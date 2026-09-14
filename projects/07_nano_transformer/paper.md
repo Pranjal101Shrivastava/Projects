@@ -108,4 +108,4 @@ gap 0.2072.
 - Train and validation loss differ by 0.2072. That gap indicates the model has begun memorising and a larger corpus or stronger regularisation would be needed to train longer.
 - Perplexity is measured on held-out Shakespeare. It says nothing about performance on any other kind of text.
 
-*Generated at commit `60c3795` · seed 42 · 1747.05s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*
+*Generated at commit `1c3d162` · seed 42 · 2583.47s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*

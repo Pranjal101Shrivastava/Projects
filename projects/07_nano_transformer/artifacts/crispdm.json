@@ -10,12 +10,12 @@
         {
           "question": "What claim will be made about the trained model?",
           "choice": "That it learns orthography and dramatic form, not meaning.",
-          "rationale": "A 2.7M-parameter model on 1.1M characters can learn which letter sequences are English-shaped and how a play is laid out. It cannot learn semantics, and claiming otherwise from a cherry-picked sample would be the standard dishonesty of small-LM demos. The evaluation therefore measures held-out perplexity and the proportion of generated words that are real, rather than displaying one good paragraph.",
+          "rationale": "A 1.8M-parameter model on 1.1M characters can learn which letter sequences are English-shaped and how a play is laid out. It cannot learn semantics, and claiming otherwise from a cherry-picked sample would be the standard dishonesty of small-LM demos. The evaluation therefore measures held-out perplexity and the proportion of generated words that are real, rather than displaying one good paragraph.",
           "alternatives_rejected": []
         }
       ],
       "evidence": {
-        "parameter_budget": "~2.7M",
+        "parameter_budget": "~1.79M",
         "compute_budget": "CPU, minutes"
       },
       "risks": []
@@ -203,7 +203,7 @@
           "batch_size": 48,
           "steps": 2200
         },
-        "train_seconds": 1722.7
+        "train_seconds": 2570.9
       },
       "risks": []
     },
@@ -365,7 +365,7 @@
     {
       "name": "deployment",
       "title": "Deployment",
-      "summary": "Training telemetry, attention statistics and generated samples at four temperatures are exported for the dashboard. Generation itself is not run in the browser \u2014 a 2.7M-parameter forward pass per character is not something to ask of a page \u2014 so pre-generated samples are shown and labelled as such.",
+      "summary": "Training telemetry, attention statistics and generated samples at four temperatures are exported for the dashboard. Generation itself is not run in the browser \u2014 a 1.8M-parameter forward pass per character is not something to ask of a page \u2014 so pre-generated samples are shown and labelled as such.",
       "decisions": [],
       "evidence": {
         "samples": 4
@@ -379,7 +379,7 @@
   "_run": {
     "project": "07_nano_transformer",
     "seed": 42,
-    "git_commit": "60c3795",
+    "git_commit": "1c3d162",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
@@ -388,7 +388,7 @@
       "lightgbm": "4.7.0",
       "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 1747.05,
-    "generated_at_unix": 1789371344
+    "duration_seconds": 2583.47,
+    "generated_at_unix": 1789373973
   }
 }

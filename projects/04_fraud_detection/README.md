@@ -64,11 +64,11 @@ negative/positive ratio. On this data that is the single worst thing you can do.
 | Variant | scale_pos_weight | PR-AUC | ROC-AUC |
 |---|---:|---:|---:|
 | `none` | — | **0.7359** | 0.9378 |
-| `scale_pos_weight_10` | 10 | **0.2359** | 0.8652 |
-| `is_unbalance` | — | **0.0181** | 0.8284 |
-| `scale_pos_weight_full` | 536 | **0.0089** | 0.8792 |
+| `scale_pos_weight_10` | 10 | **0.3645** | 0.8611 |
+| `is_unbalance` | — | **0.0260** | 0.8535 |
+| `scale_pos_weight_full` | 536 | **0.0092** | 0.8730 |
 
-Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
+Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0092, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
 
 All four variants are published rather than only the winner.
 
@@ -186,13 +186,13 @@ Three detectors spanning two supervision regimes: an Isolation Forest fitted onl
 **Should the boosted model use scale_pos_weight?**
 
 - **Chose:** No — the ablation selects 'none'.
-- **Why:** Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
+- **Why:** Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0092, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
 - *Rejected:* scale_pos_weight = n_neg/n_pos — the conventional advice; measured here as the single worst configuration.
 - *Rejected:* is_unbalance=True — LightGBM's built-in equivalent, also substantially worse than no reweighting.
 
 ### Evaluation
 
-Logistic regression (class-weighted) reaches PR-AUC 0.7657 against a no-skill floor of 0.00173 — a 580× lift. At the cost-optimal threshold it catches 80 of 94 frauds for 229 false alarms.
+Logistic regression (class-weighted) reaches PR-AUC 0.7657 against a no-skill floor of 0.00132 — a 580× lift. At the cost-optimal threshold it catches 80 of 94 frauds for 229 false alarms. The floor is the prevalence of the held-out window rather than of the full dataset (0.00173): a chronological split does not preserve the base rate exactly, and the no-skill PR-AUC is always the prevalence of the set being scored.
 
 **Did the unsupervised detector justify itself?**
 
@@ -232,4 +232,4 @@ reproduces the same numbers.
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)
 
-*Generated at commit `22d5161` · seed 42 · 34.06s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0*
+*Generated at commit `1c3d162` · seed 42 · 33.54s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*

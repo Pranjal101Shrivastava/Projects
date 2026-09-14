@@ -56,9 +56,9 @@ tuning until it looked better, I ran all four options:
 | What I did | PR-AUC |
 |---|---:|
 | none | **0.7359** |
-| scale pos weight 10 | **0.2359** |
-| is unbalance | **0.0181** |
-| scale pos weight full | **0.0089** |
+| scale pos weight 10 | **0.3645** |
+| is unbalance | **0.0260** |
+| scale pos weight full | **0.0092** |
 
 **Doing nothing beat the recommended practice by 82×.**
 

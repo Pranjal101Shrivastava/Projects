@@ -1,7 +1,7 @@
 # 07 · A Character Transformer Written from Tensor Operations
 
 A 1,785,408-parameter decoder trained on CPU in
-29 minutes, with every component — rotary embeddings, SwiGLU,
+43 minutes, with every component — rotary embeddings, SwiGLU,
 pre-norm blocks, weight tying — implemented directly rather than assembled from
 `nn.TransformerEncoderLayer`.
 
@@ -82,7 +82,7 @@ more. Nothing in the architecture assigns roles; the specialisation emerges from
 ## Training
 
 1,785,408 parameters, 22 evaluation points over
-1723 seconds on CPU. AdamW with linear warmup then cosine decay, gradient
+2571 seconds on CPU. AdamW with linear warmup then cosine decay, gradient
 clipping at 1.0.
 
 Final train loss 1.3091, validation 1.5163 —
@@ -109,7 +109,7 @@ The objective is pedagogical rather than commercial: build every component of a 
 **What claim will be made about the trained model?**
 
 - **Chose:** That it learns orthography and dramatic form, not meaning.
-- **Why:** A 2.7M-parameter model on 1.1M characters can learn which letter sequences are English-shaped and how a play is laid out. It cannot learn semantics, and claiming otherwise from a cherry-picked sample would be the standard dishonesty of small-LM demos. The evaluation therefore measures held-out perplexity and the proportion of generated words that are real, rather than displaying one good paragraph.
+- **Why:** A 1.8M-parameter model on 1.1M characters can learn which letter sequences are English-shaped and how a play is laid out. It cannot learn semantics, and claiming otherwise from a cherry-picked sample would be the standard dishonesty of small-LM demos. The evaluation therefore measures held-out perplexity and the proportion of generated words that are real, rather than displaying one good paragraph.
 
 ### Data Understanding
 
@@ -153,7 +153,7 @@ Held-out perplexity 4.555 against 27.462 for a unigram model and 65.0 for unifor
 
 ### Deployment
 
-Training telemetry, attention statistics and generated samples at four temperatures are exported for the dashboard. Generation itself is not run in the browser — a 2.7M-parameter forward pass per character is not something to ask of a page — so pre-generated samples are shown and labelled as such.
+Training telemetry, attention statistics and generated samples at four temperatures are exported for the dashboard. Generation itself is not run in the browser — a 1.8M-parameter forward pass per character is not something to ask of a page — so pre-generated samples are shown and labelled as such.
 
 
 ## Run it
@@ -179,4 +179,4 @@ reproduces the same numbers.
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)
 
-*Generated at commit `60c3795` · seed 42 · 1747.05s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*
+*Generated at commit `1c3d162` · seed 42 · 2583.47s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*

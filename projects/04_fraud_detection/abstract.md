@@ -25,7 +25,7 @@ precision 6.2%, illustrating the divergence between the two metrics under
 imbalance. A reweighting ablation found that setting `scale_pos_weight` to the
 negative/positive ratio — standard practice — reduced gradient-boosting PR-AUC from
 0.7359 to
-0.0089.
+0.0092.
 
 **Conclusion.** ROC-AUC is unsuitable as a headline metric at this prevalence. Standard
 reweighting guidance derived from linear models does not transfer to high-capacity boosted

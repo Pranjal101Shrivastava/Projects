@@ -169,7 +169,7 @@
   "_run": {
     "project": "07_nano_transformer",
     "seed": 42,
-    "git_commit": "60c3795",
+    "git_commit": "1c3d162",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
@@ -178,7 +178,7 @@
       "lightgbm": "4.7.0",
       "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 1747.05,
-    "generated_at_unix": 1789371344
+    "duration_seconds": 2583.46,
+    "generated_at_unix": 1789373973
   }
 }

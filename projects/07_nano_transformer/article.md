@@ -1,6 +1,6 @@
 # I built a transformer from scratch on a CPU, and measured what it actually learned
 
-*1,785,408 parameters, 29 minutes, no GPU*
+*1,785,408 parameters, 43 minutes, no GPU*
 
 Small language model demos follow a script. Train something on Shakespeare, generate a
 paragraph, quote the paragraph. The reader is invited to be impressed by prose that sounds
@@ -83,7 +83,7 @@ more, carrying longer structure.
 
 Nothing in the code assigns those roles. All 24 heads are
 architecturally identical and randomly initialised. The division of labour is learned, in
-29 minutes, on a CPU.
+43 minutes, on a CPU.
 
 ## The split detail
 

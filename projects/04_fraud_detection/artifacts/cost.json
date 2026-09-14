@@ -955,15 +955,16 @@
   "_run": {
     "project": "04_fraud_detection",
     "seed": 42,
-    "git_commit": "22d5161",
+    "git_commit": "1c3d162",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
       "pandas": "3.0.5",
       "sklearn": "1.9.1",
-      "lightgbm": "4.7.0"
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 34.05,
-    "generated_at_unix": 1789366193
+    "duration_seconds": 33.53,
+    "generated_at_unix": 1789374039
   }
 }

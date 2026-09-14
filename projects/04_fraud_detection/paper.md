@@ -73,11 +73,11 @@ labelling effort is worth on this problem: roughly
 | Variant | scale_pos_weight | PR-AUC | ROC-AUC | Brier |
 |---|---:|---:|---:|---:|
 | none | — | 0.7359 | 0.9378 | 0.00058 |
-| scale_pos_weight_10 | 10 | 0.2359 | 0.8652 | 0.00253 |
-| is_unbalance | — | 0.0181 | 0.8284 | 0.03508 |
-| scale_pos_weight_full | 536 | 0.0089 | 0.8792 | 0.11392 |
+| scale_pos_weight_10 | 10 | 0.3645 | 0.8611 | 0.00132 |
+| is_unbalance | — | 0.0260 | 0.8535 | 0.02716 |
+| scale_pos_weight_full | 536 | 0.0092 | 0.8730 | 0.10511 |
 
-Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
+Setting scale_pos_weight to the full negative/positive ratio (536) — the conventional recommendation for imbalanced boosting — collapses PR-AUC to 0.0092, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.
 
 This result is reported in full because it contradicts widely-repeated guidance. The
 mechanism is capacity: reweighting constrains a linear model toward the minority class
@@ -113,4 +113,4 @@ The cost ratio is an assumption, not a measurement. The full curve is published 
 - Only 94 frauds fall in the test window, so recall estimates carry wide confidence intervals — a single missed episode moves recall by 1.1%.
 - The threshold was selected on the same test split it is reported on, which is mildly optimistic. A production system would select it on a separate validation period.
 
-*Generated at commit `22d5161` · seed 42 · 34.06s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0*
+*Generated at commit `1c3d162` · seed 42 · 33.54s · Python 3.11.15 · numpy 2.4.6 · pandas 3.0.5 · sklearn 1.9.1 · lightgbm 4.7.0 · torch 2.14.0+cu130*

@@ -62,7 +62,7 @@
       "pr_auc_no_skill": 0.0013201876351787872,
       "pr_auc_lift_over_no_skill": 557.4459307070922,
       "roc_auc": 0.9378217311635044,
-      "brier": 0.0005840636181371576,
+      "brier": 0.0005840636181371575,
       "f1": 0.7577639751552795,
       "precision": 0.9104477611940298,
       "recall": 0.648936170212766,
@@ -113,50 +113,51 @@
         "is_unbalance": false,
         "pr_auc": 0.7359332250002342,
         "roc_auc": 0.9378217311635044,
-        "brier": 0.0005840636181371576
+        "brier": 0.0005840636181371575
       },
       {
         "variant": "scale_pos_weight_10",
         "scale_pos_weight": 10.0,
         "is_unbalance": false,
-        "pr_auc": 0.23592756103607548,
-        "roc_auc": 0.8652148395189098,
-        "brier": 0.0025269333932694395
+        "pr_auc": 0.3644634304010054,
+        "roc_auc": 0.8610661457130239,
+        "brier": 0.0013201876324697485
       },
       {
         "variant": "is_unbalance",
         "scale_pos_weight": null,
         "is_unbalance": true,
-        "pr_auc": 0.018144785422755834,
-        "roc_auc": 0.828353394716338,
-        "brier": 0.035083284177410745
+        "pr_auc": 0.02597020132517952,
+        "roc_auc": 0.853526520641661,
+        "brier": 0.027162245932945642
       },
       {
         "variant": "scale_pos_weight_full",
         "scale_pos_weight": 535.6959798994975,
         "is_unbalance": false,
-        "pr_auc": 0.008913267463805273,
-        "roc_auc": 0.8791756979793398,
-        "brier": 0.113915339427102
+        "pr_auc": 0.009216908054810367,
+        "roc_auc": 0.8729793996306487,
+        "brier": 0.10510918544527995
       }
     ],
     "best": "none",
     "worst": "scale_pos_weight_full",
-    "pr_auc_spread": 0.727,
-    "finding": "Setting scale_pos_weight to the full negative/positive ratio (536) \u2014 the conventional recommendation for imbalanced boosting \u2014 collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed."
+    "pr_auc_spread": 0.7267,
+    "finding": "Setting scale_pos_weight to the full negative/positive ratio (536) \u2014 the conventional recommendation for imbalanced boosting \u2014 collapses PR-AUC to 0.0092, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed."
   },
   "_run": {
     "project": "04_fraud_detection",
     "seed": 42,
-    "git_commit": "22d5161",
+    "git_commit": "1c3d162",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
       "pandas": "3.0.5",
       "sklearn": "1.9.1",
-      "lightgbm": "4.7.0"
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 34.05,
-    "generated_at_unix": 1789366193
+    "duration_seconds": 33.53,
+    "generated_at_unix": 1789374039
   }
 }
