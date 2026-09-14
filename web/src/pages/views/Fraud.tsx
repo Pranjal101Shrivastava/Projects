@@ -67,7 +67,7 @@ function Body({ models, cost, profile }: { models: Models; cost: Cost; profile: 
         <Stat label="Prevalence" value={`${(profile.profile.prevalence * 100).toFixed(3)}%`}
               sub={`${profile.profile.n_fraud} of ${profile.profile.n_transactions.toLocaleString()}`} />
         <Stat label="Best PR-AUC" value={fmt(best.pr_auc, 4)} tone="accent"
-              sub={`${best.pr_auc_lift_over_no_skill.toFixed(0)}× the no-skill floor`} />
+              sub={`${best.pr_auc_lift_over_no_skill.toFixed(0)}× the ${best.prevalence.toFixed(5)} no-skill floor`} />
         <Stat label="Imbalance" value={`${profile.profile.imbalance_ratio.toFixed(0)}:1`}
               sub="legitimate to fraudulent" />
         <Stat label="Cost saved at optimum"

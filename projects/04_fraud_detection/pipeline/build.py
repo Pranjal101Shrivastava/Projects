@@ -509,10 +509,14 @@ def main() -> None:
                 summary=(
                     f"{results[best_key]['label']} reaches PR-AUC "
                     f"{results[best_key]['pr_auc']:.4f} against a no-skill floor of "
-                    f"{prevalence:.5f} — a "
+                    f"{results[best_key]['prevalence']:.5f} — a "
                     f"{results[best_key]['pr_auc_lift_over_no_skill']:.0f}× lift. At the "
                     f"cost-optimal threshold it catches {optimal['tp']} of "
-                    f"{int(y_test.sum())} frauds for {optimal['fp']} false alarms."
+                    f"{int(y_test.sum())} frauds for {optimal['fp']} false alarms. "
+                    "The floor is the prevalence of the held-out window rather than of the "
+                    f"full dataset ({prevalence:.5f}): a chronological split does not "
+                    "preserve the base rate exactly, and the no-skill PR-AUC is always the "
+                    "prevalence of the set being scored."
                 ),
                 evidence={
                     "results": results,

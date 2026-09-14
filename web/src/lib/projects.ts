@@ -117,7 +117,7 @@ export const PROJECTS: ProjectMeta[] = [
     rows: "1,115,394 characters",
     tags: ["RoPE", "SwiGLU", "From scratch"],
     headline: "Held-out perplexity vs unigram",
-    headlineValue: "see live artifact",
+    headlineValue: "4.56 vs 27.46 — 6.0× better",
   },
   {
     id: "08_crispdm_academy",

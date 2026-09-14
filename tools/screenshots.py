@@ -54,6 +54,27 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
         pass
 
 
+def chromium_path() -> str | None:
+    """Locate a usable Chromium, preferring one already present on the machine.
+
+    The Python Playwright package pins a browser revision and refuses to launch when the
+    installed browser is a different build. Rather than download several hundred megabytes
+    of a second Chromium, point the launcher at whichever one is already here. Returns
+    ``None`` to fall back to Playwright's own resolution when nothing is found.
+    """
+    candidates = sorted(Path("/opt/pw-browsers").glob("chromium-*/chrome-linux/chrome"))
+    candidates += sorted(Path("/opt/pw-browsers").glob("chromium/chrome-linux/chrome"))
+    for candidate in candidates:
+        if candidate.is_file():
+            return str(candidate)
+
+    for fallback in ("/usr/bin/chromium", "/usr/bin/chromium-browser",
+                     "/usr/bin/google-chrome"):
+        if Path(fallback).is_file():
+            return fallback
+    return None
+
+
 def serve() -> socketserver.TCPServer:
     socketserver.TCPServer.allow_reuse_address = True
     httpd = socketserver.TCPServer(("127.0.0.1", PORT), QuietHandler)
@@ -73,7 +94,7 @@ def main() -> None:
     captured: list[str] = []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(executable_path=chromium_path())
         page = browser.new_page(viewport={"width": 1440, "height": 1000},
                                 device_scale_factor=2)
 

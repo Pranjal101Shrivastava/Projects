@@ -1,0 +1,72 @@
+name: Deploy portfolio to GitHub Pages
+
+# Builds the site from committed artifacts and publishes it. The pipelines are NOT run here:
+# they need ~10 minutes of CPU and several hundred megabytes of downloaded data, and their
+# outputs are committed precisely so the site can be rebuilt deterministically without them.
+
+on:
+  push:
+    branches: [main, claude/github-repo-access-mfytvv]
+    paths:
+      - "web/**"
+      - "projects/*/artifacts/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; a queued run supersedes an older pending one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify artifacts are valid and sync them into the site
+        run: python3 tools/sync_artifacts.py
+
+      - name: Run the leakage audit
+        # The site publishes audit results, so a repository with unacknowledged critical
+        # findings should not deploy claiming to be clean.
+        run: python3 tools/audit.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build
+        working-directory: web
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
