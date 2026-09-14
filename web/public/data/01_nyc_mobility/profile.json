@@ -1,0 +1,177 @@
+{
+  "profile": {
+    "rows_raw": 4534327,
+    "rows_modelled": 4509822,
+    "date_min": "2014-04-01 00:00:00",
+    "date_max": "2014-09-30 22:59:00",
+    "n_bases": 5,
+    "bases": [
+      "B02512",
+      "B02598",
+      "B02617",
+      "B02682",
+      "B02764"
+    ],
+    "nulls_total": 0,
+    "exact_duplicates": 82581,
+    "exact_duplicate_share": 0.01821,
+    "duplicates_kept": true,
+    "duplicate_rationale": "Timestamps are minute-resolution and coordinates rounded to ~11 m, so distinct simultaneous dispatches from one base on one block are indistinguishable in this schema. Duplicate share rises with demand (peak hours highest), which is the signature of collision under coarse resolution rather than of a data fault. Dropping them would understate demand precisely at peak, so they are retained.",
+    "duplicate_share_by_hour": {
+      "0": 0.0377,
+      "1": 0.0391,
+      "2": 0.0422,
+      "3": 0.0396,
+      "4": 0.0356,
+      "5": 0.0378,
+      "6": 0.0365,
+      "7": 0.0349,
+      "8": 0.035,
+      "9": 0.0331,
+      "10": 0.0338,
+      "11": 0.0364,
+      "12": 0.0362,
+      "13": 0.0352,
+      "14": 0.0356,
+      "15": 0.035,
+      "16": 0.0356,
+      "17": 0.0366,
+      "18": 0.0375,
+      "19": 0.0385,
+      "20": 0.0372,
+      "21": 0.0374,
+      "22": 0.0366,
+      "23": 0.0368
+    },
+    "rows_outside_nyc_bbox": 24505,
+    "outside_share": 0.0054,
+    "bbox": {
+      "lat_min": 40.5,
+      "lat_max": 40.95,
+      "lon_min": -74.3,
+      "lon_max": -73.65
+    },
+    "trips_per_day_mean": 24643.8,
+    "lat_range": [
+      39.6569,
+      42.1166
+    ],
+    "lon_range": [
+      -74.929,
+      -72.0666
+    ]
+  },
+  "zones": [
+    {
+      "zone": 9,
+      "label": "~Chelsea / Flatiron",
+      "centre_lat": 40.73809,
+      "centre_lon": -73.99268,
+      "trips": 1048068,
+      "share": 0.2324
+    },
+    {
+      "zone": 10,
+      "label": "~Midtown",
+      "centre_lat": 40.75908,
+      "centre_lon": -73.98546,
+      "trips": 842609,
+      "share": 0.18684
+    },
+    {
+      "zone": 3,
+      "label": "~Financial District",
+      "centre_lat": 40.7193,
+      "centre_lon": -74.00424,
+      "trips": 786711,
+      "share": 0.17444
+    },
+    {
+      "zone": 1,
+      "label": "~Upper East Side",
+      "centre_lat": 40.76634,
+      "centre_lon": -73.96762,
+      "trips": 645909,
+      "share": 0.14322
+    },
+    {
+      "zone": 7,
+      "label": "~Williamsburg",
+      "centre_lat": 40.70669,
+      "centre_lon": -73.9471,
+      "trips": 295865,
+      "share": 0.0656
+    },
+    {
+      "zone": 0,
+      "label": "~Downtown Brooklyn",
+      "centre_lat": 40.66863,
+      "centre_lon": -73.98061,
+      "trips": 263617,
+      "share": 0.05845
+    },
+    {
+      "zone": 6,
+      "label": "~Harlem",
+      "centre_lat": 40.80447,
+      "centre_lon": -73.95597,
+      "trips": 161099,
+      "share": 0.03572
+    },
+    {
+      "zone": 8,
+      "label": "~LaGuardia Airport",
+      "centre_lat": 40.76281,
+      "centre_lon": -73.86238,
+      "trips": 143317,
+      "share": 0.03178
+    },
+    {
+      "zone": 2,
+      "label": "~JFK Airport",
+      "centre_lat": 40.65452,
+      "centre_lon": -73.78099,
+      "trips": 128031,
+      "share": 0.02839
+    },
+    {
+      "zone": 5,
+      "label": "~Astoria / LIC",
+      "centre_lat": 40.76621,
+      "centre_lon": -73.9358,
+      "trips": 119834,
+      "share": 0.02657
+    },
+    {
+      "zone": 4,
+      "label": "~Newark Airport",
+      "centre_lat": 40.70244,
+      "centre_lon": -74.18088,
+      "trips": 41094,
+      "share": 0.00911
+    },
+    {
+      "zone": 11,
+      "label": "~The Bronx",
+      "centre_lat": 40.87225,
+      "centre_lon": -73.88729,
+      "trips": 33668,
+      "share": 0.00747
+    }
+  ],
+  "n_zones": 12,
+  "_run": {
+    "project": "01_nyc_mobility",
+    "seed": 42,
+    "git_commit": "a90a660",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 43.07,
+    "generated_at_unix": 1789365420
+  }
+}

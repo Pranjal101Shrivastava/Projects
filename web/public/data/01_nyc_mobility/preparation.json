@@ -1,0 +1,49 @@
+{
+  "panel_rows": 50676,
+  "rows_dropped_for_lag_warmup": 2016,
+  "n_features": 21,
+  "features": [
+    "lag_1h",
+    "lag_2h",
+    "lag_3h",
+    "lag_24h",
+    "lag_168h",
+    "roll_mean_3h",
+    "roll_mean_24h",
+    "roll_std_24h",
+    "roll_mean_168h",
+    "roll_std_168h",
+    "hour",
+    "dow",
+    "is_weekend",
+    "month",
+    "day_of_month",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "is_holiday",
+    "zone"
+  ],
+  "hours_covered": 4223,
+  "leakage_controls": [
+    "Lags use groupby(zone).shift(k): a row can only see its own zone's past.",
+    "Rolling windows are shift(1) before .rolling(), so the window ends at t-1 and an hour never enters its own rolling statistic.",
+    "The panel is reindexed onto a complete hourly grid before lagging, so a missing hour cannot let lag_24h silently reach 25 hours back.",
+    "2,016 warm-up rows with incomplete lag history are dropped rather than imputed \u2014 imputing them would fabricate history."
+  ],
+  "_run": {
+    "project": "01_nyc_mobility",
+    "seed": 42,
+    "git_commit": "a90a660",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 43.07,
+    "generated_at_unix": 1789365420
+  }
+}

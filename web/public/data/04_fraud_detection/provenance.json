@@ -1,0 +1,35 @@
+{
+  "datasets": [
+    {
+      "id": "credit_card_fraud",
+      "title": "Credit Card Fraud Detection (ULB, Sep 2013)",
+      "kind": "REAL",
+      "origin": "Machine Learning Group, Universite Libre de Bruxelles. Real card transactions by European cardholders over two days in September 2013. V1-V28 are PCA components published in place of the raw features for confidentiality; Time and Amount are unmodified.",
+      "license": "Open Database License (ODbL) - research and educational use.",
+      "url": "https://raw.githubusercontent.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/master/creditcard.csv",
+      "mirror_note": "kaggle.com is unreachable from this build environment (gateway denies CONNECT), so we fetch the identical file from a GitHub mirror. Integrity is pinned by the SHA-256 recorded in .data/manifest.json.",
+      "rows": "284,807 transactions, 492 fraudulent (0.1727%)",
+      "notes": "Severe class imbalance. Accuracy is meaningless here; we report PR-AUC.",
+      "cached_files": [
+        {
+          "file": "credit_card_fraud.csv",
+          "sha256": "33a178be65174943a07d1736acf5898f6c8e1fa80950dbbe598c17eda968ec59"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "04_fraud_detection",
+    "seed": 42,
+    "git_commit": "22d5161",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 34.07,
+    "generated_at_unix": 1789366193
+  }
+}

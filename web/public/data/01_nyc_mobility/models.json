@@ -1,0 +1,399 @@
+{
+  "split": {
+    "strategy": "chronological_holdout_with_embargo",
+    "shuffled": false,
+    "n_train": 40596,
+    "n_test": 8064,
+    "train_end": "2014-08-26 23:00:00",
+    "test_start": "2014-09-02T23:00:00.000000",
+    "test_days": 28,
+    "embargo_hours": 168,
+    "embargo_rationale": "The widest feature lag is 168h. Training rows within 168h of the test boundary share lag history with the first test rows, so that band is discarded to keep the partitions independent."
+  },
+  "models": {
+    "seasonal_naive_168h": {
+      "label": "Seasonal naive (t \u2212 168h)",
+      "family": "baseline",
+      "complexity": "zero parameters",
+      "mae": 25.697296626984127,
+      "rmse": 53.68273407251162,
+      "r2": 0.8652684625291233,
+      "mape": 30.16734779442344,
+      "n": 8064,
+      "baseline_mae": 25.697296626984127,
+      "baseline_rmse": 53.68273407251162,
+      "skill_score_vs_baseline": 0.0
+    },
+    "naive_24h": {
+      "label": "Naive (t \u2212 24h)",
+      "family": "baseline",
+      "complexity": "zero parameters",
+      "mae": 35.35863095238095,
+      "rmse": 71.60311758864064,
+      "r2": 0.7603022946486724,
+      "mape": 48.35766445279583,
+      "n": 8064,
+      "baseline_mae": 25.697296626984127,
+      "baseline_rmse": 53.68273407251162,
+      "skill_score_vs_baseline": -0.37596695347524145
+    },
+    "ridge": {
+      "label": "Ridge regression",
+      "family": "linear",
+      "complexity": "21 coefficients",
+      "mae": 17.999515747848736,
+      "rmse": 30.491636997087806,
+      "r2": 0.9565328171008249,
+      "mape": 29.470682513221025,
+      "n": 8064,
+      "baseline_mae": 25.697296626984127,
+      "baseline_rmse": 53.68273407251162,
+      "skill_score_vs_baseline": 0.2995560580116483
+    },
+    "lightgbm": {
+      "label": "LightGBM",
+      "family": "gradient boosting",
+      "complexity": "600 trees \u00d7 63 leaves",
+      "mae": 15.64940777811443,
+      "rmse": 30.191065998288195,
+      "r2": 0.9573855480088986,
+      "mape": 22.794348548593494,
+      "n": 8064,
+      "baseline_mae": 25.697296626984127,
+      "baseline_rmse": 53.68273407251162,
+      "skill_score_vs_baseline": 0.3910095678437492
+    }
+  },
+  "best_model": "lightgbm",
+  "conformal": {
+    "80%": {
+      "quantile_width": 15.243,
+      "nominal_coverage": 0.8,
+      "empirical_coverage": 0.7121775793650794,
+      "coverage_gap": -0.0878,
+      "mean_interval_width": 29.402632572725082,
+      "calibrated": false
+    },
+    "90%": {
+      "quantile_width": 30.683,
+      "nominal_coverage": 0.9,
+      "empirical_coverage": 0.8718998015873016,
+      "coverage_gap": -0.0281,
+      "mean_interval_width": 56.51719821938587,
+      "calibrated": true
+    },
+    "95%": {
+      "quantile_width": 48.617,
+      "nominal_coverage": 0.95,
+      "empirical_coverage": 0.9309275793650794,
+      "coverage_gap": -0.0191,
+      "mean_interval_width": 86.1096602036653,
+      "calibrated": true
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "lag_1h",
+      "gain": 1996506901.67,
+      "share": 0.53259
+    },
+    {
+      "feature": "lag_168h",
+      "gain": 1335890920.11,
+      "share": 0.35636
+    },
+    {
+      "feature": "lag_24h",
+      "gain": 157331363.47,
+      "share": 0.04197
+    },
+    {
+      "feature": "roll_mean_3h",
+      "gain": 85648617.87,
+      "share": 0.02285
+    },
+    {
+      "feature": "hour_cos",
+      "gain": 24635776.72,
+      "share": 0.00657
+    },
+    {
+      "feature": "hour",
+      "gain": 22396885.99,
+      "share": 0.00597
+    },
+    {
+      "feature": "hour_sin",
+      "gain": 19943670.73,
+      "share": 0.00532
+    },
+    {
+      "feature": "lag_2h",
+      "gain": 15437347.39,
+      "share": 0.00412
+    },
+    {
+      "feature": "roll_mean_24h",
+      "gain": 13332381.81,
+      "share": 0.00356
+    },
+    {
+      "feature": "day_of_month",
+      "gain": 11846766.77,
+      "share": 0.00316
+    },
+    {
+      "feature": "lag_3h",
+      "gain": 11380539.58,
+      "share": 0.00304
+    },
+    {
+      "feature": "dow",
+      "gain": 10679056.43,
+      "share": 0.00285
+    },
+    {
+      "feature": "roll_std_24h",
+      "gain": 9056519.47,
+      "share": 0.00242
+    },
+    {
+      "feature": "roll_std_168h",
+      "gain": 8221183.1,
+      "share": 0.00219
+    },
+    {
+      "feature": "roll_mean_168h",
+      "gain": 7669113.97,
+      "share": 0.00205
+    },
+    {
+      "feature": "month",
+      "gain": 7503149.38,
+      "share": 0.002
+    },
+    {
+      "feature": "dow_sin",
+      "gain": 3537858.89,
+      "share": 0.00094
+    },
+    {
+      "feature": "zone",
+      "gain": 3388983.97,
+      "share": 0.0009
+    },
+    {
+      "feature": "dow_cos",
+      "gain": 2230334.48,
+      "share": 0.00059
+    },
+    {
+      "feature": "is_holiday",
+      "gain": 1869854.25,
+      "share": 0.0005
+    },
+    {
+      "feature": "is_weekend",
+      "gain": 184809.3,
+      "share": 5e-05
+    }
+  ],
+  "error_by_hour": [
+    {
+      "h": 0,
+      "mae": 13.788,
+      "mean_demand": 68.646
+    },
+    {
+      "h": 1,
+      "mae": 8.858,
+      "mean_demand": 45.881
+    },
+    {
+      "h": 2,
+      "mae": 5.381,
+      "mean_demand": 30.342
+    },
+    {
+      "h": 3,
+      "mae": 5.288,
+      "mean_demand": 30.104
+    },
+    {
+      "h": 4,
+      "mae": 5.761,
+      "mean_demand": 35.211
+    },
+    {
+      "h": 5,
+      "mae": 9.991,
+      "mean_demand": 56.533
+    },
+    {
+      "h": 6,
+      "mae": 15.279,
+      "mean_demand": 93.929
+    },
+    {
+      "h": 7,
+      "mae": 18.521,
+      "mean_demand": 122.351
+    },
+    {
+      "h": 8,
+      "mae": 15.972,
+      "mean_demand": 124.881
+    },
+    {
+      "h": 9,
+      "mae": 13.775,
+      "mean_demand": 108.027
+    },
+    {
+      "h": 10,
+      "mae": 13.261,
+      "mean_demand": 105.271
+    },
+    {
+      "h": 11,
+      "mae": 13.378,
+      "mean_demand": 108.438
+    },
+    {
+      "h": 12,
+      "mae": 12.006,
+      "mean_demand": 109.238
+    },
+    {
+      "h": 13,
+      "mae": 14.262,
+      "mean_demand": 125.848
+    },
+    {
+      "h": 14,
+      "mae": 16.988,
+      "mean_demand": 147.839
+    },
+    {
+      "h": 15,
+      "mae": 18.666,
+      "mean_demand": 171.991
+    },
+    {
+      "h": 16,
+      "mae": 18.45,
+      "mean_demand": 191.39
+    },
+    {
+      "h": 17,
+      "mae": 21.156,
+      "mean_demand": 206.815
+    },
+    {
+      "h": 18,
+      "mae": 26.521,
+      "mean_demand": 212.765
+    },
+    {
+      "h": 19,
+      "mae": 22.041,
+      "mean_demand": 197.571
+    },
+    {
+      "h": 20,
+      "mae": 18.193,
+      "mean_demand": 180.89
+    },
+    {
+      "h": 21,
+      "mae": 24.005,
+      "mean_demand": 171.78
+    },
+    {
+      "h": 22,
+      "mae": 23.367,
+      "mean_demand": 147.598
+    },
+    {
+      "h": 23,
+      "mae": 20.678,
+      "mean_demand": 106.821
+    }
+  ],
+  "error_by_zone": [
+    {
+      "zone": 0,
+      "mae": 11.346,
+      "mean_demand": 92.159
+    },
+    {
+      "zone": 1,
+      "mae": 22.766,
+      "mean_demand": 197.749
+    },
+    {
+      "zone": 2,
+      "mae": 8.898,
+      "mean_demand": 38.984
+    },
+    {
+      "zone": 3,
+      "mae": 25.583,
+      "mean_demand": 247.966
+    },
+    {
+      "zone": 4,
+      "mae": 3.783,
+      "mean_demand": 12.646
+    },
+    {
+      "zone": 5,
+      "mae": 7.374,
+      "mean_demand": 41.905
+    },
+    {
+      "zone": 6,
+      "mae": 8.395,
+      "mean_demand": 58.033
+    },
+    {
+      "zone": 7,
+      "mae": 12.091,
+      "mean_demand": 104.868
+    },
+    {
+      "zone": 8,
+      "mae": 9.734,
+      "mean_demand": 48.301
+    },
+    {
+      "zone": 9,
+      "mae": 45.365,
+      "mean_demand": 337.21
+    },
+    {
+      "zone": 10,
+      "mae": 28.853,
+      "mean_demand": 257.009
+    },
+    {
+      "zone": 11,
+      "mae": 3.604,
+      "mean_demand": 13.253
+    }
+  ],
+  "_run": {
+    "project": "01_nyc_mobility",
+    "seed": 42,
+    "git_commit": "a90a660",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 43.11,
+    "generated_at_unix": 1789365420
+  }
+}

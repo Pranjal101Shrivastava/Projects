@@ -1,0 +1,308 @@
+{
+  "n_transactions": 9835,
+  "n_distinct_items": 169,
+  "total_items_sold": 43367,
+  "basket_size": {
+    "mean": 4.409,
+    "median": 3,
+    "max": 32,
+    "singleton_share": 0.2195
+  },
+  "basket_size_distribution": [
+    {
+      "size": 1,
+      "count": 2159
+    },
+    {
+      "size": 2,
+      "count": 1643
+    },
+    {
+      "size": 3,
+      "count": 1299
+    },
+    {
+      "size": 4,
+      "count": 1005
+    },
+    {
+      "size": 5,
+      "count": 855
+    },
+    {
+      "size": 6,
+      "count": 645
+    },
+    {
+      "size": 7,
+      "count": 545
+    },
+    {
+      "size": 8,
+      "count": 438
+    },
+    {
+      "size": 9,
+      "count": 350
+    },
+    {
+      "size": 10,
+      "count": 246
+    },
+    {
+      "size": 11,
+      "count": 182
+    },
+    {
+      "size": 12,
+      "count": 117
+    },
+    {
+      "size": 13,
+      "count": 78
+    },
+    {
+      "size": 14,
+      "count": 77
+    },
+    {
+      "size": 15,
+      "count": 55
+    },
+    {
+      "size": 16,
+      "count": 46
+    },
+    {
+      "size": 17,
+      "count": 29
+    },
+    {
+      "size": 18,
+      "count": 14
+    },
+    {
+      "size": 19,
+      "count": 14
+    },
+    {
+      "size": 20,
+      "count": 9
+    },
+    {
+      "size": 21,
+      "count": 11
+    },
+    {
+      "size": 22,
+      "count": 4
+    },
+    {
+      "size": 23,
+      "count": 6
+    },
+    {
+      "size": 24,
+      "count": 1
+    },
+    {
+      "size": 25,
+      "count": 0
+    },
+    {
+      "size": 26,
+      "count": 1
+    },
+    {
+      "size": 27,
+      "count": 1
+    },
+    {
+      "size": 28,
+      "count": 1
+    },
+    {
+      "size": 29,
+      "count": 3
+    },
+    {
+      "size": 30,
+      "count": 0
+    },
+    {
+      "size": 31,
+      "count": 0
+    },
+    {
+      "size": 32,
+      "count": 1
+    }
+  ],
+  "top_items": [
+    {
+      "item": "whole milk",
+      "count": 2513,
+      "support": 0.25552
+    },
+    {
+      "item": "other vegetables",
+      "count": 1903,
+      "support": 0.19349
+    },
+    {
+      "item": "rolls/buns",
+      "count": 1809,
+      "support": 0.18393
+    },
+    {
+      "item": "soda",
+      "count": 1715,
+      "support": 0.17438
+    },
+    {
+      "item": "yogurt",
+      "count": 1372,
+      "support": 0.1395
+    },
+    {
+      "item": "bottled water",
+      "count": 1087,
+      "support": 0.11052
+    },
+    {
+      "item": "root vegetables",
+      "count": 1072,
+      "support": 0.109
+    },
+    {
+      "item": "tropical fruit",
+      "count": 1032,
+      "support": 0.10493
+    },
+    {
+      "item": "shopping bags",
+      "count": 969,
+      "support": 0.09853
+    },
+    {
+      "item": "sausage",
+      "count": 924,
+      "support": 0.09395
+    },
+    {
+      "item": "pastry",
+      "count": 875,
+      "support": 0.08897
+    },
+    {
+      "item": "citrus fruit",
+      "count": 814,
+      "support": 0.08277
+    },
+    {
+      "item": "bottled beer",
+      "count": 792,
+      "support": 0.08053
+    },
+    {
+      "item": "newspapers",
+      "count": 785,
+      "support": 0.07982
+    },
+    {
+      "item": "canned beer",
+      "count": 764,
+      "support": 0.07768
+    },
+    {
+      "item": "pip fruit",
+      "count": 744,
+      "support": 0.07565
+    },
+    {
+      "item": "fruit/vegetable juice",
+      "count": 711,
+      "support": 0.07229
+    },
+    {
+      "item": "whipped/sour cream",
+      "count": 705,
+      "support": 0.07168
+    },
+    {
+      "item": "brown bread",
+      "count": 638,
+      "support": 0.06487
+    },
+    {
+      "item": "domestic eggs",
+      "count": 624,
+      "support": 0.06345
+    },
+    {
+      "item": "frankfurter",
+      "count": 580,
+      "support": 0.05897
+    },
+    {
+      "item": "margarine",
+      "count": 576,
+      "support": 0.05857
+    },
+    {
+      "item": "coffee",
+      "count": 571,
+      "support": 0.05806
+    },
+    {
+      "item": "pork",
+      "count": 567,
+      "support": 0.05765
+    },
+    {
+      "item": "butter",
+      "count": 545,
+      "support": 0.05541
+    },
+    {
+      "item": "curd",
+      "count": 524,
+      "support": 0.05328
+    },
+    {
+      "item": "beef",
+      "count": 516,
+      "support": 0.05247
+    },
+    {
+      "item": "napkins",
+      "count": 515,
+      "support": 0.05236
+    },
+    {
+      "item": "chocolate",
+      "count": 488,
+      "support": 0.04962
+    },
+    {
+      "item": "frozen vegetables",
+      "count": 473,
+      "support": 0.04809
+    }
+  ],
+  "sparsity": 0.97391,
+  "_run": {
+    "project": "03_market_basket",
+    "seed": 42,
+    "git_commit": "b949297",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 130.62,
+    "generated_at_unix": 1789365813
+  }
+}

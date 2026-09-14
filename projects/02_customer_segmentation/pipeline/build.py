@@ -442,6 +442,11 @@ def _finish(df, outcome, encoded, sweeps, consensus, stability, crisp, ctx,
           f"{segment_profiles[0]['conversion_rate']:.2%}, χ²={chi2:.0f}, p={p_value:.1e}")
 
     # --- 2-D projection for the UI --------------------------------------------------
+    # audit: ok(preprocessing-leak) This PCA is display-only. The analysis is unsupervised,
+    # there is no held-out partition for its statistics to contaminate, and the components
+    # are never used as model input — they exist solely to place points on a scatter plot.
+    # The rule fires correctly; fitting a transformer on all rows is a leak whenever a
+    # holdout exists, and there is none here.
     pca = PCA(n_components=2, random_state=SEED)
     coords = pca.fit_transform(X[sample_idx])
     projection = {

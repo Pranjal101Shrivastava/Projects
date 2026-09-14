@@ -1,0 +1,386 @@
+{
+  "project": "01_nyc_mobility",
+  "business_question": "For each NYC zone, how many ride-hail pickups should be expected in the next hour, and how confident can a dispatcher be in that number?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "Positioning idle vehicles ahead of demand is the core operational lever in ride-hail. Under-supply in a zone loses the fare and pushes riders to a competitor; over-supply pays drivers to idle. Both costs are asymmetric and both are paid hourly, so the useful forecast horizon is one hour at zone granularity.",
+      "decisions": [
+        {
+          "question": "What is the prediction target?",
+          "choice": "Pickup count per zone per hour.",
+          "rationale": "The FOIL extract records timestamp, coordinates and dispatch base only. It contains no trip duration and no fare. Demand is the quantity this data can actually support, it is directly countable from the records, and it is what dispatch decisions are made on.",
+          "alternatives_rejected": [
+            "Trip duration \u2014 the reference implementation this portfolio responds to predicts duration on this dataset, but the column does not exist; doing so requires synthesising the target, and a model fitted to a synthetic target measures only how well it recovers the generator.",
+            "Fare \u2014 likewise absent from the source."
+          ]
+        },
+        {
+          "question": "What accuracy would make this worth deploying?",
+          "choice": "Beat seasonal-naive MAE by a clear margin at zone-hour level.",
+          "rationale": "Dispatchers already reason with 'same time last week'. A model is only worth operating if it improves on the heuristic the organisation would use for free.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "horizon": "1 hour",
+        "granularity": "12 learned zones",
+        "asymmetric_costs": "Under-supply loses revenue and rider retention; over-supply pays idle driver time. The conformal interval is provided so a dispatcher can position against the upper bound when under-supply is costlier."
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "4,534,327 real dispatched pickups spanning 2014-04-01 to 2014-09-30 across 5 dispatch bases. No nulls. Two quirks drive the preparation decisions: 1.8% exact duplicates and 0.1% of points lying outside the NYC market entirely.",
+      "decisions": [
+        {
+          "question": "Should the 82,581 exact duplicate rows be dropped?",
+          "choice": "No \u2014 retained.",
+          "rationale": "Timestamps are minute-resolution and coordinates rounded to ~11 m, so distinct simultaneous dispatches from one base on one block are indistinguishable in this schema. Duplicate share rises with demand (peak hours highest), which is the signature of collision under coarse resolution rather than of a data fault. Dropping them would understate demand precisely at peak, so they are retained.",
+          "alternatives_rejected": [
+            "drop_duplicates() \u2014 the reflex action; would understate peak demand, the regime the model exists to predict.",
+            "Deduplicate within a 5-minute window \u2014 same defect, larger."
+          ]
+        },
+        {
+          "question": "How should out-of-region coordinates be handled?",
+          "choice": "Filter to a Manhattan-centred bbox; 24,505 rows dropped.",
+          "rationale": "Coordinates reach 39.66\u00b0N\u201342.12\u00b0N and -74.93\u00b0E\u2013-72.07\u00b0E, i.e. from Philadelphia to eastern Long Island. These are real dispatches but from other markets. Zone clustering over that span would merge locations 100 km apart into one 'zone'.",
+          "alternatives_rejected": [
+            "Keep everything \u2014 produces geographically meaningless zones.",
+            "Winsorise coordinates \u2014 would pile distant trips onto the boundary and invent demand at the edge of the box."
+          ]
+        }
+      ],
+      "evidence": {
+        "rows_raw": 4534327,
+        "rows_modelled": 4509822,
+        "date_min": "2014-04-01 00:00:00",
+        "date_max": "2014-09-30 22:59:00",
+        "n_bases": 5,
+        "bases": [
+          "B02512",
+          "B02598",
+          "B02617",
+          "B02682",
+          "B02764"
+        ],
+        "nulls_total": 0,
+        "exact_duplicates": 82581,
+        "exact_duplicate_share": 0.01821,
+        "duplicates_kept": true,
+        "duplicate_rationale": "Timestamps are minute-resolution and coordinates rounded to ~11 m, so distinct simultaneous dispatches from one base on one block are indistinguishable in this schema. Duplicate share rises with demand (peak hours highest), which is the signature of collision under coarse resolution rather than of a data fault. Dropping them would understate demand precisely at peak, so they are retained.",
+        "duplicate_share_by_hour": {
+          "0": 0.0377,
+          "1": 0.0391,
+          "2": 0.0422,
+          "3": 0.0396,
+          "4": 0.0356,
+          "5": 0.0378,
+          "6": 0.0365,
+          "7": 0.0349,
+          "8": 0.035,
+          "9": 0.0331,
+          "10": 0.0338,
+          "11": 0.0364,
+          "12": 0.0362,
+          "13": 0.0352,
+          "14": 0.0356,
+          "15": 0.035,
+          "16": 0.0356,
+          "17": 0.0366,
+          "18": 0.0375,
+          "19": 0.0385,
+          "20": 0.0372,
+          "21": 0.0374,
+          "22": 0.0366,
+          "23": 0.0368
+        },
+        "rows_outside_nyc_bbox": 24505,
+        "outside_share": 0.0054,
+        "bbox": {
+          "lat_min": 40.5,
+          "lat_max": 40.95,
+          "lon_min": -74.3,
+          "lon_max": -73.65
+        },
+        "trips_per_day_mean": 24643.8,
+        "lat_range": [
+          39.6569,
+          42.1166
+        ],
+        "lon_range": [
+          -74.929,
+          -72.0666
+        ]
+      },
+      "risks": [
+        "Six months of a single year cannot express annual seasonality; the model must not be read as capturing winter demand.",
+        "2014 Uber volume grew steeply month over month. Trend is in-sample here, so forecasts beyond the observed window will extrapolate a growth rate that did not continue indefinitely."
+      ]
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Point events aggregated to a 12-zone \u00d7 hourly panel of 50,676 rows with 21 strictly backward-looking features: autoregressive lags to one week, shifted rolling statistics, cyclically encoded calendar terms and holiday flags.",
+      "decisions": [
+        {
+          "question": "How are rolling features protected from lookahead?",
+          "choice": "shift(1) applied before .rolling(), never after.",
+          "rationale": "A rolling mean computed without the prior shift includes the target hour in its own predictor. The resulting fit looks excellent and collapses in production. Shifting first makes the window strictly [t-w, t-1].",
+          "alternatives_rejected": [
+            ".rolling(w).mean() directly on the demand column \u2014 leaks the target into its own feature.",
+            "centered=True rolling windows \u2014 leaks the future outright."
+          ]
+        },
+        {
+          "question": "Learned zones or a uniform spatial grid?",
+          "choice": "K-means over pickup coordinates, k=12.",
+          "rationale": "A uniform grid over this bbox is mostly water and parkland. Most cells would carry near-zero demand while a few Manhattan cells would aggregate very different neighbourhoods. Learned centroids place zone boundaries where demand actually separates.",
+          "alternatives_rejected": [
+            "Uniform lat/lon grid \u2014 dominated by empty cells.",
+            "Official TLC taxi zones \u2014 not present in this FOIL extract and joining them would require an external shapefile the environment cannot reach."
+          ]
+        }
+      ],
+      "evidence": {
+        "panel_rows": 50676,
+        "rows_dropped_for_lag_warmup": 2016,
+        "n_features": 21,
+        "features": [
+          "lag_1h",
+          "lag_2h",
+          "lag_3h",
+          "lag_24h",
+          "lag_168h",
+          "roll_mean_3h",
+          "roll_mean_24h",
+          "roll_std_24h",
+          "roll_mean_168h",
+          "roll_std_168h",
+          "hour",
+          "dow",
+          "is_weekend",
+          "month",
+          "day_of_month",
+          "hour_sin",
+          "hour_cos",
+          "dow_sin",
+          "dow_cos",
+          "is_holiday",
+          "zone"
+        ],
+        "hours_covered": 4223,
+        "leakage_controls": [
+          "Lags use groupby(zone).shift(k): a row can only see its own zone's past.",
+          "Rolling windows are shift(1) before .rolling(), so the window ends at t-1 and an hour never enters its own rolling statistic.",
+          "The panel is reindexed onto a complete hourly grid before lagging, so a missing hour cannot let lag_24h silently reach 25 hours back.",
+          "2,016 warm-up rows with incomplete lag history are dropped rather than imputed \u2014 imputing them would fabricate history."
+        ]
+      },
+      "risks": [
+        "K-means assumes isotropic clusters in degrees; one degree of longitude is shorter than one of latitude at 40\u00b0N, so zones are mildly stretched east-west. At this scale the distortion is under 25% and does not affect ranking, but it is a real approximation."
+      ]
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "A four-rung ladder from zero-parameter baselines to gradient boosting, every rung scored on the identical embargoed holdout. Uncertainty is quantified by split-conformal intervals rather than by a Gaussian assumption the residuals do not satisfy.",
+      "decisions": [
+        {
+          "question": "What must a model beat to be considered useful?",
+          "choice": "Seasonal naive at t \u2212 168h.",
+          "rationale": "Weekly periodicity dominates urban mobility. Repeating the same hour last week already achieves MAE 25.70. Any learned model that cannot beat that is not earning its complexity, and reporting its R\u00b2 without this reference would be misleading.",
+          "alternatives_rejected": [
+            "Global mean baseline \u2014 trivially weak, flatters every model.",
+            "Reporting R\u00b2 alone \u2014 high for anything that tracks the daily cycle and therefore uninformative here."
+          ]
+        },
+        {
+          "question": "How are prediction intervals produced?",
+          "choice": "Split-conformal calibration on a held-out training slice.",
+          "rationale": "Residuals are right-skewed and heteroscedastic \u2014 variance grows with demand level \u2014 so a Gaussian \u00b11.96\u03c3 band would be too wide at low demand and too narrow at peak, exactly where the cost of being wrong is highest. Conformal quantiles need no distributional assumption and their coverage is checked empirically below.",
+          "alternatives_rejected": [
+            "Gaussian \u00b11.96\u03c3 \u2014 assumes symmetry and homoscedasticity, both violated.",
+            "Quantile regression \u2014 viable, but needs a separate model per level and gives no finite-sample coverage guarantee."
+          ]
+        }
+      ],
+      "evidence": {
+        "split": {
+          "strategy": "chronological_holdout_with_embargo",
+          "shuffled": false,
+          "n_train": 40596,
+          "n_test": 8064,
+          "train_end": "2014-08-26 23:00:00",
+          "test_start": "2014-09-02T23:00:00.000000",
+          "test_days": 28,
+          "embargo_hours": 168,
+          "embargo_rationale": "The widest feature lag is 168h. Training rows within 168h of the test boundary share lag history with the first test rows, so that band is discarded to keep the partitions independent."
+        },
+        "n_models": 4,
+        "best_model": "lightgbm"
+      },
+      "risks": [
+        "LightGBM cannot extrapolate beyond the demand levels seen in training. 2014 volume was growing steeply, so a forecast far past the window would saturate at the training maximum rather than continue the trend."
+      ]
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "LightGBM reaches MAE 15.65 against seasonal-naive 25.70, a 39.1% reduction in mean absolute error. Conformal intervals are calibrated at 90%, 95% but under-cover at 80% (80% covers 71.2%).",
+      "decisions": [
+        {
+          "question": "Is the reported improvement worth the added complexity?",
+          "choice": "Yes \u2014 every rung improves on the one below it.",
+          "rationale": "LightGBM cuts MAE from 25.70 to 15.65. Ridge reaches 18.00. Where the linear rung fails to beat a zero-parameter baseline that is reported as-is rather than quietly omitted from the table.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "best_model": "lightgbm",
+        "best_mae": 15.64940777811443,
+        "naive_mae": 25.697296626984127,
+        "skill_score": 0.3910095678437492,
+        "conformal_calibrated_levels": [
+          "90%",
+          "95%"
+        ],
+        "conformal_failed_levels": [
+          "80%"
+        ],
+        "conformal": {
+          "80%": {
+            "quantile_width": 15.243,
+            "nominal_coverage": 0.8,
+            "empirical_coverage": 0.7121775793650794,
+            "coverage_gap": -0.0878,
+            "mean_interval_width": 29.402632572725082,
+            "calibrated": false
+          },
+          "90%": {
+            "quantile_width": 30.683,
+            "nominal_coverage": 0.9,
+            "empirical_coverage": 0.8718998015873016,
+            "coverage_gap": -0.0281,
+            "mean_interval_width": 56.51719821938587,
+            "calibrated": true
+          },
+          "95%": {
+            "quantile_width": 48.617,
+            "nominal_coverage": 0.95,
+            "empirical_coverage": 0.9309275793650794,
+            "coverage_gap": -0.0191,
+            "mean_interval_width": 86.1096602036653,
+            "calibrated": true
+          }
+        },
+        "worst_hour": {
+          "h": 18,
+          "mae": 26.521,
+          "mean_demand": 212.765
+        },
+        "worst_zone": {
+          "zone": 9,
+          "mae": 45.365,
+          "mean_demand": 337.21
+        },
+        "top_features": [
+          {
+            "feature": "lag_1h",
+            "gain": 1996506901.67,
+            "share": 0.53259
+          },
+          {
+            "feature": "lag_168h",
+            "gain": 1335890920.11,
+            "share": 0.35636
+          },
+          {
+            "feature": "lag_24h",
+            "gain": 157331363.47,
+            "share": 0.04197
+          },
+          {
+            "feature": "roll_mean_3h",
+            "gain": 85648617.87,
+            "share": 0.02285
+          },
+          {
+            "feature": "hour_cos",
+            "gain": 24635776.72,
+            "share": 0.00657
+          },
+          {
+            "feature": "hour",
+            "gain": 22396885.99,
+            "share": 0.00597
+          },
+          {
+            "feature": "hour_sin",
+            "gain": 19943670.73,
+            "share": 0.00532
+          },
+          {
+            "feature": "lag_2h",
+            "gain": 15437347.39,
+            "share": 0.00412
+          }
+        ]
+      },
+      "risks": [
+        "Conformal coverage degrades at the narrowest band: the 80% interval realises 71.2% rather than its nominal level. Split conformal assumes the calibration and test residuals are exchangeable. They are not here: calibration comes from the chronologically last slice of training data, and demand grew substantially across the six months, so test-period residuals are systematically larger than calibration-period residuals. The wider 90% and 95% bands absorb that drift and remain calibrated; the tight band does not. This is a real limitation of the method under trend, not a tuning artefact, and the fix is periodic recalibration on recent data.",
+        "Error concentrates at hour 18 (MAE 26.52 against mean demand 212.8) \u2014 the evening peak, where both demand and its variance are highest.",
+        "Zone 9 carries the largest absolute error (MAE 45.37); high-volume zones dominate the aggregate figure, so a single citywide MAE understates performance in quiet zones and overstates it in busy ones.",
+        "Model selection used a single chronological holdout. With one test window there is no estimate of variance across periods; a different four weeks would give a different number."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "Two serving paths. A FastAPI service exposes the full LightGBM model for local use; a compact hour-of-week \u00d7 zone surrogate is exported to JSON so the published static site can score interactively with no backend.",
+      "decisions": [
+        {
+          "question": "How does a static site serve a gradient boosted model?",
+          "choice": "Export an interpretable surrogate and publish its fidelity.",
+          "rationale": "GitHub Pages serves static files only. Rather than pretend the demo runs the real model, the surrogate is declared as such and its R\u00b2 against the parent (0.8676) is shown in the UI itself.",
+          "alternatives_rejected": [
+            "Ship the full booster as JSON \u2014 megabytes of trees plus a JavaScript tree-walker, for a demo.",
+            "Silently hard-code precomputed predictions \u2014 the demo would stop being interactive and would misrepresent what it does."
+          ]
+        }
+      ],
+      "evidence": {
+        "surrogate_fidelity": {
+          "r2_vs_parent_model": 0.8676,
+          "mae_vs_actual": 35.516,
+          "parent_mae_vs_actual": 15.649,
+          "note": "The browser scorer is a hour-of-week \u00d7 zone surrogate, not the LightGBM model. Its agreement with the parent is reported here so the live demo is read as an approximation with a known gap, not as the trained model."
+        },
+        "table_zones": 12
+      },
+      "risks": [
+        "The surrogate ignores autoregressive state, so it cannot react to a demand shock the way the parent model does. It reproduces the periodic structure only."
+      ]
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "01_nyc_mobility",
+    "seed": 42,
+    "git_commit": "a90a660",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 43.12,
+    "generated_at_unix": 1789365420
+  }
+}

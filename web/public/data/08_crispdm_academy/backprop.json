@@ -1,0 +1,311 @@
+{
+  "title": "Backpropagation is the chain rule",
+  "dataset": "Titanic (64 real passengers, 3 standardised features)",
+  "architecture": "3 \u2192 5 (tanh) \u2192 1 (sigmoid), binary cross-entropy",
+  "gradient_checks": [
+    {
+      "parameter": "W1[0,3]",
+      "analytic": 0.0223839651,
+      "numerical": 0.0223839651,
+      "relative_error": 3.33e-10
+    },
+    {
+      "parameter": "W1[2,1]",
+      "analytic": -0.0002046748,
+      "numerical": -0.0002046748,
+      "relative_error": 1.708e-09
+    },
+    {
+      "parameter": "W1[0,4]",
+      "analytic": -0.0007011997,
+      "numerical": -0.0007011997,
+      "relative_error": 1.733e-09
+    },
+    {
+      "parameter": "W1[1,4]",
+      "analytic": -0.0003476388,
+      "numerical": -0.0003476388,
+      "relative_error": 1.0135e-08
+    },
+    {
+      "parameter": "W1[2,3]",
+      "analytic": -0.0016746172,
+      "numerical": -0.0016746173,
+      "relative_error": 1.4041e-08
+    },
+    {
+      "parameter": "W1[2,0]",
+      "analytic": 0.0036210775,
+      "numerical": 0.0036210775,
+      "relative_error": 3.073e-09
+    },
+    {
+      "parameter": "W2[1,0]",
+      "analytic": -0.0192850303,
+      "numerical": -0.0192850303,
+      "relative_error": 2.72e-10
+    },
+    {
+      "parameter": "W2[2,0]",
+      "analytic": 0.0085065731,
+      "numerical": 0.0085065731,
+      "relative_error": 1.02e-10
+    },
+    {
+      "parameter": "W2[2,0]",
+      "analytic": 0.0085065731,
+      "numerical": 0.0085065731,
+      "relative_error": 1.02e-10
+    },
+    {
+      "parameter": "W2[0,0]",
+      "analytic": -0.0225376948,
+      "numerical": -0.0225376948,
+      "relative_error": 2.25e-10
+    },
+    {
+      "parameter": "W2[2,0]",
+      "analytic": 0.0085065731,
+      "numerical": 0.0085065731,
+      "relative_error": 1.02e-10
+    },
+    {
+      "parameter": "W2[0,0]",
+      "analytic": -0.0225376948,
+      "numerical": -0.0225376948,
+      "relative_error": 2.25e-10
+    }
+  ],
+  "max_relative_error": 1.4041e-08,
+  "check_passed": true,
+  "training_curve": [
+    {
+      "step": 0,
+      "loss": 0.69266
+    },
+    {
+      "step": 10,
+      "loss": 0.66333
+    },
+    {
+      "step": 20,
+      "loss": 0.65047
+    },
+    {
+      "step": 30,
+      "loss": 0.64169
+    },
+    {
+      "step": 40,
+      "loss": 0.63552
+    },
+    {
+      "step": 50,
+      "loss": 0.63093
+    },
+    {
+      "step": 60,
+      "loss": 0.62725
+    },
+    {
+      "step": 70,
+      "loss": 0.62403
+    },
+    {
+      "step": 80,
+      "loss": 0.62092
+    },
+    {
+      "step": 90,
+      "loss": 0.61763
+    },
+    {
+      "step": 100,
+      "loss": 0.61399
+    },
+    {
+      "step": 110,
+      "loss": 0.61003
+    },
+    {
+      "step": 120,
+      "loss": 0.60597
+    },
+    {
+      "step": 130,
+      "loss": 0.60199
+    },
+    {
+      "step": 140,
+      "loss": 0.5982
+    },
+    {
+      "step": 150,
+      "loss": 0.5946
+    },
+    {
+      "step": 160,
+      "loss": 0.5912
+    },
+    {
+      "step": 170,
+      "loss": 0.588
+    },
+    {
+      "step": 180,
+      "loss": 0.58501
+    },
+    {
+      "step": 190,
+      "loss": 0.58222
+    },
+    {
+      "step": 200,
+      "loss": 0.57964
+    },
+    {
+      "step": 210,
+      "loss": 0.57726
+    },
+    {
+      "step": 220,
+      "loss": 0.57506
+    },
+    {
+      "step": 230,
+      "loss": 0.57304
+    },
+    {
+      "step": 240,
+      "loss": 0.57117
+    },
+    {
+      "step": 250,
+      "loss": 0.56944
+    },
+    {
+      "step": 260,
+      "loss": 0.56784
+    },
+    {
+      "step": 270,
+      "loss": 0.56635
+    },
+    {
+      "step": 280,
+      "loss": 0.56496
+    },
+    {
+      "step": 290,
+      "loss": 0.56365
+    },
+    {
+      "step": 300,
+      "loss": 0.56241
+    },
+    {
+      "step": 310,
+      "loss": 0.56123
+    },
+    {
+      "step": 320,
+      "loss": 0.56011
+    },
+    {
+      "step": 330,
+      "loss": 0.55904
+    },
+    {
+      "step": 340,
+      "loss": 0.55802
+    },
+    {
+      "step": 350,
+      "loss": 0.55704
+    },
+    {
+      "step": 360,
+      "loss": 0.5561
+    },
+    {
+      "step": 370,
+      "loss": 0.55521
+    },
+    {
+      "step": 380,
+      "loss": 0.55435
+    },
+    {
+      "step": 390,
+      "loss": 0.55353
+    }
+  ],
+  "initial_loss": 0.69266,
+  "final_loss": 0.55353,
+  "chain_rule_steps": [
+    {
+      "step": "\u2202L/\u2202a\u2082",
+      "expression": "\u2212(y/a\u2082 \u2212 (1\u2212y)/(1\u2212a\u2082))/m",
+      "note": "derivative of binary cross-entropy w.r.t. the output activation"
+    },
+    {
+      "step": "\u2202a\u2082/\u2202z\u2082",
+      "expression": "a\u2082(1 \u2212 a\u2082)",
+      "note": "derivative of the sigmoid"
+    },
+    {
+      "step": "\u2202L/\u2202z\u2082",
+      "expression": "(a\u2082 \u2212 y)/m",
+      "note": "the two above multiply and simplify \u2014 this cancellation is why sigmoid pairs with cross-entropy rather than with squared error"
+    },
+    {
+      "step": "\u2202L/\u2202W\u2082",
+      "expression": "a\u2081\u1d40 \u00b7 \u2202L/\u2202z\u2082",
+      "note": "chain rule through the linear layer"
+    },
+    {
+      "step": "\u2202L/\u2202a\u2081",
+      "expression": "\u2202L/\u2202z\u2082 \u00b7 W\u2082\u1d40",
+      "note": "propagate the error backwards one layer"
+    },
+    {
+      "step": "\u2202L/\u2202z\u2081",
+      "expression": "\u2202L/\u2202a\u2081 \u2299 (1 \u2212 tanh\u00b2(z\u2081))",
+      "note": "derivative of tanh, applied elementwise"
+    },
+    {
+      "step": "\u2202L/\u2202W\u2081",
+      "expression": "X\u1d40 \u00b7 \u2202L/\u2202z\u2081",
+      "note": "chain rule through the first linear layer"
+    }
+  ],
+  "lesson": "The analytic gradients match central finite differences to a maximum relative error of 1.40e-08. That agreement is the proof the derivation is correct, and the gradient check is the first thing to run when a network will not train. Note the third step: \u2202L/\u2202a\u2082 and \u2202a\u2082/\u2202z\u2082 multiply to the clean (a\u2082 \u2212 y)/m. That cancellation is exactly why sigmoid is paired with cross-entropy \u2014 with squared error the sigmoid derivative survives, and it vanishes when the unit saturates, stalling learning.",
+  "quiz": [
+    {
+      "question": "A gradient check gives relative error 0.3 between analytic and numerical gradients. What does that indicate?",
+      "options": [
+        "Normal floating-point noise",
+        "A bug in the backward pass",
+        "The learning rate is too high",
+        "The network needs more layers"
+      ],
+      "answer": 1,
+      "explanation": "Correct gradients agree to roughly 1e-7 with central differences. An error of 0.3 is a derivation or implementation error, not noise."
+    }
+  ],
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.28,
+    "generated_at_unix": 1789369529
+  }
+}

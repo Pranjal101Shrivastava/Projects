@@ -66,6 +66,20 @@ LEARNING_RATE = 3e-4
 WARMUP_STEPS = 120
 VAL_FRACTION = 0.1
 
+# Parameter count implied by the configuration above, used in prose written before the
+# model is constructed. Embedding and output head share one matrix (weight tying), so the
+# vocabulary term is counted once. Verified against the constructed model at runtime.
+_VOCAB = 65
+EXPECTED_PARAMS = (
+    _VOCAB * D_MODEL                                   # tied embedding / output head
+    + N_LAYERS * (
+        4 * D_MODEL * D_MODEL                          # qkv projection + output projection
+        + 3 * D_MODEL * D_FF                           # SwiGLU gate, up, down
+        + 4 * D_MODEL                                  # two LayerNorms (weight + bias)
+    )
+    + 2 * D_MODEL                                      # final LayerNorm
+)
+
 
 def main() -> None:
     import torch
@@ -241,7 +255,8 @@ def main() -> None:
                         "That it learns orthography and dramatic form, not meaning."
                     ),
                     rationale=(
-                        "A 2.7M-parameter model on 1.1M characters can learn which letter "
+                        f"A {EXPECTED_PARAMS / 1e6:.1f}M-parameter model on 1.1M characters "
+                        "can learn which letter "
                         "sequences are English-shaped and how a play is laid out. It "
                         "cannot learn semantics, and claiming otherwise from a "
                         "cherry-picked sample would be the standard dishonesty of small-LM "
@@ -251,7 +266,10 @@ def main() -> None:
                     ),
                 ),
             ],
-            evidence={"parameter_budget": "~2.7M", "compute_budget": "CPU, minutes"},
+            evidence={
+                "parameter_budget": f"~{EXPECTED_PARAMS / 1e6:.2f}M",
+                "compute_budget": "CPU, minutes",
+            },
         )
     )
 
@@ -304,6 +322,13 @@ def main() -> None:
         # ==============================================================================
         model = NanoTransformer(len(vocabulary)).to(device)
         n_params = sum(p.numel() for p in model.parameters())
+        # The prose above quotes EXPECTED_PARAMS, written before the model exists. If the
+        # two disagree the documentation is wrong, so fail rather than publish it.
+        if abs(n_params - EXPECTED_PARAMS) > 0.02 * n_params:
+            raise AssertionError(
+                f"EXPECTED_PARAMS ({EXPECTED_PARAMS:,}) disagrees with the constructed "
+                f"model ({n_params:,}). Update the derivation before publishing."
+            )
         n_params_unique = n_params - model.head.weight.numel() * 0  # tied, counted once
         print(f"\n[2/4] Training {n_params:,} parameters for {MAX_STEPS} steps on CPU …")
 
@@ -616,7 +641,8 @@ def main() -> None:
                 summary=(
                     "Training telemetry, attention statistics and generated samples at four "
                     "temperatures are exported for the dashboard. Generation itself is not "
-                    "run in the browser — a 2.7M-parameter forward pass per character is "
+                    f"run in the browser — a {n_params / 1e6:.1f}M-parameter forward pass "
+                    "per character is "
                     "not something to ask of a page — so pre-generated samples are shown "
                     "and labelled as such."
                 ),

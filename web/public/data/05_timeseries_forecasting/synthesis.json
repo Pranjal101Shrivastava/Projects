@@ -1,0 +1,75 @@
+{
+  "cross_series_ranking": [
+    {
+      "model": "sarima",
+      "label": "SARIMA(1,1,1)(1,1,1,m)",
+      "mean_rank": 1.5,
+      "best_rank": 1,
+      "worst_rank": 3,
+      "wins": 3
+    },
+    {
+      "model": "gbm",
+      "label": "LightGBM direct multi-step",
+      "mean_rank": 2.5,
+      "best_rank": 2,
+      "worst_rank": 3,
+      "wins": 0
+    },
+    {
+      "model": "holt_winters",
+      "label": "Holt-Winters (add/add)",
+      "mean_rank": 2.75,
+      "best_rank": 2,
+      "worst_rank": 4,
+      "wins": 0
+    },
+    {
+      "model": "seasonal_naive",
+      "label": "Seasonal naive",
+      "mean_rank": 3.25,
+      "best_rank": 1,
+      "worst_rank": 4,
+      "wins": 1
+    },
+    {
+      "model": "drift",
+      "label": "Drift",
+      "mean_rank": 5.25,
+      "best_rank": 5,
+      "worst_rank": 6,
+      "wins": 0
+    },
+    {
+      "model": "naive",
+      "label": "Naive (last value)",
+      "mean_rank": 5.75,
+      "best_rank": 5,
+      "worst_rank": 6,
+      "wins": 0
+    }
+  ],
+  "winners_by_series": {
+    "airline_passengers": "SARIMA(1,1,1)(1,1,1,m)",
+    "daily_min_temps": "SARIMA(1,1,1)(1,1,1,m)",
+    "drug_sales": "SARIMA(1,1,1)(1,1,1,m)",
+    "sunspots": "Seasonal naive"
+  },
+  "n_distinct_winners": 2,
+  "horizon": 12,
+  "protocol": "Rolling origin: 8 refits, each forecasting 12 steps ahead from data strictly before the origin. No model sees any observation at or after its origin. Reported MASE is the mean across origins, so a single lucky cut cannot determine the ranking.",
+  "_run": {
+    "project": "05_timeseries_forecasting",
+    "seed": 42,
+    "git_commit": "02a5f5a",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 32.97,
+    "generated_at_unix": 1789368564
+  }
+}

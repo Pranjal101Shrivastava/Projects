@@ -1,0 +1,86 @@
+{
+  "datasets": [
+    {
+      "id": "airline_passengers",
+      "title": "International Airline Passengers (1949-1960)",
+      "kind": "REAL",
+      "origin": "Box & Jenkins, 'Time Series Analysis: Forecasting and Control' (1976), series G. Monthly totals of international airline passengers.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/jbrownlee/Datasets/master/airline-passengers.csv",
+      "mirror_note": "Brownlee's dataset archive.",
+      "rows": "144 monthly observations",
+      "notes": "Canonical multiplicative trend + seasonality benchmark.",
+      "cached_files": [
+        {
+          "file": "airline_passengers.csv",
+          "sha256": "8cb51be753a718d9be5d76d7e238cc224792754676adc21faa59e954b0201621"
+        }
+      ]
+    },
+    {
+      "id": "daily_min_temps",
+      "title": "Daily Minimum Temperatures, Melbourne (1981-1990)",
+      "kind": "REAL",
+      "origin": "Australian Bureau of Meteorology, via Hyndman's Time Series Data Library.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv",
+      "mirror_note": "Brownlee's dataset archive.",
+      "rows": "3,650 daily observations",
+      "notes": "Strong annual seasonality, no trend. Good ACF/PACF teaching case.",
+      "cached_files": [
+        {
+          "file": "daily_min_temps.csv",
+          "sha256": "8b9de63ed6789492bf497625e7f9beb96a63d367b4b0a21754006f749fa5e5da"
+        }
+      ]
+    },
+    {
+      "id": "drug_sales",
+      "title": "Antidiabetic Drug Sales, Australia (1991-2008)",
+      "kind": "REAL",
+      "origin": "Australian Health Insurance Commission, published in Hyndman & Athanasopoulos, 'Forecasting: Principles and Practice' as series a10.",
+      "license": "Public domain (fpp text data).",
+      "url": "https://raw.githubusercontent.com/selva86/datasets/master/a10.csv",
+      "mirror_note": "Selva Prabhakaran's dataset archive.",
+      "rows": "204 monthly observations",
+      "notes": "Trend plus strong December seasonality; classic multiplicative case.",
+      "cached_files": [
+        {
+          "file": "drug_sales.csv",
+          "sha256": "4baa700091ba43f59d762ed7112e203134467ecde3f7bc88da3b153040d384cb"
+        }
+      ]
+    },
+    {
+      "id": "sunspots",
+      "title": "Sunspot Area (1875-2015)",
+      "kind": "REAL",
+      "origin": "Royal Observatory Greenwich / NASA Marshall solar cycle observations.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/selva86/datasets/master/sunspotarea.csv",
+      "mirror_note": "Selva Prabhakaran's dataset archive.",
+      "rows": "141 annual observations",
+      "notes": "~11 year solar cycle; long-period seasonality without a calendar anchor.",
+      "cached_files": [
+        {
+          "file": "sunspots.csv",
+          "sha256": "474bca93ef2466201a5f4b7b72f22b536cc14619dbf41dcf27ea4e9a9166e383"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "05_timeseries_forecasting",
+    "seed": 42,
+    "git_commit": "02a5f5a",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 32.98,
+    "generated_at_unix": 1789368564
+  }
+}
