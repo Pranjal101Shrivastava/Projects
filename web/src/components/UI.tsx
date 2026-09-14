@@ -139,8 +139,25 @@ export function Resolved<T>({
 /* Provenance                                                          */
 /* ------------------------------------------------------------------ */
 
-export function ProvenanceTable({ datasets }: { datasets: ProvenanceRecord[] }) {
+export function ProvenanceTable({
+  datasets, note,
+}: {
+  datasets: ProvenanceRecord[];
+  note?: string;
+}) {
   const [open, setOpen] = useState<string | null>(null);
+
+  // A project can legitimately have no external source — project 11 analyses this
+  // repository's own dependency graph. Saying so is more honest than an empty list, which
+  // reads as a missing artifact.
+  if (!datasets.length) {
+    return (
+      <Callout kind="info" title="This project consumes no external dataset">
+        {note ?? "Its inputs are internal to this repository."}
+      </Callout>
+    );
+  }
+
   return (
     <div className="stack">
       {datasets.map((d) => (

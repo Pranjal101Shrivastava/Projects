@@ -133,6 +133,62 @@ export const PROJECTS: ProjectMeta[] = [
     headline: "Gradient check max relative error",
     headlineValue: "1.4 × 10⁻⁸",
   },
+  {
+    id: "09_similarity_search",
+    slug: "similarity-search",
+    number: "09",
+    title: "Sub-Linear Similarity Search",
+    description:
+      "MinHash and LSH built from first principles for entity resolution — with the exact O(n²) answer computed too, so the approximation's cost is measured rather than assumed.",
+    domain: "Approximate nearest neighbour",
+    dataset: "CFPB consumer complaints",
+    rows: "28,156 complaints · 1,534 company names",
+    tags: ["MinHash", "LSH", "From scratch"],
+    headline: "Recall bought at the cost of speedup",
+    headlineValue: "100% recall → 3.0×; 90% → 45.2×",
+  },
+  {
+    id: "10_fairness_audit",
+    slug: "fairness",
+    number: "10",
+    title: "Fairness Audit · COMPAS",
+    description:
+      "The risk score ProPublica investigated, audited against every major fairness criterion — and a proof on the real data that they cannot all hold at once.",
+    domain: "Algorithmic fairness",
+    dataset: "ProPublica COMPAS, Broward County",
+    rows: "7,214 defendants",
+    tags: ["Equalized odds", "Calibration", "Impossibility"],
+    headline: "False positive rate, by group",
+    headlineValue: "42.3% vs 22.0% — same tool",
+  },
+  {
+    id: "11_pipeline_dag",
+    slug: "dag-engine",
+    number: "11",
+    title: "Pipeline DAG Engine",
+    description:
+      "Kahn's topological sort, cycle reporting and transitive content caching, measured on this repository's own dependency graph — where orchestration turns out to barely help.",
+    domain: "Orchestration",
+    dataset: "This repository's 17-task graph",
+    rows: "17 tasks · 44 edges · 5 levels",
+    tags: ["Kahn", "Content hashing", "Critical path"],
+    headline: "Speedup ceiling from the critical path",
+    headlineValue: "1.51× — no worker count beats it",
+  },
+  {
+    id: "12_market_backtest",
+    slug: "backtest",
+    number: "12",
+    title: "Market Backtest",
+    description:
+      "A trading study built to be hard to fool yourself with: purged walk-forward CV, transaction costs, a buy-and-hold benchmark — and a result that finds no edge.",
+    domain: "Quantitative finance",
+    dataset: "AAPL daily bars, 2015–2017",
+    rows: "506 trading days",
+    tags: ["Purged CV", "Transaction costs", "Negative result"],
+    headline: "Strategies beating buy-and-hold",
+    headlineValue: "0 of 2 — IC not distinguishable from 0",
+  },
 ];
 
 export const bySlug = (slug: string) => PROJECTS.find((p) => p.slug === slug);

@@ -10,12 +10,12 @@ It **cannot** establish that a feature is knowable at scoring time. That is a qu
 
 ## Summary
 
-| Projects audited | 8 |
+| Projects audited | 12 |
 |---|---|
-| Structural checks passed | **39** |
+| Structural checks passed | **57** |
 | Critical findings | **0** |
 | Warnings | **0** |
-| Acknowledged (rule fired, reason recorded) | 1 |
+| Acknowledged (rule fired, reason recorded) | 5 |
 
 An acknowledged finding is one where the rule fired correctly but the author recorded a written reason why it is acceptable in context, via an `# audit: ok(rule) reason` pragma. A bare suppression is not accepted by the tool — the reason is mandatory, and it is reproduced below so a reader can disagree with it.
 
@@ -29,6 +29,10 @@ An acknowledged finding is one where the rule fired correctly but the author rec
 | `06_automl_tournament` | 1 | 6 | 0 | 0 | 0 |
 | `07_nano_transformer` | 1 | 4 | 0 | 0 | 0 |
 | `08_crispdm_academy` | 1 | 7 | 0 | 0 | 0 |
+| `09_similarity_search` | 1 | 4 | 0 | 0 | 0 |
+| `10_fairness_audit` | 1 | 6 | 0 | 0 | 0 |
+| `11_pipeline_dag` | 1 | 3 | 0 | 0 | 0 |
+| `12_market_backtest` | 1 | 5 | 0 | 0 | 4 |
 
 ## Per-project detail
 
@@ -130,3 +134,56 @@ No findings.
 - All data requested through the registry by id: credit_card_fraud, daily_min_temps, titanic.
 
 No findings.
+
+### `09_similarity_search`
+
+**Passed**
+
+- Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.
+- Declares a module-level seed (SEED).
+- No synthetic data generators. All inputs come from the declared dataset registry.
+- All data requested through the registry by id: consumer_complaints.
+
+No findings.
+
+### `10_fairness_audit`
+
+**Passed**
+
+- Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.
+- Calls splits.assert_pipeline_safe(), which raises unless preprocessing is inside a scikit-learn Pipeline and therefore refitted per fold.
+- Uses stratified_split(), preserving the class base rate across partitions.
+- Declares a module-level seed (SEED).
+- No synthetic data generators. All inputs come from the declared dataset registry.
+- All data requested through the registry by id: compas.
+
+No findings.
+
+### `11_pipeline_dag`
+
+**Passed**
+
+- Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.
+- Declares a module-level seed (SEED).
+- No synthetic data generators. All inputs come from the declared dataset registry.
+
+No findings.
+
+### `12_market_backtest`
+
+**Passed**
+
+- Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.
+- Calls splits.assert_pipeline_safe(), which raises unless preprocessing is inside a scikit-learn Pipeline and therefore refitted per fold.
+- Declares a module-level seed (SEED).
+- No synthetic data generators. All inputs come from the declared dataset registry.
+- All data requested through the registry by id: aapl_daily.
+
+**Findings**
+
+| Severity | Rule | Location | Detail |
+|---|---|---|---|
+| ⚪ acknowledged | `lookahead-window` | `projects/12_market_backtest/pipeline/build.py:134` | .rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.<br><br>**Author's reason:** The .shift(1) is applied to the series BEFORE .pipe(), so the rolling windows inside the lambda operate on already-shifted data. The scanner cannot trace a shift across the pipe boundary, so the rule fires correctly on what it can see. assert_no_lookahead() verifies the composed result empirically. |
+| ⚪ acknowledged | `lookahead-window` | `projects/12_market_backtest/pipeline/build.py:134` | .rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.<br><br>**Author's reason:** The .shift(1) is applied to the series BEFORE .pipe(), so the rolling windows inside the lambda operate on already-shifted data. The scanner cannot trace a shift across the pipe boundary, so the rule fires correctly on what it can see. assert_no_lookahead() verifies the composed result empirically. |
+| ⚪ acknowledged | `lookahead-window` | `projects/12_market_backtest/pipeline/build.py:694` | .rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.<br><br>**Author's reason:** These rolling means are computed on unshifted data and the whole result is shifted once at the end of the function, which is equivalent and avoids shifting twice. The scanner sees the rolling call without a preceding shift and fires correctly on what it can see; assert_no_lookahead() proves the composed result uses no future information. |
+| ⚪ acknowledged | `lookahead-window` | `projects/12_market_backtest/pipeline/build.py:695` | .rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.<br><br>**Author's reason:** These rolling means are computed on unshifted data and the whole result is shifted once at the end of the function, which is equivalent and avoids shifting twice. The scanner sees the rolling call without a preceding shift and fires correctly on what it can see; assert_no_lookahead() proves the composed result uses no future information. |

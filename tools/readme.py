@@ -31,6 +31,10 @@ TITLES = {
     "06_automl_tournament": ("AutoML & the Leak", "AutoML / data leakage"),
     "07_nano_transformer": ("Nano Transformer", "Deep learning"),
     "08_crispdm_academy": ("CRISP-DM Academy", "Statistical education"),
+    "09_similarity_search": ("Sub-Linear Similarity Search", "Approximate nearest neighbour"),
+    "10_fairness_audit": ("Fairness Audit · COMPAS", "Algorithmic fairness"),
+    "11_pipeline_dag": ("Pipeline DAG Engine", "Orchestration"),
+    "12_market_backtest": ("Market Backtest", "Quantitative finance"),
 }
 
 
@@ -80,9 +84,131 @@ def headline(project: str) -> tuple[str, str]:
                 f"perplexity **{t['best_val']['val_perplexity']:.2f}** vs "
                 f"**{e['baselines']['unigram']['perplexity']:.1f}** unigram "
                 f"({e['improvement_over_unigram']:.1f}×)")
-    b = load(project, "backprop")
-    return ("5 real datasets, 6 modules",
-            f"gradient check max error **{b['max_relative_error']:.1e}**")
+    if project == "08_crispdm_academy":
+        b = load(project, "backprop")
+        return ("5 real datasets, 6 modules",
+                f"gradient check max error **{b['max_relative_error']:.1e}**")
+    if project == "09_similarity_search":
+        r = load(project, "results")
+        cfgs = r["lsh_configurations"]
+        full = [c for c in cfgs if c["recall"] >= 0.999][-1]
+        cheap = max((c for c in cfgs if 0.85 <= c["recall"] < 0.999),
+                    key=lambda c: c["speedup_vs_exact"])
+        p9 = load(project, "profile")["profile"]
+        return (f"{p9['n_distinct_company_strings']:,} real company names "
+                f"({p9['exact_pairs']:,} pairs)",
+                f"**{full['speedup_vs_exact']:.1f}×** at {pct(full['recall'], 0)} recall; "
+                f"**{cheap['speedup_vs_exact']:.0f}×** at {pct(cheap['recall'])}")
+    if project == "10_fairness_audit":
+        f10 = load(project, "fairness")
+        own = load(project, "own_model")
+        m = f10["criteria"]["predictive_equality"]["measured"]
+        return (f"{load(project, 'profile')['rows_after_propublica_filters']:,} real "
+                "COMPAS defendants",
+                f"FPR **{pct(m['max'])} vs {pct(m['min'])}**; removing race leaves "
+                f"**{own['fpr_gap']:.4f}** of a {own['compas_fpr_gap']:.4f} gap")
+    if project == "11_pipeline_dag":
+        g = load(project, "graph")
+        sch = load(project, "scheduling")
+        return (f"this repository's {g['n_tasks']}-task graph "
+                f"({g['n_edges']} edges, {g['n_levels']} levels)",
+                f"speedup ceiling **{sch['theoretical_max_speedup']:.2f}×** — "
+                f"one task is {pct(sch['dominant_task']['share_of_critical_path'])} "
+                "of the critical path")
+    r12 = load(project, "results")
+    trap = load(project, "profile")["random_walk_trap"]
+    beat = len([c for c in r12["verdict"]["comparison"]
+                if c["beats_buy_and_hold_sharpe"]])
+    return (f"{load(project, 'profile')['profile']['n_days']:,} real AAPL daily bars",
+            f"**{beat} of {len(r12['verdict']['comparison'])}** strategies beat "
+            f"buy-and-hold; price R² "
+            f"**{trap['r2_predicting_price_with_yesterdays_price']:.4f}** vs return R² "
+            f"**{trap['r2_predicting_return_with_zero']:.4f}**")
+
+
+def negative_findings() -> list[str]:
+    """The results that did not work, with every figure read from an artifact.
+
+    Hand-typing these would be the one place in the repository where a number could drift
+    unnoticed, because nothing downstream depends on them. They are derived for exactly
+    that reason.
+    """
+    out = []
+
+    conformal = load("01_nyc_mobility", "models")["conformal"]
+    c80 = conformal["80%"]
+    failed = [k for k, v in conformal.items() if not v["calibrated"]]
+    out.append(
+        f"| A conformal interval that under-covered — {pct(c80['empirical_coverage'])} at the "
+        f"nominal {pct(c80['nominal_coverage'], 0)} level ({len(failed)} of {len(conformal)} "
+        f"levels miscalibrated), because demand growth broke exchangeability "
+        f"| [01](./projects/01_nyc_mobility/) |"
+    )
+
+    agree = load("02_customer_segmentation", "selection")["cross_algorithm_agreement"]
+    worst = min(v for v in agree.values() if isinstance(v, (int, float)))
+    out.append(
+        f"| Clustering algorithms agreeing at only ARI {worst:.2f} — much of the structure is "
+        f"the algorithm's assumption, not the data "
+        f"| [02](./projects/02_customer_segmentation/) |"
+    )
+
+    abl = load("04_fraud_detection", "models")["reweighting_ablation"]
+    none = [v for v in abl["variants"] if v["variant"] == "none"][0]
+    worst_v = [v for v in abl["variants"] if v["variant"] == abl["worst"]][0]
+    out.append(
+        f"| Standard advice for imbalanced boosting made the model "
+        f"{none['pr_auc'] / max(worst_v['pr_auc'], 1e-9):.0f}× worse "
+        f"| [04](./projects/04_fraud_detection/) |"
+    )
+
+    winners = load("05_timeseries_forecasting", "synthesis")["winners_by_series"]
+    naive = [k for k, v in winners.items() if "naive" in v.lower()]
+    out.append(
+        f"| {len(naive)} of {len(winners)} series where no learned model beats the naive "
+        f"baseline ({', '.join(naive)}) | [05](./projects/05_timeseries_forecasting/) |"
+    )
+
+    bv = load("08_crispdm_academy", "bias_variance")
+    out.append(
+        f"| A bias-variance curve that is not a U — variance is only "
+        f"{pct(bv['variance_share_at_max_degree'])} of test error at maximum capacity, and "
+        f"training error is {'not ' if not bv['train_error_monotone'] else ''}monotone "
+        f"| [08](./projects/08_crispdm_academy/) |"
+    )
+
+    cfgs = load("09_similarity_search", "results")["lsh_configurations"]
+    full = [c for c in cfgs if c["recall"] >= 0.999][-1]
+    cheap = max((c for c in cfgs if 0.85 <= c["recall"] < 0.999),
+                key=lambda c: c["speedup_vs_exact"])
+    out.append(
+        f"| Full recall costs almost all of LSH's advantage — {full['speedup_vs_exact']:.1f}× "
+        f"where {pct(cheap['recall'])} recall buys {cheap['speedup_vs_exact']:.0f}× "
+        f"| [09](./projects/09_similarity_search/) |"
+    )
+
+    own = load("10_fairness_audit", "own_model")
+    out.append(
+        f"| Removing race from the model left {pct(own['fpr_gap'] / own['compas_fpr_gap'])} of "
+        f"the false-positive-rate gap in place | [10](./projects/10_fairness_audit/) |"
+    )
+
+    sch = load("11_pipeline_dag", "scheduling")
+    out.append(
+        f"| A DAG scheduler that cannot beat {sch['theoretical_max_speedup']:.2f}× at any "
+        f"worker count, because one task is "
+        f"{pct(sch['dominant_task']['share_of_critical_path'])} of the critical path "
+        f"| [11](./projects/11_pipeline_dag/) |"
+    )
+
+    v12 = load("12_market_backtest", "results")["verdict"]
+    beat = len([c for c in v12["comparison"] if c["beats_buy_and_hold_sharpe"]])
+    out.append(
+        f"| A trading study with no measurable signal — {beat} of {len(v12['comparison'])} "
+        f"strategies beat buy-and-hold — published as the result "
+        f"| [12](./projects/12_market_backtest/) |"
+    )
+    return out
 
 
 def main() -> None:
@@ -112,7 +238,7 @@ def main() -> None:
 
     readme = f"""# Applied Data Science Portfolio
 
-**Eight end-to-end data science systems built on real, publicly documented data** — with
+**Twelve end-to-end data science systems built on real, publicly documented data** — with
 leakage controls that are enforced in code, baselines reported beside every metric, and the
 results that did not work kept in.
 
@@ -171,7 +297,7 @@ actually bite:
 [`tools/audit.py`](./tools/audit.py) then walks the AST of every pipeline to verify it.
 
 **The scanner is itself tested against known-bad code.** Its first version reported zero
-findings across all eight projects, which looked like success and was a bug — it matched only
+findings across every project, which looked like success and was a bug — it matched only
 `StandardScaler().fit(X)` inline and missed `scaler = StandardScaler(); scaler.fit(X)`. A
 deliberately leaky fixture found that in one run.
 [`tools/tests/`](./tools/tests/) now holds {len(list((ROOT / 'tools' / 'tests').glob('*.py')))}
@@ -194,11 +320,9 @@ A portfolio where everything worked is evidence of selective reporting, not of s
 
 | Finding | Project |
 |---|---|
-| A conformal interval that under-covered — 71.2% at the nominal 80% level, caused by 82.9% demand growth breaking exchangeability | [01](./projects/01_nyc_mobility/) |
-| Clustering algorithms agreeing at only ARI 0.49 — half the structure is the algorithm's assumption, not the data | [02](./projects/02_customer_segmentation/) |
-| Standard advice for imbalanced boosting made the model 82× worse | [04](./projects/04_fraud_detection/) |
-| A series where no learned model beats the naive baseline | [05](./projects/05_timeseries_forecasting/) |
-| A bias-variance curve that is not a U, and training error that is not monotone | [08](./projects/08_crispdm_academy/) |
+""" + "\n".join(negative_findings()) + f"""
+
+Every figure in that table is read from an artifact too — including the inconvenient ones.
 
 ### 5 · No number in any document was typed by hand
 
@@ -229,7 +353,7 @@ tools/
   readme.py           this file's generator
   screenshots.py      browser verification + screenshot capture
   sync_artifacts.py   artifacts → web
-web/                  unified React + TypeScript site for all eight projects
+web/                  unified React + TypeScript site for all twelve projects
 docs/screenshots/     verified captures of every page
 .github/workflows/    CI verification and Pages deployment
 ```

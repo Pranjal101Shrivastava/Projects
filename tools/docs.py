@@ -32,6 +32,10 @@ SHOTS = {
     "06_automl_tournament": ["06_automl"],
     "07_nano_transformer": ["07_transformer"],
     "08_crispdm_academy": ["08_academy"],
+    "09_similarity_search": ["09_similarity_search"],
+    "10_fairness_audit": ["10_fairness", "10_fairness_method"],
+    "11_pipeline_dag": ["11_dag_engine"],
+    "12_market_backtest": ["12_backtest"],
 }
 
 SLUGS = {
@@ -43,6 +47,10 @@ SLUGS = {
     "06_automl_tournament": "automl",
     "07_nano_transformer": "transformer",
     "08_crispdm_academy": "academy",
+    "09_similarity_search": "similarity-search",
+    "10_fairness_audit": "fairness",
+    "11_pipeline_dag": "dag-engine",
+    "12_market_backtest": "backtest",
 }
 
 SITE = "https://pranjal101shrivastava.github.io/Projects"
@@ -60,8 +68,17 @@ def pct(x: float, digits: int = 1) -> str:
 
 
 def provenance_table(project: str) -> str:
-    """Render the dataset provenance table from the recorded provenance artifact."""
+    """Render the dataset provenance table from the recorded provenance artifact.
+
+    A project may legitimately consume no external dataset — project 11 analyses this
+    repository's own dependency graph. In that case the artifact records a note explaining
+    what the input actually is, and rendering an empty table with a header would be worse
+    than rendering the note.
+    """
     doc = load(project, "provenance")
+    if not doc["datasets"]:
+        note = doc.get("note", "This project consumes no external dataset.")
+        return f"> **Data provenance.** {note}"
     lines = [
         "| Dataset | Kind | Size | Origin | Licence |",
         "|---|:---:|---|---|---|",
@@ -3201,6 +3218,1615 @@ surface you can see is considerably more memorable.
             "article.md": article}
 
 
+# ======================================================================================
+# Project 09 — Sub-linear similarity search
+# ======================================================================================
+def doc_09() -> dict[str, str]:
+    project = "09_similarity_search"
+    r = load(project, "results")
+    prof = load(project, "profile")
+    p = prof["profile"]
+    prep = prof["preparation"]
+    ex = r["exact"]
+    mh = r["minhash"]
+    acc = mh["accuracy"]
+    cfgs = r["lsh_configurations"]
+    best = r["best_by_f1"]
+    perfect = [c for c in cfgs if c["recall"] >= 0.999]
+    cheapest_useful = max(
+        (c for c in cfgs if 0.85 <= c["recall"] < 0.999),
+        key=lambda c: c["speedup_vs_exact"],
+    )
+    strat = acc["stratified_by_similarity"]
+
+    def cfg_rows(rows):
+        return "\n".join(
+            f"| {c['bands']} | {c['rows']} | {c['threshold_estimate']:.3f} | "
+            f"{c['candidate_pairs']:,} | **{pct(c['recall'])}** | {c['true_pairs_missed']:,} | "
+            f"{c['total_seconds']:.3f}s | **{c['speedup_vs_exact']:.1f}×** |"
+            for c in rows
+        )
+
+    strat_rows = "\n".join(
+        f"| `{s['similarity_band']}` | {s['n_pairs']:,} | {s['mean_true_similarity']:.4f} | "
+        f"{s['observed_std']:.4f} | {s['theoretical_std']:.4f} | {s['mean_error']:+.5f} |"
+        for s in strat
+    )
+
+    example_rows = "\n".join(
+        f"| `{e['a']}` | `{e['b']}` | {e['jaccard']:.3f} | {e['minhash_estimate']:.3f} |"
+        for e in r["examples"][:10]
+    )
+
+    readme = f"""# 09 · Sub-Linear Similarity Search
+
+MinHash and locality-sensitive hashing implemented from first principles for entity
+resolution over **{p['n_distinct_company_strings']:,} real company names** drawn from
+{p['n_complaints']:,} CFPB consumer complaints — with the exact O(n²) answer computed as well,
+so the cost of the approximation is **measured rather than assumed**.
+
+{provenance_table(project)}
+
+## The claim this project refuses to make
+
+Every LSH write-up reports a speedup. Almost none report what the speedup cost, because doing
+so requires computing the exact answer — the very thing LSH exists to avoid. At
+{p['n_distinct_company_strings']:,} names that exact answer is still reachable:
+**{ex['pairs_compared']:,} pairs in {ex['seconds']}s**, finding {ex['pairs_found']:,} pairs at
+Jaccard ≥ {ex['threshold']}. Every approximate configuration below is scored against it.
+
+## The recall/speed trade-off, measured
+
+| Bands | Rows | S-curve threshold | Candidates | Recall | Missed | Time | Speedup |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+{cfg_rows(cfgs)}
+
+Precision is 1.000 in every row **by construction**: LSH is used as a filter and every
+candidate it proposes is verified exactly afterwards. That is the standard two-stage pattern,
+and it is why verification time is *included* in the speedup rather than excluded from it — an
+omission that would have reported {ex['seconds'] / perfect[-1]['banding_seconds']:.1f}× instead
+of {perfect[-1]['speedup_vs_exact']:.1f}× for the {perfect[-1]['bands']}-band configuration.
+
+**The headline is a trade, not a number.** Full recall costs almost all of the advantage:
+{perfect[-1]['candidate_pairs']:,} candidate pairs have to be examined, leaving
+{perfect[-1]['speedup_vs_exact']:.1f}×. Accepting {pct(cheapest_useful['recall'])} recall —
+{cheapest_useful['true_pairs_missed']:,} missed pairs out of {ex['pairs_found']:,} — buys
+{cheapest_useful['speedup_vs_exact']:.1f}×. Which of those is correct depends entirely on
+whether a missed duplicate is an inconvenience or a compliance failure, and that is a decision
+no benchmark can make.
+
+## Is MinHash itself accurate?
+
+{acc['n_pairs_sampled']:,} pairs were sampled and their MinHash estimates compared against
+exact Jaccard.
+
+| True similarity | Pairs | Mean true *s* | Observed sd | Theoretical sd | Mean error |
+|---|---:|---:|---:|---:|---:|
+{strat_rows}
+
+The aggregate standard deviation is {acc['std_error_aggregate']:.4f}, and quoting that figure
+alone would be misleading in two separate ways — which is why the table above is stratified.
+
+1. **{pct(acc['share_of_pairs_below_0_1'])} of random pairs have similarity below 0.1**, where
+   the estimator's variance is nearly zero. An aggregate is therefore dominated by the easy
+   cases.
+2. The estimator's standard deviation is **√(s(1−s)/k)**, not a constant. It peaks at
+   *s* = 0.5, where it equals **0.5/√k = {acc['max_theoretical_std']:.4f}** for
+   k = {mh['n_permutations']} permutations.
+
+The commonly quoted rule of thumb 1/√k = {1 / (mh['n_permutations'] ** 0.5):.4f} is **twice the
+true maximum**. An earlier draft of this project reported observed spread against that number,
+which made the estimator appear to beat its own theoretical variance — an impossible result,
+and the tell that the theory line was wrong rather than the measurement.
+
+Mean error across all sampled pairs is **{acc['mean_error']:+.5f}** — unbiased, as the theory
+requires.
+
+## Why the S-curve is the design surface
+
+P(pair becomes a candidate) = 1 − (1 − sʳ)ᵇ, with a step near (1/b)^(1/r). Choosing bands and
+rows *is* choosing where the step falls, and therefore choosing the recall/precision trade
+explicitly rather than discovering it afterwards. The configurations above span thresholds
+from {min(c['threshold_estimate'] for c in cfgs):.3f} to
+{max(c['threshold_estimate'] for c in cfgs):.3f}, which is the whole reason their behaviour
+differs so sharply.
+
+## What it found
+
+| Name A | Name B | Exact Jaccard | MinHash estimate |
+|---|---|---:|---:|
+{example_rows}
+
+Shingle size {prep['shingle_size']}, mean {prep['mean_shingles_per_name']} shingles per name.
+{prep['normalisation']}
+
+{screenshots_section(project)}
+
+## CRISP-DM record
+
+{crispdm_section(project)}
+
+{quickstart(project)}
+
+{footer(project)}
+"""
+
+    abstract = f"""# Abstract — Measuring What Locality-Sensitive Hashing Costs
+
+**Objective.** Quantify the accuracy price of approximate near-duplicate detection by
+computing the exact answer alongside it, rather than reporting a speedup in isolation.
+
+**Data.** {p['n_distinct_company_strings']:,} distinct company name strings extracted from
+{p['n_complaints']:,} US Consumer Financial Protection Bureau complaint records, yielding
+{p['exact_pairs']:,} candidate pairs. Names were normalised and decomposed into character
+{prep['shingle_size']}-shingles (mean {prep['mean_shingles_per_name']} per name); corporate
+suffixes were deliberately retained.
+
+**Method.** MinHash with k = {mh['n_permutations']} permutations and banded LSH were
+implemented from first principles. Exhaustive pairwise Jaccard computation provided ground
+truth at a threshold of {ex['threshold']}. {len(cfgs)} band/row configurations were evaluated,
+each with its candidate set verified exactly so that reported speedups include verification
+cost. Estimator accuracy was assessed on {acc['n_pairs_sampled']:,} sampled pairs, stratified
+by true similarity.
+
+**Results.** Exhaustive search required {ex['seconds']}s for {ex['pairs_compared']:,} pairs and
+identified {ex['pairs_found']:,} pairs above threshold. Full recall was achievable at
+{perfect[-1]['speedup_vs_exact']:.1f}× ({perfect[-1]['bands']} bands × {perfect[-1]['rows']}
+rows, {perfect[-1]['candidate_pairs']:,} candidates); relaxing to
+{pct(cheapest_useful['recall'])} recall yielded {cheapest_useful['speedup_vs_exact']:.1f}×.
+MinHash estimates were unbiased (mean error {acc['mean_error']:+.5f}); within-band observed
+standard deviations tracked the theoretical √(s(1−s)/k) to within
+{max(abs(s['observed_std'] - s['theoretical_std']) for s in strat):.4f} across all bands.
+
+**Conclusion.** Speedup figures for approximate search are uninterpretable without the recall
+they purchased. The aggregate error of a MinHash estimator is also uninterpretable, because
+{pct(acc['share_of_pairs_below_0_1'])} of random pairs fall in the region where its variance
+vanishes; stratification by true similarity is required.
+
+**Keywords.** MinHash, locality-sensitive hashing, entity resolution, Jaccard similarity,
+approximate nearest neighbour
+"""
+
+    paper = f"""# Measuring the Cost of Approximation in Locality-Sensitive Hashing
+
+*Entity resolution over {p['n_distinct_company_strings']:,} real company names*
+
+## 1. Problem
+
+Deduplicating entity names is quadratic in the number of entities. At
+{p['n_distinct_company_strings']:,} names that is {p['exact_pairs']:,} comparisons — tractable,
+but a hundred thousand names would not be. LSH is the standard answer, and it is an
+*approximation*: it trades recall for time. The question this study asks is how much.
+
+## 2. Data
+
+{p['n_complaints']:,} CFPB consumer complaint records across {p['n_products']} products and
+{p['n_issues']} issue categories yield {p['n_distinct_company_strings']:,} distinct company
+name strings, mean length {p['name_length']['mean']:.1f} characters (median
+{p['name_length']['median']:.0f}, range {p['name_length']['min']:.0f}–{p['name_length']['max']:.0f}).
+
+{prep['normalisation']}
+
+## 3. Method
+
+### 3.1 Shingling
+
+Each name is decomposed into overlapping character {prep['shingle_size']}-grams — mean
+{prep['mean_shingles_per_name']} per name, range {prep['min_shingles']}–{prep['max_shingles']}.
+Jaccard similarity is computed over these shingle sets.
+
+### 3.2 MinHash
+
+k = {mh['n_permutations']} independent hash permutations. For each, the minimum hash value over
+a set's shingles is retained; the fraction of agreeing minima across permutations is an
+unbiased estimator of Jaccard similarity. Signature construction over all
+{p['n_distinct_company_strings']:,} names took {mh['seconds']}s.
+
+The estimator's standard deviation is √(s(1−s)/k), maximal at s = 0.5 where it equals
+0.5/√k = {acc['max_theoretical_std']:.4f}.
+
+### 3.3 Banded LSH
+
+The signature is split into b bands of r rows (b·r = k). Two items become candidates if any
+band matches exactly. The probability of candidacy is
+
+    P(s) = 1 − (1 − sʳ)ᵇ
+
+a sigmoid with its steep region near (1/b)^(1/r).
+
+### 3.4 Ground truth
+
+All {ex['pairs_compared']:,} pairs were compared exactly ({ex['seconds']}s), giving
+{ex['pairs_found']:,} pairs at Jaccard ≥ {ex['threshold']}. Every LSH configuration is scored
+against this set.
+
+## 4. Results
+
+| Bands | Rows | Threshold | Candidates | Recall | Missed | Banding | Verify | Total | Speedup |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+""" + "\n".join(
+        f"| {c['bands']} | {c['rows']} | {c['threshold_estimate']:.3f} | {c['candidate_pairs']:,} | "
+        f"{pct(c['recall'])} | {c['true_pairs_missed']:,} | {c['banding_seconds']:.3f}s | "
+        f"{c['verify_seconds']:.4f}s | {c['total_seconds']:.3f}s | {c['speedup_vs_exact']:.1f}× |"
+        for c in cfgs
+    ) + f"""
+
+Precision is 1.000 throughout because candidates are verified exactly. Verification time is
+included in the total; excluding it, as is common, would misstate the trade.
+
+### 4.1 Estimator accuracy, stratified
+
+| Band | Pairs | Mean *s* | Observed sd | Theory | Mean error |
+|---|---:|---:|---:|---:|---:|
+{strat_rows}
+
+Observed spread tracks √(s(1−s)/k) within every band. The aggregate figure
+({acc['std_error_aggregate']:.4f}) is not comparable to the peak theoretical value because
+{pct(acc['share_of_pairs_below_0_1'])} of sampled pairs lie below s = 0.1.
+
+## 5. Discussion
+
+The configuration maximising F1 is {best['bands']} bands × {best['rows']} rows, achieving
+{pct(best['recall'])} recall at {best['speedup_vs_exact']:.1f}×. It is not obviously the right
+operating point: {cheapest_useful['bands']} × {cheapest_useful['rows']} gives
+{cheapest_useful['speedup_vs_exact']:.1f}× for {cheapest_useful['true_pairs_missed']:,} missed
+pairs. F1 weights a missed pair and a wasted comparison equally, which no real application
+does.
+
+The degenerate configurations are instructive: {cfgs[0]['bands']} × {cfgs[0]['rows']} reaches
+{cfgs[0]['speedup_vs_exact']:.0f}× while recovering {pct(cfgs[0]['recall'])} of true pairs. A
+speedup reported without recall can be made arbitrarily large.
+
+## 6. Limitations
+
+""" + "\n".join(
+        f"- {risk}"
+        for phase in load(project, "crispdm")["phases"]
+        for risk in phase.get("risks", [])
+    ) + f"""
+
+{run_stamp(project, "results")}
+"""
+
+    article = f"""# I built LSH from scratch, then computed the exact answer to see what it cost me
+
+*Every LSH tutorial reports a speedup. Almost none report the recall.*
+
+Locality-sensitive hashing is the standard trick for finding near-duplicates without
+comparing everything to everything. The pitch writes itself: {ex['pairs_compared']:,} pairs
+becomes {best['candidate_pairs']:,} candidates, done.
+
+But LSH is an **approximation**. It will miss pairs. A speedup without a recall figure is
+half of a sentence.
+
+So I computed the exact answer too.
+
+## The setup
+
+{p['n_distinct_company_strings']:,} distinct company names, pulled from {p['n_complaints']:,}
+real consumer-finance complaints. Names like `United Collection Bureau` and
+`United Collection Bureau, Inc.` — the same company, two strings, and the kind of thing that
+quietly splits a report in half.
+
+Exhaustive comparison: **{ex['pairs_compared']:,} pairs in {ex['seconds']}s**, finding
+{ex['pairs_found']:,} matches at Jaccard ≥ {ex['threshold']}. That is my ground truth.
+
+## What LSH actually cost
+
+| Bands × rows | Recall | Missed | Speedup |
+|---|---:|---:|---:|
+""" + "\n".join(
+        f"| {c['bands']} × {c['rows']} | **{pct(c['recall'])}** | {c['true_pairs_missed']:,} | {c['speedup_vs_exact']:.1f}× |"
+        for c in cfgs
+    ) + f"""
+
+Read the top row again. **{cfgs[0]['speedup_vs_exact']:.0f}× faster** — and it found
+{pct(cfgs[0]['recall'])} of the duplicates. That is the number I could have published if I had
+never computed ground truth, and it is worthless.
+
+At the other end, perfect recall costs almost everything: {perfect[-1]['candidate_pairs']:,}
+candidates to examine, {perfect[-1]['speedup_vs_exact']:.1f}× left over.
+
+The honest middle is {cheapest_useful['bands']} × {cheapest_useful['rows']}:
+{cheapest_useful['speedup_vs_exact']:.1f}× for {pct(cheapest_useful['recall'])} recall. Whether
+that is a good deal depends on whether the {cheapest_useful['true_pairs_missed']:,} missed
+pairs are an annoyance or a regulatory problem. No benchmark can answer that for you.
+
+## The mistake I made, and kept
+
+I first reported MinHash's accuracy like this: observed standard deviation
+{acc['std_error_aggregate']:.4f}, theoretical {1 / (mh['n_permutations'] ** 0.5):.4f}. Look how
+much better than theory my implementation is!
+
+An estimator cannot beat its own variance. That is not a good result, it is a bug — and it was
+two bugs.
+
+**First**, MinHash's standard deviation is not a constant. It is √(s(1−s)/k), which is nearly
+zero for dissimilar pairs. And {pct(acc['share_of_pairs_below_0_1'])} of randomly drawn pairs
+of company names are dissimilar. My "impressive" aggregate was mostly measuring pairs that are
+trivially easy.
+
+**Second**, the figure I was comparing against — 1/√k — is the rule of thumb everyone quotes,
+and it is **twice** the true maximum of 0.5/√k = {acc['max_theoretical_std']:.4f}.
+
+Stratified by true similarity, the picture is boring and correct:
+
+| Similarity | Observed sd | Theory |
+|---|---:|---:|
+""" + "\n".join(
+        f"| {s['similarity_band']} | {s['observed_std']:.4f} | {s['theoretical_std']:.4f} |"
+        for s in strat if s["n_pairs"] > 10
+    ) + f"""
+
+The estimator behaves exactly as advertised. Mean error {acc['mean_error']:+.5f}, unbiased.
+That is the result — and it took getting it wrong twice to state it properly.
+
+## What it found
+
+| Name A | Name B | Jaccard |
+|---|---|---:|
+""" + "\n".join(
+        f"| {e['a']} | {e['b']} | {e['jaccard']:.2f} |" for e in r["examples"][:6]
+    ) + f"""
+
+And the caveat that belongs beside them: ground truth here is *string similarity*, not
+"genuinely the same company". Two subsidiaries of one group can score highly; a company that
+rebranded scores low. Every recall number above measures agreement with exact string search,
+not with reality.
+
+---
+
+**Live demo:** [{SITE}/#/p/{SLUGS[project]}]({SITE}/#/p/{SLUGS[project]})
+**Code:** [github.com/Pranjal101Shrivastava/Projects](https://github.com/Pranjal101Shrivastava/Projects)
+"""
+    return {"README.md": readme, "abstract.md": abstract, "paper.md": paper,
+            "article.md": article}
+
+
+# ======================================================================================
+# Project 10 — Fairness audit
+# ======================================================================================
+def doc_10() -> dict[str, str]:
+    project = "10_fairness_audit"
+    f = load(project, "fairness")
+    own = load(project, "own_model")
+    prof = load(project, "profile")
+    groups = list(f["by_group"])
+    crit = f["criteria"]
+    summ = f["criteria_summary"]
+    imp = f["impossibility"]
+    sig = f["significance"]
+    fpr = crit["predictive_equality"]["measured"]
+    ppv = crit["calibration_ppv"]["measured"]
+    ranked = sorted(crit.items(), key=lambda kv: kv[1]["rank_closest_to_parity"])
+
+    labels = {
+        "demographic_parity": "Demographic parity",
+        "equal_opportunity": "Equal opportunity (FNR parity)",
+        "predictive_equality": "Predictive equality (FPR parity)",
+        "calibration_ppv": "Predictive parity (PPV)",
+    }
+
+    group_rows = "\n".join(
+        f"| {g} | {m['n']:,} | {pct(m['base_rate'])} | {pct(m['selection_rate'])} | "
+        f"**{pct(m['fpr'])}** | {pct(m['fnr'])} | {pct(m['ppv'])} | {pct(m['accuracy'])} |"
+        for g, m in f["by_group"].items()
+    )
+
+    criteria_rows = "\n".join(
+        f"| {c['rank_closest_to_parity']} | **{labels.get(k, k)}** | {c['gap']:.4f} | "
+        f"{c['measured']['ratio']:.2f}× | {c['measured']['min']:.3f} ({c['measured']['min_group']}) → "
+        f"{c['measured']['max']:.3f} ({c['measured']['max_group']}) | "
+        f"{'yes' if c['satisfied'] else 'no'} |"
+        for k, c in ranked
+    )
+
+    identity_rows = "\n".join(
+        f"| {v['group']} | {v['base_rate']:.4f} | {v['observed_fpr']:.4f} | "
+        f"{v['fpr_implied_by_identity']:.4f} | {v['discrepancy']:.1e} |"
+        for v in imp["identity_verified_on_real_data"]
+    )
+
+    own_rows = "\n".join(
+        f"| {g} | {f['by_group'][g]['fpr']:.4f} | **{own['by_group'][g]['fpr']:.4f}** | "
+        f"{f['by_group'][g]['ppv']:.4f} | {own['by_group'][g]['ppv']:.4f} |"
+        for g in own["by_group"] if g in f["by_group"]
+    )
+
+    acc_spread = (max(m["accuracy"] for m in f["by_group"].values())
+                  - min(m["accuracy"] for m in f["by_group"].values()))
+
+    readme = f"""# 10 · Fairness Audit of COMPAS
+
+An audit of the criminal-risk score ProPublica investigated, run against every major fairness
+criterion on **{prof['rows_after_propublica_filters']:,} real Broward County defendants** — and
+a demonstration, computed on this data rather than cited, that the criteria **cannot all hold
+at once**.
+
+{provenance_table(project)}
+
+## Both sides of the argument are in the same table
+
+ProPublica said COMPAS was biased. Northpointe, its vendor, said it was not. This audit
+computes both claims from one contingency table per group.
+
+| Group | n | Reoffended | Scored high risk | FPR | FNR | PPV | Accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|
+{group_rows}
+
+**ProPublica's claim, measured:** among defendants who did *not* reoffend within two years,
+{fpr['max_group']} defendants were labelled high risk {pct(fpr['max'])} of the time against
+{pct(fpr['min'])} for {fpr['min_group']} — a gap of {fpr['absolute_difference']:.4f},
+{fpr['ratio']:.2f}×. A χ² test on the two largest groups gives χ² = {sig['chi2']:.1f},
+p = {sig['p_value']:.1e}. Not noise.
+
+**Northpointe's reply, measured:** among defendants labelled high risk, the share who
+reoffended ranges {pct(ppv['min'])}–{pct(ppv['max'])} across groups — a gap of
+{ppv['absolute_difference']:.4f}. The label means close to the same thing whoever receives it.
+
+**Both are true.** The rest of this document is about why that is not a contradiction.
+
+### Accuracy is the column to ignore
+
+Accuracy varies by only {acc_spread * 100:.1f} percentage points across groups — which is
+exactly why a vendor can quote it truthfully while a journalist is also right. A single
+accuracy number averages a false positive and a false negative into one figure, and here those
+two errors fall on different people.
+
+## Four criteria, ranked by distance from parity
+
+| Rank | Criterion | Gap | Ratio | Range across groups | Within {summ['tolerance_used']} tolerance |
+|---:|---|---:|---:|---|:---:|
+{criteria_rows}
+
+{summ['n_satisfied']} of {len(crit)} criteria are satisfied at a {summ['tolerance_used']}
+tolerance — and reporting only that would have been the worse answer.
+{summ['why_ranking_matters']}
+
+The furthest-from-parity criterion ({labels[summ['furthest_from_parity']['criterion']]},
+gap {summ['furthest_from_parity']['gap']:.4f}) is
+**{summ['ratio_furthest_to_closest']:.2f}× further out** than the closest
+({labels[summ['closest_to_parity']['criterion']]}, gap
+{summ['closest_to_parity']['gap']:.4f}). A flat column of four "violated" verdicts would erase
+precisely the distinction the public argument was about.
+
+## The impossibility, verified rather than cited
+
+    {imp['chouldechova_identity']}
+
+| Group | Base rate *p* | Observed FPR | FPR the identity forces | Discrepancy |
+|---|---:|---:|---:|---:|
+{identity_rows}
+
+Maximum discrepancy across all groups: **{imp['max_identity_discrepancy']:.1e}** — the residual
+is floating-point rounding, not slack.
+
+{imp['explanation']}
+
+Base rates differ by {imp['base_rate_gap']:.4f} between groups. While that holds, equal PPV and
+equal FPR cannot both be achieved — not by COMPAS, not by a better model, not by any scoring
+rule whatsoever. This is Kleinberg et al. (2016) and Chouldechova (2017), checked against real
+counts instead of quoted.
+
+## Would dropping race from the model fix it?
+
+A replacement model was trained on {len(own['features_used'])} features
+with `{own['protected_attribute_excluded']}` **deliberately excluded**.
+
+| Group | COMPAS FPR | Own model FPR | COMPAS PPV | Own model PPV |
+|---|---:|---:|---:|---:|
+{own_rows}
+
+- FPR gap, COMPAS: **{own['compas_fpr_gap']:.4f}**
+- FPR gap, own model (race never seen): **{own['fpr_gap']:.4f}**
+
+{own['finding']}
+
+The model's own quality is reported beside its no-skill floor, as everywhere else in this
+repository: PR-AUC {own['overall']['pr_auc']:.4f} against a prevalence floor of
+{own['overall']['pr_auc_no_skill']:.4f}, Brier {own['overall']['brier']:.4f}. And the accuracy
+trap, stated so it cannot be quoted out of context: the model scores
+{pct(own['overall']['accuracy_trap']['model_accuracy'])} accuracy where predicting "will not
+reoffend" for everybody scores
+{pct(own['overall']['accuracy_trap']['always_negative_accuracy'])}.
+
+## Who was excluded from the comparison, and why that matters
+
+{prof['rows_raw']:,} raw records reduce to {prof['rows_after_propublica_filters']:,} under
+ProPublica's published filters. Groups below {prof['min_group_size']} people —
+{", ".join(f"{g['group']} (n={g['n']})" for g in prof['groups_too_small_to_compare'])} — are
+excluded from every comparison rather than reported with intervals too wide to mean anything.
+That exclusion is itself a choice with consequences: the smallest groups are the ones least
+likely to be audited anywhere.
+
+{screenshots_section(project)}
+
+## CRISP-DM record
+
+{crispdm_section(project)}
+
+{quickstart(project)}
+
+{footer(project)}
+"""
+
+    abstract = f"""# Abstract — An Empirical Audit of COMPAS Against Four Fairness Criteria
+
+**Objective.** Evaluate a deployed criminal-risk instrument against the major group-fairness
+criteria simultaneously, and test the algebraic impossibility result against real data rather
+than citing it.
+
+**Data.** ProPublica's COMPAS release for Broward County, Florida: {prof['rows_raw']:,} records
+reduced to {prof['rows_after_propublica_filters']:,} by the published screening filters.
+Analysis is restricted to the {len(prof['groups_compared'])} groups with at least
+{prof['min_group_size']} members ({", ".join(prof['groups_compared'])}). Overall two-year
+recidivism rate {pct(prof['overall_recidivism_rate'])}; overall high-risk rate
+{pct(prof['overall_high_risk_rate'])}.
+
+**Method.** Per-group contingency tables were computed at a decile-≥5 high-risk threshold, and
+four criteria evaluated: demographic parity, equal opportunity (FNR parity), predictive
+equality (FPR parity), and predictive parity (PPV). Criteria were ranked by absolute distance
+from parity rather than reported as binary pass/fail. Chouldechova's identity
+FPR = (p/(1−p))·((1−PPV)/PPV)·(1−FNR) was evaluated against observed counts. A replacement
+gradient-boosted model excluding race was trained for comparison.
+
+**Results.** False positive rates ranged {fpr['min']:.4f} ({fpr['min_group']}) to
+{fpr['max']:.4f} ({fpr['max_group']}), a {fpr['ratio']:.2f}× ratio (χ² = {sig['chi2']:.1f},
+p = {sig['p_value']:.1e}). Positive predictive value ranged {ppv['min']:.4f}–{ppv['max']:.4f},
+a gap of {ppv['absolute_difference']:.4f}. No criterion was satisfied at a
+{summ['tolerance_used']} tolerance, but distances from parity differed by a factor of
+{summ['ratio_furthest_to_closest']:.2f}. The identity reproduced observed FPR to within
+{imp['max_identity_discrepancy']:.1e} for every group. The replacement model, trained without
+race, retained an FPR gap of {own['fpr_gap']:.4f} against COMPAS's {own['compas_fpr_gap']:.4f}.
+
+**Conclusion.** With base rates differing by {imp['base_rate_gap']:.4f}, equalised error rates
+and equal predictive value are mutually exclusive as a matter of algebra; the observed
+disagreement between ProPublica and Northpointe is therefore a disagreement about which
+criterion to prioritise, not about the facts. Removing the protected attribute from the feature
+set reduces but does not eliminate disparate error rates, because correlated features carry the
+same information.
+
+**Keywords.** algorithmic fairness, COMPAS, equalised odds, calibration, impossibility theorem,
+recidivism prediction
+"""
+
+    paper = f"""# Four Fairness Criteria, One Risk Score, and an Impossibility
+
+*An audit of COMPAS on {prof['rows_after_propublica_filters']:,} Broward County defendants*
+
+## 1. Background
+
+In 2016 ProPublica reported that COMPAS, a proprietary recidivism-risk instrument used in
+pretrial and sentencing decisions, produced substantially higher false-positive rates for Black
+defendants. Northpointe replied that the instrument was calibrated: a given score carried the
+same meaning across groups. Both analyses were competent and both conclusions were correct.
+
+This study reproduces both, then shows why they had to coexist.
+
+## 2. Data and filtering
+
+| Step | Records |
+|---|---:|
+| Raw COMPAS release | {prof['rows_raw']:,} |
+| After ProPublica screening filters | {prof['rows_after_propublica_filters']:,} |
+
+Filters applied:
+
+""" + "\n".join(f"- `{k}` — {v}" for k, v in prof["filters_applied"].items()) + f"""
+
+Group sizes:
+
+""" + "\n".join(
+        f"- {g}: {n:,}" + ("" if n >= prof["min_group_size"] else "  *(excluded — below the "
+                           f"{prof['min_group_size']} minimum)*")
+        for g, n in prof["group_sizes"].items()
+    ) + f"""
+
+Identifying columns ({", ".join(f"`{c}`" for c in prof["identifying_columns_dropped"])}) were
+dropped before any modelling.
+
+## 3. Per-group performance
+
+| Group | n | TP | FP | FN | TN | Base rate | FPR | FNR | PPV | NPV |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+""" + "\n".join(
+        f"| {g} | {m['n']:,} | {m['tp']:,} | {m['fp']:,} | {m['fn']:,} | {m['tn']:,} | "
+        f"{m['base_rate']:.4f} | {m['fpr']:.4f} | {m['fnr']:.4f} | {m['ppv']:.4f} | {m['npv']:.4f} |"
+        for g, m in f["by_group"].items()
+    ) + f"""
+
+## 4. Criteria
+
+| Rank | Criterion | Definition | Gap | Ratio |
+|---:|---|---|---:|---:|
+""" + "\n".join(
+        f"| {c['rank_closest_to_parity']} | {labels.get(k, k)} | {c['definition']} | "
+        f"{c['gap']:.4f} | {c['measured']['ratio']:.2f}× |"
+        for k, c in ranked
+    ) + f"""
+
+Demographic parity additionally fails the four-fifths rule: disparate impact ratio
+{crit['demographic_parity']['disparate_impact_ratio']:.4f} against a 0.80 threshold.
+
+Each criterion carries a recorded interpretation:
+
+""" + "\n\n".join(f"**{labels.get(k, k)}.** {c['note']}" for k, c in ranked) + f"""
+
+## 5. The impossibility result
+
+For any classifier, within any group:
+
+    FPR = (p / (1 − p)) · ((1 − PPV) / PPV) · (1 − FNR)
+
+where p is the group's base rate. This is an algebraic identity, not an empirical finding.
+Evaluated on the observed counts:
+
+| Group | p | Observed FPR | Implied FPR | Discrepancy |
+|---|---:|---:|---:|---:|
+{identity_rows}
+
+Maximum discrepancy {imp['max_identity_discrepancy']:.1e}.
+
+{imp['explanation']}
+
+## 6. Fairness through unawareness
+
+A gradient-boosted replacement model was trained on
+{len(own['features_used'])} features
+({", ".join(f"`{x}`" for x in own['features_used'])}) with `{own['protected_attribute_excluded']}`
+excluded.
+
+Held-out performance: PR-AUC {own['overall']['pr_auc']:.4f} against a no-skill floor of
+{own['overall']['pr_auc_no_skill']:.4f} (lift {own['overall']['pr_auc_lift_over_no_skill']:.2f}×),
+ROC-AUC {own['overall']['roc_auc']:.4f}, Brier {own['overall']['brier']:.4f} on
+{own['overall']['n']:,} held-out defendants.
+
+| Group | COMPAS FPR | Own model FPR | COMPAS PPV | Own model PPV |
+|---|---:|---:|---:|---:|
+{own_rows}
+
+{own['finding']}
+
+## 7. Statistical significance
+
+{sig['note']}
+
+χ² = {sig['chi2']:.2f}, p = {sig['p_value']:.2e} for {sig['metric']} between
+{sig['comparison']}.
+
+## 8. Limitations
+
+""" + "\n".join(
+        f"- {risk}"
+        for phase in load(project, "crispdm")["phases"]
+        for risk in phase.get("risks", [])
+    ) + f"""
+
+{run_stamp(project, "fairness")}
+"""
+
+    article = f"""# ProPublica and Northpointe were both right, and I can show you the arithmetic
+
+*An audit of COMPAS on {prof['rows_after_propublica_filters']:,} real defendants*
+
+In 2016 ProPublica published an investigation of COMPAS, a risk score used in American
+courtrooms, and found that Black defendants who did not go on to reoffend were labelled
+high-risk far more often than white defendants who did not.
+
+Northpointe, the company behind it, responded that the score was calibrated: a 7 means the same
+probability of reoffending whoever gets it.
+
+This looked like a factual dispute. It was not. Here is the same data, with both claims
+computed side by side.
+
+## Claim one: the error rates
+
+| Group | Did not reoffend, labelled high risk |
+|---|---:|
+""" + "\n".join(
+        f"| {g} | **{pct(m['fpr'])}** |" for g, m in f["by_group"].items()
+    ) + f"""
+
+{fpr['ratio']:.2f}× between the extremes. χ² = {sig['chi2']:.0f}, p = {sig['p_value']:.0e}.
+This is not a sampling artefact.
+
+## Claim two: the calibration
+
+| Group | Labelled high risk, did reoffend |
+|---|---:|
+""" + "\n".join(
+        f"| {g} | {pct(m['ppv'])} |" for g, m in f["by_group"].items()
+    ) + f"""
+
+A spread of {ppv['absolute_difference']:.3f}. The label means roughly the same thing whoever
+receives it.
+
+Both tables come from the same {prof['rows_after_propublica_filters']:,} rows. Nobody was
+lying.
+
+## Why both can be true
+
+There is an identity that holds for any classifier at all:
+
+    FPR = (p / (1 − p)) · ((1 − PPV) / PPV) · (1 − FNR)
+
+where p is the group's base rate — the share who actually reoffended.
+
+I did not want to cite this. I wanted to check it, so I computed the right-hand side from the
+real numbers and compared it to the observed FPR:
+
+| Group | Observed FPR | What the identity forces | Difference |
+|---|---:|---:|---:|
+{identity_rows}
+
+Maximum difference across every group: **{imp['max_identity_discrepancy']:.1e}**. That is
+rounding.
+
+Now read the identity again. If two groups have different base rates — here they differ by
+{imp['base_rate_gap']:.4f} — then holding PPV equal *forces* FPR to differ. Not because of bad
+data, or a biased vendor, or a fixable modelling choice. Because of algebra.
+
+You can have equal error rates, or you can have equal predictive value. Not both.
+
+## So I tried the obvious fix
+
+Everyone's first instinct: just don't give the model race.
+
+I trained a gradient-boosted model on
+{len(own['features_used'])} features — age, priors, charge degree,
+juvenile counts — with race **excluded entirely**.
+
+| | FPR gap between groups |
+|---|---:|
+| COMPAS | {own['compas_fpr_gap']:.4f} |
+| My model, race never seen | **{own['fpr_gap']:.4f}** |
+
+{(1 - own['fpr_gap'] / own['compas_fpr_gap']) * 100:.0f}% of the gap closed. The rest stayed.
+
+{own['finding']}
+
+Prior arrest counts carry the information race would have carried. You cannot delete a variable
+out of a correlated world.
+
+## The number I nearly published instead
+
+My first version of the criteria table had four rows and one column: VIOLATED, VIOLATED,
+VIOLATED, VIOLATED. All true. All useless.
+
+{summ['why_ranking_matters']}
+
+Ranked by distance from parity instead:
+
+| Rank | Criterion | Gap |
+|---:|---|---:|
+""" + "\n".join(
+        f"| {c['rank_closest_to_parity']} | {labels.get(k, k)} | {c['gap']:.4f} |" for k, c in ranked
+    ) + f"""
+
+{summ['ratio_furthest_to_closest']:.1f}× between the closest and the furthest. That ordering is
+the entire public argument, and a pass/fail column erases it.
+
+## What this audit cannot tell you
+
+Every number here treats **a recorded re-arrest within two years** as ground truth for
+"committed another crime". Policing is not uniform. The base rates that drive the impossibility
+result are themselves measured through a process that may be biased — and nothing in this
+analysis, or any analysis of this dataset, can separate the two.
+
+That is not a footnote. It is the limit of what the data can support, and it belongs in the
+same breath as the result.
+
+---
+
+**Live demo:** [{SITE}/#/p/{SLUGS[project]}]({SITE}/#/p/{SLUGS[project]})
+**Code:** [github.com/Pranjal101Shrivastava/Projects](https://github.com/Pranjal101Shrivastava/Projects)
+"""
+    return {"README.md": readme, "abstract.md": abstract, "paper.md": paper,
+            "article.md": article}
+
+
+# ======================================================================================
+# Project 11 — Pipeline DAG engine
+# ======================================================================================
+def doc_11() -> dict[str, str]:
+    project = "11_pipeline_dag"
+    g = load(project, "graph")
+    s = load(project, "scheduling")
+    e = load(project, "engine")
+    cp = s["critical_path"]
+    dom = s["dominant_task"]
+    cache = e["caching"]
+    cyc = e["cycle_detection"]
+    last = s["schedules"][-1]
+    two = next(x for x in s["schedules"] if x["workers"] == s["workers_for_best"])
+    on_path = set(cp["path"])
+    slowest = sorted(g["nodes"], key=lambda n: -n["seconds"])[:6]
+
+    schedule_rows = "\n".join(
+        f"| {x['workers']} | {x['makespan_seconds']:.1f}s | **{x['speedup']:.2f}×** | "
+        f"{pct(x['efficiency'], 0)} | {pct(x['idle_fraction_of_capacity'], 0)} | "
+        f"{x['idle_worker_seconds']:,.0f} | {x['vs_critical_path']:.3f}× |"
+        for x in s["schedules"]
+    )
+
+    level_rows = "\n".join(
+        f"| {lv['level']} | {lv['width']} | "
+        + ", ".join(f"`{t}`" for t in lv["tasks"])
+        + " |"
+        for lv in g["levels"]
+    )
+
+    path_rows = "\n".join(
+        f"| {i + 1} | `{t}` | {cp['task_seconds'][t]:.1f}s | "
+        f"{pct(cp['task_seconds'][t] / cp['seconds'])} |"
+        for i, t in enumerate(cp["path"])
+    )
+
+    readme = f"""# 11 · Pipeline DAG Engine
+
+A dependency-graph executor — Kahn's topological sort, cycle reporting, level scheduling and
+transitive content-addressed caching — written from scratch and measured on **this
+repository's own {g['n_tasks']}-task build graph**, where the honest conclusion is that
+orchestration barely helps.
+
+{provenance_table(project)}
+
+## The graph
+
+{g['n_tasks']} tasks, {g['n_edges']} edges, {g['n_levels']} topological levels, maximum width
+{g['max_width']}. Executed one after another it takes
+**{g['total_sequential_seconds']:.1f}s**.
+
+| Level | Width | Tasks |
+|---:|---:|---|
+{level_rows}
+
+A depth-first topological sort would emit one valid ordering and discard the fact that
+{g['max_width']} of these tasks can run simultaneously. Kahn's algorithm peels the graph off in
+layers of zero in-degree, so the **width of each layer is the available parallelism** — which
+is the information a scheduler actually needs.
+
+## Does adding workers help? Mostly no.
+
+| Workers | Makespan | Speedup | Efficiency | Idle capacity | Idle worker-sec | vs critical path |
+|---:|---:|---:|---:|---:|---:|---:|
+{schedule_rows}
+
+**{s['theoretical_max_speedup']:.2f}× is the ceiling**, and no worker count beats it. The best
+observed result is {s['best_observed_speedup']:.2f}× at {s['workers_for_best']} workers;
+returns diminish from {s['diminishing_returns_at']} workers onward. At {last['workers']}
+workers, {pct(last['idle_fraction_of_capacity'], 0)} of the fleet is idle and the makespan is
+within {abs(last['makespan_seconds'] - two['makespan_seconds']):.1f}s of the
+{two['workers']}-worker result.
+
+This is the number to take to a discussion about buying more CI runners.
+
+## Why: one task is the whole critical path
+
+| # | Task | Seconds | Share of path |
+|---:|---|---:|---:|
+{path_rows}
+
+Critical path total: **{cp['seconds']:.1f}s** of a {s['sequential_seconds']:.1f}s sequential
+run. `{dom['name']}` alone accounts for
+**{pct(dom['share_of_critical_path'])}** of it.
+
+The slowest tasks overall:
+
+| Task | Seconds | On critical path |
+|---|---:|:---:|
+""" + "\n".join(
+        f"| `{n['name']}` | {n['seconds']:.1f}s | {'yes' if n['name'] in on_path else 'no'} |"
+        for n in slowest
+    ) + f"""
+
+Note that not every slow task is on the path — shortening one that is not changes nothing at
+all. That distinction is the practical reason to compute the path rather than to profile task
+durations and start optimising the biggest number.
+
+## Cycle detection that names the cycle
+
+    {cyc['message']}
+
+{cyc['note']}
+
+## Content-addressed caching
+
+A task's fingerprint is the hash of its own content **plus the fingerprints of its
+dependencies**. That chaining is what makes invalidation transitive without a separate graph
+walk: change one byte in the shared library and every downstream hash changes by construction.
+
+Perturbation test: `{cache['perturbation']}` →
+**{cache['n_invalidated']} of {cache['n_total']} tasks invalidated**.
+
+{cache['note']}
+
+| Task | Fingerprint |
+|---|---|
+""" + "\n".join(f"| `{k}` | `{v}` |" for k, v in cache["fingerprints"].items()) + f"""
+
+{screenshots_section(project)}
+
+## CRISP-DM record
+
+{crispdm_section(project)}
+
+{quickstart(project)}
+
+{footer(project)}
+"""
+
+    abstract = f"""# Abstract — Critical-Path Limits on Pipeline Parallelism
+
+**Objective.** Determine the achievable benefit of parallel task execution for a real data
+science build, and implement the graph machinery — topological ordering, cycle diagnosis and
+content-addressed invalidation — required to establish it.
+
+**Data.** The dependency graph of this repository: {g['n_tasks']} tasks
+({g['n_edges']} edges, {g['n_levels']} topological levels, maximum level width
+{g['max_width']}), with wall-clock durations measured from actual pipeline execution totalling
+{g['total_sequential_seconds']:.1f}s.
+
+**Method.** Kahn's algorithm was used for topological ordering, retaining level structure so
+that per-level width expresses available parallelism. Level-synchronous schedules were
+simulated for {", ".join(str(x['workers']) for x in s['schedules'])} workers with a
+{s['barrier_cost_seconds']:.1f}s barrier cost per level boundary. The critical path was
+computed by longest-path relaxation over the topological order. Cycle detection uses tri-colour
+depth-first search and reports the offending cycle. Cache fingerprints chain a task's content
+hash with those of its dependencies; invalidation was verified by perturbation.
+
+**Results.** The critical path is {cp['seconds']:.1f}s against {s['sequential_seconds']:.1f}s
+sequential, bounding speedup at {s['theoretical_max_speedup']:.2f}×. Observed speedup peaked at
+{s['best_observed_speedup']:.2f}× with {s['workers_for_best']} workers; adding workers beyond
+{s['diminishing_returns_at']} produced no measurable improvement, leaving
+{pct(last['idle_fraction_of_capacity'], 0)} of capacity idle at {last['workers']} workers. A
+single task (`{dom['name']}`, {dom['seconds']:.1f}s) constitutes
+{pct(dom['share_of_critical_path'])} of the critical path. Perturbing the shared library's
+fingerprint invalidated {cache['n_invalidated']} of {cache['n_total']} tasks, confirming
+transitive propagation.
+
+**Conclusion.** Parallel orchestration cannot help a graph whose runtime is concentrated in one
+serial chain. Reporting the critical-path ceiling alongside any scheduling result is therefore
+necessary: a {s['best_observed_speedup']:.2f}× measured speedup is near-optimal here, and would
+be a failure on a graph with a different shape.
+
+**Keywords.** directed acyclic graph, Kahn's algorithm, critical path, Amdahl's law, content-addressed caching
+"""
+
+    paper = f"""# Scheduling a Data Science Build: Where the Parallelism Isn't
+
+*Measured on a {g['n_tasks']}-task, {g['n_edges']}-edge dependency graph*
+
+## 1. Problem
+
+Workflow orchestrators are adopted on the premise that expressing a pipeline as a DAG unlocks
+parallel execution. That premise is rarely tested against the graph in question. This study
+implements the machinery and measures the benefit on a real build.
+
+## 2. Graph construction
+
+Tasks are the pipelines, the shared library, and the downstream tooling steps of this
+repository. Edges are genuine data dependencies: a pipeline depends on the toolkit it imports,
+the artifact sync depends on every pipeline, the web build depends on the sync, screenshots
+depend on the web build.
+
+| Property | Value |
+|---|---:|
+| Tasks | {g['n_tasks']} |
+| Edges | {g['n_edges']} |
+| Topological levels | {g['n_levels']} |
+| Maximum level width | {g['max_width']} |
+| Sequential runtime | {g['total_sequential_seconds']:.1f}s |
+
+## 3. Topological ordering
+
+Kahn's algorithm repeatedly removes all nodes of in-degree zero. Unlike a DFS-based
+topological sort, which produces a single linear order, this retains the level structure:
+
+| Level | Width | Tasks |
+|---:|---:|---|
+{level_rows}
+
+Level width is exactly the number of tasks eligible to run concurrently, which is what a
+scheduler consumes.
+
+## 4. Critical path
+
+Longest-path relaxation over the topological order gives:
+
+| Position | Task | Seconds | Share |
+|---:|---|---:|---:|
+{path_rows}
+
+Total {cp['seconds']:.1f}s. By Amdahl's argument the maximum achievable speedup is
+{s['sequential_seconds']:.1f} / {cp['seconds']:.1f} = **{s['theoretical_max_speedup']:.2f}×**,
+regardless of worker count.
+
+## 5. Scheduling results
+
+Level-synchronous simulation, barrier cost {s['barrier_cost_seconds']:.1f}s per boundary:
+
+| Workers | Makespan | Speedup | Efficiency | Idle capacity | vs critical path |
+|---:|---:|---:|---:|---:|---:|
+""" + "\n".join(
+        f"| {x['workers']} | {x['makespan_seconds']:.1f}s | {x['speedup']:.2f}× | "
+        f"{pct(x['efficiency'], 0)} | {pct(x['idle_fraction_of_capacity'], 0)} | "
+        f"{x['vs_critical_path']:.3f}× |"
+        for x in s["schedules"]
+    ) + f"""
+
+{s['interpretation']}
+
+"Idle capacity" is unused worker-seconds divided by available worker-seconds — a normalised
+figure, because raw idle worker-seconds necessarily grow with fleet size and are easy to
+misread as a worsening problem.
+
+## 6. Cycle detection
+
+Tri-colour depth-first search distinguishes an in-progress node (grey) from a finished one
+(black); an edge into a grey node closes a cycle, and the stack between them *is* the cycle.
+On a deliberately cyclic test graph the engine reports:
+
+    {cyc['message']}
+
+{cyc['note']}
+
+## 7. Content-addressed caching
+
+fingerprint(t) = H(content(t) ‖ fingerprint(d₁) ‖ … ‖ fingerprint(dₙ)) over dependencies dᵢ in
+topological order.
+
+Because the hash chains through dependencies, invalidation is transitive by construction.
+Perturbation test: `{cache['perturbation']}` invalidated {cache['n_invalidated']} of
+{cache['n_total']} tasks.
+
+{cache['note']}
+
+## 8. Limitations
+
+""" + "\n".join(
+        f"- {risk}"
+        for phase in load(project, "crispdm")["phases"]
+        for risk in phase.get("risks", [])
+    ) + f"""
+
+{run_stamp(project, "scheduling")}
+"""
+
+    article = f"""# I built a DAG scheduler, then measured that my pipeline didn't need one
+
+*{g['n_tasks']} tasks, {g['n_edges']} edges, and a {s['theoretical_max_speedup']:.2f}× ceiling*
+
+Every data engineering post about DAGs ends the same way: express your pipeline as a graph,
+add workers, go faster.
+
+I wrote the scheduler. Then I measured it on my own repository, and the answer was no.
+
+## The graph
+
+{g['n_tasks']} tasks: a shared library, {len([n for n in g['nodes'] if n['kind'] == 'pipeline'])}
+analysis pipelines, and the tooling that turns their output into a website. Run one at a time,
+it takes **{g['total_sequential_seconds']:.1f} seconds**.
+
+Kahn's algorithm sorts it into {g['n_levels']} levels, and the widest holds {g['max_width']}
+tasks. Ten things that can run at once! This is the moment the blog post tells you to spin up
+sixteen workers.
+
+## What actually happened
+
+| Workers | Makespan | Speedup |
+|---:|---:|---:|
+""" + "\n".join(
+        f"| {x['workers']} | {x['makespan_seconds']:.1f}s | **{x['speedup']:.2f}×** |"
+        for x in s["schedules"]
+    ) + f"""
+
+Two workers: {two['speedup']:.2f}×. Sixteen workers: {last['speedup']:.2f}×. The same number.
+
+At {last['workers']} workers, {pct(last['idle_fraction_of_capacity'], 0)} of the fleet does
+nothing at all.
+
+## Why
+
+The critical path — the longest chain of tasks that must happen in order — is
+**{cp['seconds']:.1f}s**. Nothing can finish before that, at any worker count, ever. So the
+ceiling is {s['sequential_seconds']:.1f} / {cp['seconds']:.1f} =
+**{s['theoretical_max_speedup']:.2f}×**.
+
+And here is the whole story in one row:
+
+| Task | Seconds | Share of critical path |
+|---|---:|---:|
+| `{dom['name']}` | {dom['seconds']:.1f}s | **{pct(dom['share_of_critical_path'])}** |
+
+Training a transformer on CPU takes {dom['seconds'] / 60:.0f} minutes. Everything else in this
+repository, combined, takes about
+{(s['sequential_seconds'] - dom['seconds']) / 60:.0f} minutes. No scheduler can parallelise a
+single task with itself.
+
+**{two['speedup']:.2f}× is not a disappointing result — it is {pct(two['speedup'] / s['theoretical_max_speedup'])} of
+the theoretical maximum.** That reframing is only available if you compute the ceiling, and
+almost nobody does.
+
+## The parts I'd actually keep
+
+**Cycle detection that tells you where the cycle is.** Most implementations raise
+`CycleError: cycle detected`, which on a graph of a hundred nodes is barely better than
+silence. Mine reports:
+
+    {cyc['message']}
+
+**Caching that chains through dependencies.** A task's fingerprint hashes its own content
+*plus* its dependencies' fingerprints. Change the shared library, and every downstream
+fingerprint changes automatically — no invalidation walk, no bookkeeping.
+
+I tested it by perturbing the toolkit: **{cache['n_invalidated']} of {cache['n_total']} tasks
+invalidated.** Everything, correctly, because every pipeline imports it.
+
+## The honest caveat
+
+My scheduler releases tasks in levels with a barrier between them. A real work-stealing
+executor starts a task the moment its own dependencies finish, so my speedups are a *lower*
+bound on what Airflow or Dagster would do.
+
+That does not rescue the conclusion. The {s['theoretical_max_speedup']:.2f}× ceiling binds them
+too. Better scheduling cannot shorten a chain.
+
+If you want this build to be faster, there is exactly one move: make that one task cheaper, or
+cache it. The scheduler was the fun part and the profiler was the useful one.
+
+---
+
+**Live demo:** [{SITE}/#/p/{SLUGS[project]}]({SITE}/#/p/{SLUGS[project]})
+**Code:** [github.com/Pranjal101Shrivastava/Projects](https://github.com/Pranjal101Shrivastava/Projects)
+"""
+    return {"README.md": readme, "abstract.md": abstract, "paper.md": paper,
+            "article.md": article}
+
+
+# ======================================================================================
+# Project 12 — Market backtest
+# ======================================================================================
+def doc_12() -> dict[str, str]:
+    project = "12_market_backtest"
+    r = load(project, "results")
+    prof = load(project, "profile")
+    p = prof["profile"]
+    prep = prof["preparation"]
+    trap = prof["random_walk_trap"]
+    look = prep["lookahead_test"]
+    v = r["verdict"]
+    names = list(r["results"])
+    bench = v["benchmark_net"]
+    stat = p["return_stats"]
+
+    def perf_rows(kind: str) -> str:
+        rows = [("buy & hold", v[f"benchmark_{kind}"])]
+        rows += [(n, r["results"][n][kind]) for n in names]
+        return "\n".join(
+            f"| {n} | {pct(m['total_return'])} | {pct(m['annualised_return'])} | "
+            f"{pct(m['annualised_volatility'])} | **{m['sharpe']:.3f}** | {m['sortino']:.3f} | "
+            f"{pct(m['max_drawdown'])} | {pct(m['hit_rate'])} | {m['n_periods']} |"
+            for n, m in rows
+        )
+
+    signal_rows = "\n".join(
+        f"| {n} | {r['results'][n]['information_coefficient']:+.4f} | "
+        f"{r['results'][n]['ic_p_value']:.4f} | "
+        f"{'yes' if r['results'][n]['ic_significant'] else '**no**'} | "
+        f"{pct(r['results'][n]['directional_accuracy'])} | "
+        f"{r['results'][n]['r2_on_returns']:.4f} | {r['results'][n]['n_trades']} | "
+        f"{pct(r['results'][n]['time_in_market'])} |"
+        for n in names
+    )
+
+    fold_rows = "\n".join(
+        f"| {n} | {f['fold']} | {f['n_train']} | {f['n_test']} | {f['mae']:.5f} | "
+        f"{pct(f['directional_accuracy'])} |"
+        for n in names for f in r["results"][n]["folds"]
+    )
+
+    all_dir = [f["directional_accuracy"] for n in names for f in r["results"][n]["folds"]]
+
+    readme = f"""# 12 · Market Backtest — A Negative Result, Reported
+
+A trading study built to be hard to fool yourself with: purged walk-forward cross-validation,
+transaction costs, a buy-and-hold benchmark, and a look-ahead test that perturbs the future to
+prove the features cannot see it. **{len([c for c in v['comparison'] if c['beats_buy_and_hold_sharpe']])} of
+{len(v['comparison'])} strategies beat the benchmark.** That is the result, and it is
+published as the result.
+
+{provenance_table(project)}
+
+## The trap this project exists to avoid
+
+| Model | R² |
+|---|---:|
+| Predicting tomorrow's **price** from today's price | **{trap['r2_predicting_price_with_yesterdays_price']:.4f}** |
+| The identical model, restated as a **return** forecast | **{trap['r2_predicting_return_with_zero']:.4f}** |
+
+{trap['explanation']}
+
+The statistical backing: an augmented Dickey-Fuller test rejects a unit root in returns
+(p = {p['stationarity']['returns_adf_pvalue']:.4f}) and fails to reject it in price
+(p = {p['stationarity']['price_adf_pvalue']:.3f}). {p['stationarity']['note']}
+
+## Step one: did the models predict anything?
+
+Before any trading logic, before any equity curve — does the signal exist at all?
+
+| Model | Information coefficient | p-value | Significant | Directional accuracy | R² on returns | Trades | Time in market |
+|---|---:|---:|:---:|---:|---:|---:|---:|
+{signal_rows}
+
+Both information coefficients are small, negative, and carry p-values above 0.05. Directional
+accuracy sits within a few points of a coin flip. **There is no signal here**, and everything
+downstream follows from that.
+
+Reporting a strategy's returns without first establishing that its *predictions* have
+measurable skill is how backtests get published. The IC column is the check that comes first.
+
+## Step two: the backtest anyway
+
+Net of {v['cost_bps']:.0f} bps round-trip costs:
+
+| Strategy | Total return | Annualised | Volatility | Sharpe | Sortino | Max drawdown | Hit rate | Periods |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+{perf_rows("net")}
+
+Gross, for comparison:
+
+| Strategy | Total return | Annualised | Volatility | Sharpe | Sortino | Max drawdown | Hit rate | Periods |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+{perf_rows("gross")}
+
+{v['breakeven_note']}
+
+Both models were already losing money **before** costs, so costs are not the reason this study
+failed — but they are the reason a study that looks marginally profitable gross usually is not
+worth running.
+
+The benchmark covers {bench['n_periods']} periods against the strategies'
+{r['results'][names[0]]['net']['n_periods']}: a model needs training history before it can
+trade, so each series is scored over its own periods rather than forced onto a common window
+that would flatter one of them.
+
+## Purged walk-forward folds
+
+| Model | Fold | Train rows | Test rows | MAE | Directional accuracy |
+|---|---:|---:|---:|---:|---:|
+{fold_rows}
+
+Directional accuracy swings from {pct(min(all_dir))} to {pct(max(all_dir))} across folds of
+{r['results'][names[0]]['folds'][0]['n_test']} rows. Any single fold could be quoted as a
+triumph or a disaster; the average is the only reading that survives having fixed the window in
+advance.
+
+{prep['label_overlap']}
+
+## Proving there is no look-ahead
+
+Static analysis flags suspicious shifts. It does not prove anything, so the pipeline runs an
+empirical test: **{look['test']}**.
+
+All price and volume columns are multiplied by 1.5 from row {look['cut_row']} onward, the
+entire feature matrix is rebuilt, and every feature value at the {look['n_rows_checked']}
+*earlier* rows is compared against the unperturbed build.
+
+**Maximum drift: {look['max_drift']:.1f} across {look['n_features_checked']} features.**
+{'Passed' if look['passed'] else 'FAILED'}.
+
+{look['note']}
+
+Leakage controls in force:
+
+""" + "\n".join(f"- {c}" for c in prep["leakage_controls"]) + f"""
+
+## The series itself
+
+| Property | Value |
+|---|---:|
+| Window | {p['date_min']} → {p['date_max']} |
+| Trading days | {p['n_days']:,} |
+| Price | {p['price_start']:.2f} → {p['price_end']:.2f} |
+| Buy & hold, full sample | {pct(p['buy_and_hold_total_return'])} |
+| Annualised volatility | {pct(stat['annualised_volatility'])} |
+| Skew | {stat['skew']:.4f} |
+| Excess kurtosis | {stat['excess_kurtosis']:.4f} |
+| Forecast horizon | {prep['horizon_days']} days |
+| Features | {prep['n_features']} |
+| Rows modelled | {prep['n_rows_modelled']:,} |
+
+Excess kurtosis {stat['excess_kurtosis']:.2f} means fat tails — returns are not Gaussian, which
+is one more reason to read maximum drawdown beside any Sharpe ratio.
+
+{p['adjustment_note']}
+
+## Conclusion
+
+{v['conclusion']}
+
+{screenshots_section(project)}
+
+## CRISP-DM record
+
+{crispdm_section(project)}
+
+{quickstart(project)}
+
+{footer(project)}
+"""
+
+    abstract = f"""# Abstract — A Purged Walk-Forward Backtest with a Negative Result
+
+**Objective.** Test whether daily-frequency machine learning models extract tradeable signal
+from a single liquid equity under realistic evaluation, and report the outcome irrespective of
+sign.
+
+**Data.** {p['n_days']:,} daily adjusted bars for AAPL, {p['date_min']} to {p['date_max']}.
+Adjusted closes differ from unadjusted by up to {pct(p['max_adjustment_vs_close'])} over the
+window; unadjusted series would inject spurious negative returns at dividend dates.
+{prep['n_features']} features were derived from lagged returns, momentum, realised volatility,
+RSI, volume z-score and high-low range, yielding {prep['n_rows_modelled']:,} modelled rows at a
+{prep['horizon_days']}-day forward-return horizon.
+
+**Method.** Ridge regression and gradient boosting were evaluated under purged walk-forward
+cross-validation ({len(r['results'][names[0]]['folds'])} expanding folds) with a purge band
+removing the label-overlap region. Signal was assessed by information coefficient (rank
+correlation between prediction and realised return) before any trading rule was applied.
+Positions were simulated with {v['cost_bps']:.0f} bps round-trip transaction costs and compared
+against buy-and-hold. Absence of look-ahead was verified empirically by perturbing all future
+price and volume bars by +50% from row {look['cut_row']} and confirming no earlier feature value
+changed.
+
+**Results.** Information coefficients were {", ".join(f"{r['results'][n]['information_coefficient']:+.4f} (p = {r['results'][n]['ic_p_value']:.3f})" for n in names)}
+— neither distinguishable from zero. Directional accuracy was
+{", ".join(pct(r['results'][n]['directional_accuracy']) for n in names)}. Net Sharpe ratios were
+{", ".join(f"{r['results'][n]['net']['sharpe']:.3f}" for n in names)} against buy-and-hold's
+{bench['sharpe']:.3f}. No strategy beat the benchmark on return or on a risk-adjusted basis.
+The look-ahead perturbation test recorded a maximum drift of {look['max_drift']:.1f} across
+{look['n_features_checked']} features and {look['n_rows_checked']} rows.
+
+**Conclusion.** Two years of daily bars on one instrument contain little exploitable structure;
+the models found none, and transaction costs would have consumed any marginal edge. The
+methodological contribution is the evaluation protocol — purged splits, cost accounting, a
+benchmark, an empirical look-ahead test, and signal measured before returns — under which a
+negative result is both detectable and reportable.
+
+**Keywords.** backtesting, purged cross-validation, information coefficient, transaction costs,
+negative result, look-ahead bias
+"""
+
+    paper = f"""# An Honest Backtest and Why It Found Nothing
+
+*Purged walk-forward evaluation on {p['n_days']:,} daily AAPL bars*
+
+## 1. Problem
+
+Backtests are unusually easy to get wrong in a direction that flatters the author. Look-ahead
+bias, survivorship, overlapping labels, omitted transaction costs and missing benchmarks each
+independently produce apparent edges. This study fixes the protocol in advance and reports
+whatever comes out.
+
+## 2. Data
+
+{p['n_days']:,} adjusted daily bars, {p['date_min']} to {p['date_max']}. Price moved
+{p['price_start']:.2f} → {p['price_end']:.2f}, a buy-and-hold total return of
+{pct(p['buy_and_hold_total_return'])} over the full sample.
+
+{p['adjustment_note']}
+
+Return distribution: mean {stat['mean']:.6f}, standard deviation {stat['std']:.4f}, skew
+{stat['skew']:.4f}, excess kurtosis {stat['excess_kurtosis']:.4f}, annualised volatility
+{pct(stat['annualised_volatility'])}.
+
+## 3. The stationarity trap
+
+| Model | R² |
+|---|---:|
+| Tomorrow's price from today's price | {trap['r2_predicting_price_with_yesterdays_price']:.5f} |
+| Same model as a return forecast | {trap['r2_predicting_return_with_zero']:.5f} |
+
+{trap['explanation']}
+
+ADF p-values: returns {p['stationarity']['returns_adf_pvalue']:.4f}, price
+{p['stationarity']['price_adf_pvalue']:.4f}. {p['stationarity']['note']}
+
+## 4. Features and leakage controls
+
+{prep['n_features']} features: {", ".join(f"`{x}`" for x in prep['features'])}.
+
+Controls:
+
+""" + "\n".join(f"{i + 1}. {c}" for i, c in enumerate(prep["leakage_controls"])) + f"""
+
+### 4.1 Empirical look-ahead test
+
+Static rules cannot establish absence of look-ahead when a shift is applied across a `.pipe()`
+boundary or inside a helper. The pipeline therefore perturbs the future and checks the past:
+
+| Parameter | Value |
+|---|---|
+| Test | {look['test']} |
+| Cut row | {look['cut_row']} |
+| Perturbation | {look['perturbation']} |
+| Features checked | {look['n_features_checked']} |
+| Earlier rows checked | {look['n_rows_checked']} |
+| Maximum drift | **{look['max_drift']:.1f}** |
+| Result | {'passed' if look['passed'] else 'FAILED'} |
+
+{look['note']}
+
+## 5. Cross-validation
+
+{prep['label_overlap']}
+
+| Model | Fold | Train | Test | MAE | Directional accuracy |
+|---|---:|---:|---:|---:|---:|
+{fold_rows}
+
+## 6. Signal, measured before returns
+
+| Model | IC | p | Significant | Directional accuracy | R² on returns |
+|---|---:|---:|:---:|---:|---:|
+""" + "\n".join(
+        f"| {n} | {r['results'][n]['information_coefficient']:+.4f} | "
+        f"{r['results'][n]['ic_p_value']:.4f} | "
+        f"{'yes' if r['results'][n]['ic_significant'] else 'no'} | "
+        f"{pct(r['results'][n]['directional_accuracy'])} | "
+        f"{r['results'][n]['r2_on_returns']:.4f} |"
+        for n in names
+    ) + f"""
+
+## 7. Backtest results
+
+Net of {v['cost_bps']:.0f} bps:
+
+| Strategy | Total | Annualised | Vol | Sharpe | Sortino | Max DD | Hit rate | Periods |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+{perf_rows("net")}
+
+Gross:
+
+| Strategy | Total | Annualised | Vol | Sharpe | Sortino | Max DD | Hit rate | Periods |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+{perf_rows("gross")}
+
+Cost drag: {", ".join(f"{n} {pct(r['results'][n]['total_cost_drag'])}" for n in names)}.
+
+{v['breakeven_note']}
+
+## 8. Verdict
+
+{v['conclusion']}
+
+## 9. Limitations
+
+""" + "\n".join(
+        f"- {risk}"
+        for phase in load(project, "crispdm")["phases"]
+        for risk in phase.get("risks", [])
+    ) + f"""
+
+{run_stamp(project, "results")}
+"""
+
+    article = f"""# I built a trading model, tested it properly, and it lost money
+
+*So I published it*
+
+This is the project where nothing worked, which is exactly why it is here.
+
+## The number that should scare you
+
+Here is a model I could have led with:
+
+> **R² = {trap['r2_predicting_price_with_yesterdays_price']:.4f}** predicting tomorrow's AAPL
+> price.
+
+Impressive, right? It is repeating yesterday's price.
+
+Here is the identical model, restated as a forecast of tomorrow's *return*:
+
+> **R² = {trap['r2_predicting_return_with_zero']:.4f}**
+
+Same model. Same data. Same information content, which is none.
+
+{trap['explanation']}
+
+If you have ever seen a financial ML post with a stunning R² and a chart of predicted-vs-actual
+prices hugging a diagonal, this is what you were looking at.
+
+## What I actually tested
+
+{prep['n_features']} features — lagged returns, momentum, realised volatility, RSI, volume
+z-score — predicting the {prep['horizon_days']}-day forward return on {p['n_days']:,} days of
+AAPL. Ridge and LightGBM. Purged walk-forward CV.
+
+And before looking at a single equity curve, I asked the question that comes first: **do the
+predictions correlate with what happened?**
+
+| Model | Information coefficient | p-value |
+|---|---:|---:|
+""" + "\n".join(
+        f"| {n} | {r['results'][n]['information_coefficient']:+.4f} | {r['results'][n]['ic_p_value']:.3f} |"
+        for n in names
+    ) + f"""
+
+Both negative. Both with p-values above 0.05. Directional accuracy:
+{", ".join(pct(r['results'][n]['directional_accuracy']) for n in names)} — a coin flip scores
+50%.
+
+There was no signal. Everything after this point is arithmetic on noise.
+
+## The backtest, run anyway
+
+| Strategy | Net annualised | Net Sharpe | Max drawdown |
+|---|---:|---:|---:|
+""" + "\n".join(
+        f"| {c['strategy']} | {pct(c['net_annualised'])} | **{c['net_sharpe']:.3f}** | {pct(c['max_drawdown'])} |"
+        for c in v["comparison"]
+    ) + f"""
+| buy & hold | {pct(bench['annualised_return'])} | {bench['sharpe']:.3f} | {pct(bench['max_drawdown'])} |
+
+Both strategies lost to doing nothing. Both lost money in absolute terms. Both were already
+losing **before** I charged {v['cost_bps']:.0f} bps of transaction costs.
+
+{v['breakeven_note']}
+
+## The test I'm proudest of
+
+My own static leakage scanner flagged two features in this pipeline. I could have written a
+comment saying "this is fine, trust me". Instead I made the pipeline prove it.
+
+The test: take all the future price and volume bars from row {look['cut_row']} onward and
+multiply them by 1.5. Rebuild the entire feature matrix. Then check every feature value at
+every one of the {look['n_rows_checked']} *earlier* rows.
+
+If any of them moved, that feature is reading the future.
+
+**Maximum drift: {look['max_drift']:.1f}.** Nothing moved. Not one bit, across
+{look['n_features_checked']} features.
+
+{look['note']}
+
+That is what "no look-ahead" should mean — a measurement, not an assurance.
+
+## Why this is the honest outcome
+
+Two years of daily data on one stock. Roughly {prep['n_rows_modelled']:,} usable rows,
+{prep['n_features']} features, overlapping labels. If I had found a Sharpe of 1.5 in there, the
+correct reaction would have been suspicion, not celebration.
+
+The things that would have manufactured one are all well known: forget to purge overlapping
+labels, model price instead of returns, drop transaction costs, omit the benchmark, or simply
+try models until one works and report that one.
+
+I did none of those, and got nothing. That is the system working.
+
+## What I'd want you to take from this
+
+The value here is not the models. It is the protocol:
+
+1. Establish the target is stationary before modelling it.
+2. Measure signal (IC) **before** looking at returns.
+3. Purge overlapping labels out of the CV boundary.
+4. Charge costs, and show gross beside net.
+5. Compare against buy-and-hold, not against zero.
+6. Prove there is no look-ahead by perturbing the future.
+7. Publish the result you got.
+
+Step seven is the hard one.
+
+---
+
+**Live demo:** [{SITE}/#/p/{SLUGS[project]}]({SITE}/#/p/{SLUGS[project]})
+**Code:** [github.com/Pranjal101Shrivastava/Projects](https://github.com/Pranjal101Shrivastava/Projects)
+"""
+    return {"README.md": readme, "abstract.md": abstract, "paper.md": paper,
+            "article.md": article}
+
+
 GENERATORS = {
     "01_nyc_mobility": doc_01,
     "02_customer_segmentation": doc_02,
@@ -3210,6 +4836,10 @@ GENERATORS = {
     "06_automl_tournament": doc_06,
     "07_nano_transformer": doc_07,
     "08_crispdm_academy": doc_08,
+    "09_similarity_search": doc_09,
+    "10_fairness_audit": doc_10,
+    "11_pipeline_dag": doc_11,
+    "12_market_backtest": doc_12,
 }
 
 

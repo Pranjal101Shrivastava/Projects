@@ -15,6 +15,10 @@ import Forecasting from "./Forecasting";
 import AutoML from "./AutoML";
 import Transformer from "./Transformer";
 import Academy from "./Academy";
+import SimilaritySearch from "./SimilaritySearch";
+import Fairness from "./Fairness";
+import DagEngine from "./DagEngine";
+import Backtest from "./Backtest";
 
 export const PROJECT_VIEWS: Record<string, ComponentType> = {
   "01_nyc_mobility": NycMobility,
@@ -25,4 +29,8 @@ export const PROJECT_VIEWS: Record<string, ComponentType> = {
   "06_automl_tournament": AutoML,
   "07_nano_transformer": Transformer,
   "08_crispdm_academy": Academy,
+  "09_similarity_search": SimilaritySearch,
+  "10_fairness_audit": Fairness,
+  "11_pipeline_dag": DagEngine,
+  "12_market_backtest": Backtest,
 };

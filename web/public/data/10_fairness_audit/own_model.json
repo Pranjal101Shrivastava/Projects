@@ -1,0 +1,105 @@
+{
+  "features_used": [
+    "age",
+    "priors_count",
+    "juv_fel_count",
+    "juv_misd_count",
+    "juv_other_count",
+    "sex",
+    "c_charge_degree",
+    "age_cat"
+  ],
+  "protected_attribute_excluded": "race",
+  "overall": {
+    "pr_auc": 0.6948329174661587,
+    "pr_auc_no_skill": 0.45518358531317493,
+    "pr_auc_lift_over_no_skill": 1.5264893987512764,
+    "roc_auc": 0.7343716750902612,
+    "brier": 0.20813225910669209,
+    "f1": 0.6710837671557028,
+    "precision": 0.5582677165354331,
+    "recall": 0.8410438908659549,
+    "threshold": 0.3414066064065051,
+    "confusion": {
+      "tn": 448,
+      "fp": 561,
+      "fn": 134,
+      "tp": 709
+    },
+    "prevalence": 0.45518358531317493,
+    "n": 1852,
+    "accuracy_trap": {
+      "model_accuracy": 0.6247300215982722,
+      "always_negative_accuracy": 0.5448164146868251,
+      "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+    }
+  },
+  "by_group": {
+    "African-American": {
+      "n": 956,
+      "tp": 350,
+      "fp": 137,
+      "fn": 161,
+      "tn": 308,
+      "base_rate": 0.5345,
+      "selection_rate": 0.5094,
+      "fpr": 0.3079,
+      "fnr": 0.3151,
+      "tpr": 0.6849,
+      "tnr": 0.6921,
+      "ppv": 0.7187,
+      "npv": 0.6567,
+      "accuracy": 0.6883
+    },
+    "Caucasian": {
+      "n": 645,
+      "tp": 91,
+      "fp": 67,
+      "fn": 149,
+      "tn": 338,
+      "base_rate": 0.3721,
+      "selection_rate": 0.245,
+      "fpr": 0.1654,
+      "fnr": 0.6208,
+      "tpr": 0.3792,
+      "tnr": 0.8346,
+      "ppv": 0.5759,
+      "npv": 0.694,
+      "accuracy": 0.6651
+    },
+    "Hispanic": {
+      "n": 141,
+      "tp": 30,
+      "fp": 16,
+      "fn": 30,
+      "tn": 65,
+      "base_rate": 0.4255,
+      "selection_rate": 0.3262,
+      "fpr": 0.1975,
+      "fnr": 0.5,
+      "tpr": 0.5,
+      "tnr": 0.8025,
+      "ppv": 0.6522,
+      "npv": 0.6842,
+      "accuracy": 0.6738
+    }
+  },
+  "fpr_gap": 0.1425,
+  "compas_fpr_gap": 0.2296,
+  "finding": "The replacement model never sees race, yet its false-positive rates still differ by 0.1425 across groups, against 0.2296 for COMPAS. Removing a protected attribute does not remove disparity, because prior convictions and age carry the same information. 'Fairness through unawareness' does not work, and this is what that looks like measured rather than asserted.",
+  "_run": {
+    "project": "10_fairness_audit",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.29,
+    "generated_at_unix": 1789378991
+  }
+}

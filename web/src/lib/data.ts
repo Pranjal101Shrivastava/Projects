@@ -117,4 +117,9 @@ export type ProvenanceRecord = {
   cached_files: { file: string; sha256: string }[];
 };
 
-export type ProvenanceDoc = { datasets: ProvenanceRecord[]; _run?: RunBlock };
+export type ProvenanceDoc = {
+  datasets: ProvenanceRecord[];
+  /** Set when a project consumes no external dataset, explaining what its input is. */
+  note?: string;
+  _run?: RunBlock;
+};

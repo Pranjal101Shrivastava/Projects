@@ -1,0 +1,368 @@
+{
+  "by_group": {
+    "African-American": {
+      "n": 3175,
+      "tp": 1188,
+      "fp": 641,
+      "fn": 473,
+      "tn": 873,
+      "base_rate": 0.5231,
+      "selection_rate": 0.5761,
+      "fpr": 0.4234,
+      "fnr": 0.2848,
+      "tpr": 0.7152,
+      "tnr": 0.5766,
+      "ppv": 0.6495,
+      "npv": 0.6486,
+      "accuracy": 0.6491
+    },
+    "Caucasian": {
+      "n": 2103,
+      "tp": 414,
+      "fp": 282,
+      "fn": 408,
+      "tn": 999,
+      "base_rate": 0.3909,
+      "selection_rate": 0.331,
+      "fpr": 0.2201,
+      "fnr": 0.4964,
+      "tpr": 0.5036,
+      "tnr": 0.7799,
+      "ppv": 0.5948,
+      "npv": 0.71,
+      "accuracy": 0.6719
+    },
+    "Hispanic": {
+      "n": 509,
+      "tp": 79,
+      "fp": 62,
+      "fn": 110,
+      "tn": 258,
+      "base_rate": 0.3713,
+      "selection_rate": 0.277,
+      "fpr": 0.1938,
+      "fnr": 0.582,
+      "tpr": 0.418,
+      "tnr": 0.8063,
+      "ppv": 0.5603,
+      "npv": 0.7011,
+      "accuracy": 0.6621
+    }
+  },
+  "criteria": {
+    "demographic_parity": {
+      "definition": "P(predicted high risk) is equal across groups.",
+      "measured": {
+        "by_group": {
+          "African-American": 0.5761,
+          "Caucasian": 0.331,
+          "Hispanic": 0.277
+        },
+        "min": 0.277,
+        "min_group": "Hispanic",
+        "max": 0.5761,
+        "max_group": "African-American",
+        "absolute_difference": 0.2991,
+        "ratio": 2.08
+      },
+      "satisfied": false,
+      "disparate_impact_ratio": 0.4808,
+      "passes_four_fifths_rule": false,
+      "note": "Demographic parity ignores the outcome entirely. If two groups truly differ in base rate, enforcing it requires deliberately mis-scoring people \u2014 so failing this test is not on its own evidence of unfairness.",
+      "gap": 0.2991,
+      "rank_closest_to_parity": 4
+    },
+    "equal_opportunity": {
+      "definition": "False negative rate is equal across groups.",
+      "measured": {
+        "by_group": {
+          "African-American": 0.2848,
+          "Caucasian": 0.4964,
+          "Hispanic": 0.582
+        },
+        "min": 0.2848,
+        "min_group": "African-American",
+        "max": 0.582,
+        "max_group": "Hispanic",
+        "absolute_difference": 0.2972,
+        "ratio": 2.044
+      },
+      "satisfied": false,
+      "note": "Concerns people who did reoffend but were scored low risk. Unequal FNR means one group is more often released when they should not have been.",
+      "gap": 0.2972,
+      "rank_closest_to_parity": 3
+    },
+    "predictive_equality": {
+      "definition": "False positive rate is equal across groups.",
+      "measured": {
+        "by_group": {
+          "African-American": 0.4234,
+          "Caucasian": 0.2201,
+          "Hispanic": 0.1938
+        },
+        "min": 0.1938,
+        "min_group": "Hispanic",
+        "max": 0.4234,
+        "max_group": "African-American",
+        "absolute_difference": 0.2296,
+        "ratio": 2.185
+      },
+      "satisfied": false,
+      "note": "Concerns people who did NOT reoffend but were scored high risk \u2014 detained or sentenced more harshly for something they would not have done. This is the criterion ProPublica's analysis centred on.",
+      "gap": 0.2296,
+      "rank_closest_to_parity": 2
+    },
+    "calibration_ppv": {
+      "definition": "Among those labelled high risk, P(reoffends) is equal across groups.",
+      "measured": {
+        "by_group": {
+          "African-American": 0.6495,
+          "Caucasian": 0.5948,
+          "Hispanic": 0.5603
+        },
+        "min": 0.5603,
+        "min_group": "Hispanic",
+        "max": 0.6495,
+        "max_group": "African-American",
+        "absolute_difference": 0.0892,
+        "ratio": 1.159
+      },
+      "satisfied": false,
+      "note": "If satisfied, a 'high risk' label means the same thing whoever receives it. This is the criterion Northpointe's defence centred on.",
+      "gap": 0.0892,
+      "rank_closest_to_parity": 1
+    }
+  },
+  "criteria_summary": {
+    "tolerance_used": 0.05,
+    "n_satisfied": 0,
+    "closest_to_parity": {
+      "criterion": "calibration_ppv",
+      "gap": 0.0892
+    },
+    "furthest_from_parity": {
+      "criterion": "demographic_parity",
+      "gap": 0.2991
+    },
+    "ratio_furthest_to_closest": 3.35,
+    "why_ranking_matters": "At a 5-point tolerance every criterion is rejected, which is true but uninformative: it erases the distinction the whole dispute rested on. The gaps are not comparable in size. calibration_ppv is off by 0.0892 while demographic_parity is off by 0.2991 \u2014 a factor of 3.4. Northpointe's defence was that calibration nearly holds; ProPublica's case was that error rates emphatically do not. Both readings are visible here, and a pass/fail table alone would hide the one that favours the developer."
+  },
+  "impossibility": {
+    "chouldechova_identity": "FPR = (p/(1-p)) \u00b7 ((1-PPV)/PPV) \u00b7 (1-FNR)",
+    "identity_verified_on_real_data": [
+      {
+        "group": "African-American",
+        "base_rate": 0.5231,
+        "observed_fpr": 0.4234,
+        "fpr_implied_by_identity": 0.4233,
+        "discrepancy": 6e-05
+      },
+      {
+        "group": "Caucasian",
+        "base_rate": 0.3909,
+        "observed_fpr": 0.2201,
+        "fpr_implied_by_identity": 0.2202,
+        "discrepancy": 7e-05
+      },
+      {
+        "group": "Hispanic",
+        "base_rate": 0.3713,
+        "observed_fpr": 0.1938,
+        "fpr_implied_by_identity": 0.1937,
+        "discrepancy": 7e-05
+      }
+    ],
+    "max_identity_discrepancy": 7e-05,
+    "base_rates": {
+      "African-American": 0.5231,
+      "Caucasian": 0.3909,
+      "Hispanic": 0.3713
+    },
+    "base_rate_gap": 0.1518,
+    "explanation": "Observed base rates differ by 0.1518 between groups. The identity above is an algebraic fact, not a modelling assumption: it holds on this data to within 0.00007. With PPV held equal across groups and p differing, FPR and FNR are forced apart. No amount of retraining, reweighting or threshold tuning escapes this \u2014 it is arithmetic. Any tool applied to groups with different base rates must violate either calibration or error-rate equality."
+  },
+  "significance": {
+    "comparison": "African-American vs Caucasian",
+    "metric": "false positive rate",
+    "fpr_a": 0.4234,
+    "fpr_b": 0.2201,
+    "chi2": 128.67,
+    "p_value": 7.99571894994104e-30,
+    "significant": true,
+    "note": "Tests whether the FPR difference between the two largest groups could plausibly arise by chance. It does not test whether the difference is unjust \u2014 that is not a statistical question."
+  },
+  "calibration": {
+    "African-American": [
+      {
+        "decile": 1,
+        "n": 365,
+        "observed_recidivism_rate": 0.2329
+      },
+      {
+        "decile": 2,
+        "n": 346,
+        "observed_recidivism_rate": 0.3035
+      },
+      {
+        "decile": 3,
+        "n": 298,
+        "observed_recidivism_rate": 0.4195
+      },
+      {
+        "decile": 4,
+        "n": 337,
+        "observed_recidivism_rate": 0.4688
+      },
+      {
+        "decile": 5,
+        "n": 323,
+        "observed_recidivism_rate": 0.4892
+      },
+      {
+        "decile": 6,
+        "n": 318,
+        "observed_recidivism_rate": 0.5881
+      },
+      {
+        "decile": 7,
+        "n": 343,
+        "observed_recidivism_rate": 0.6093
+      },
+      {
+        "decile": 8,
+        "n": 301,
+        "observed_recidivism_rate": 0.7143
+      },
+      {
+        "decile": 9,
+        "n": 317,
+        "observed_recidivism_rate": 0.7224
+      },
+      {
+        "decile": 10,
+        "n": 227,
+        "observed_recidivism_rate": 0.837
+      }
+    ],
+    "Caucasian": [
+      {
+        "decile": 1,
+        "n": 605,
+        "observed_recidivism_rate": 0.2116
+      },
+      {
+        "decile": 2,
+        "n": 321,
+        "observed_recidivism_rate": 0.3115
+      },
+      {
+        "decile": 3,
+        "n": 238,
+        "observed_recidivism_rate": 0.3445
+      },
+      {
+        "decile": 4,
+        "n": 243,
+        "observed_recidivism_rate": 0.4033
+      },
+      {
+        "decile": 5,
+        "n": 200,
+        "observed_recidivism_rate": 0.455
+      },
+      {
+        "decile": 6,
+        "n": 160,
+        "observed_recidivism_rate": 0.5813
+      },
+      {
+        "decile": 7,
+        "n": 113,
+        "observed_recidivism_rate": 0.6018
+      },
+      {
+        "decile": 8,
+        "n": 96,
+        "observed_recidivism_rate": 0.75
+      },
+      {
+        "decile": 9,
+        "n": 77,
+        "observed_recidivism_rate": 0.7143
+      },
+      {
+        "decile": 10,
+        "n": 50,
+        "observed_recidivism_rate": 0.7
+      }
+    ],
+    "Hispanic": [
+      {
+        "decile": 1,
+        "n": 159,
+        "observed_recidivism_rate": 0.239
+      },
+      {
+        "decile": 2,
+        "n": 89,
+        "observed_recidivism_rate": 0.382
+      },
+      {
+        "decile": 3,
+        "n": 73,
+        "observed_recidivism_rate": 0.3151
+      },
+      {
+        "decile": 4,
+        "n": 47,
+        "observed_recidivism_rate": 0.3191
+      },
+      {
+        "decile": 5,
+        "n": 39,
+        "observed_recidivism_rate": 0.5128
+      },
+      {
+        "decile": 6,
+        "n": 27,
+        "observed_recidivism_rate": 0.6667
+      },
+      {
+        "decile": 7,
+        "n": 28,
+        "observed_recidivism_rate": 0.5
+      },
+      {
+        "decile": 8,
+        "n": 14,
+        "observed_recidivism_rate": 0.5
+      },
+      {
+        "decile": 9,
+        "n": 17,
+        "observed_recidivism_rate": 0.5294
+      },
+      {
+        "decile": 10,
+        "n": 16,
+        "observed_recidivism_rate": 0.6875
+      }
+    ]
+  },
+  "reference_group": "African-American",
+  "_run": {
+    "project": "10_fairness_audit",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.28,
+    "generated_at_unix": 1789378991
+  }
+}

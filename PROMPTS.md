@@ -135,7 +135,8 @@ The ones that mattered most:
    after a single configuration produced an implausibly bad result.
 
 4. **Test the tooling against known-bad input.** The leakage scanner initially reported zero
-   findings across all eight projects. That looked like success and was a bug — it missed the
+   findings across every project that existed at the time. That looked like success and was
+   a bug — it missed the
    most common spelling of a preprocessing leak. Running it against a deliberately leaky
    fixture found the gap in one run.
 
@@ -159,7 +160,7 @@ cd Projects
 pip install -r requirements.txt
 export PYTHONPATH=lib
 
-for p in projects/*/pipeline/build.py; do python3 "$p"; done   # all eight pipelines
+for p in projects/*/pipeline/build.py; do python3 "$p"; done   # all twelve pipelines
 python3 tools/audit.py --write                                  # leakage audit
 python3 -m pytest tools/tests/ -q                               # audit regression tests
 python3 tools/sync_artifacts.py                                 # artifacts → web

@@ -1,6 +1,6 @@
 # Applied Data Science Portfolio
 
-**Eight end-to-end data science systems built on real, publicly documented data** — with
+**Twelve end-to-end data science systems built on real, publicly documented data** — with
 leakage controls that are enforced in code, baselines reported beside every metric, and the
 results that did not work kept in.
 
@@ -12,8 +12,8 @@ and renders inline on GitHub, and every project runs locally.</sub>
 
 [![Verify](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/verify.yml/badge.svg)](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/verify.yml)
 [![Pages](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/pages.yml/badge.svg)](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/pages.yml)
-![Real data](https://img.shields.io/badge/data-10%2F10%20REAL-brightgreen)
-![Audit](https://img.shields.io/badge/leakage%20audit-39%20checks%20passed-brightgreen)
+![Real data](https://img.shields.io/badge/data-13%2F13%20REAL-brightgreen)
+![Audit](https://img.shields.io/badge/leakage%20audit-57%20checks%20passed-brightgreen)
 ![Critical](https://img.shields.io/badge/critical%20findings-0-brightgreen)
 
 ---
@@ -30,6 +30,10 @@ and renders inline on GitHub, and every project runs locally.</sub>
 | **[06](https://pranjal101shrivastava.github.io/Projects/#/p/automl)** | [AutoML & the Leak](./projects/06_automl_tournament/) | AutoML / data leakage | 41,188 real bank marketing contacts | one column inflated PR-AUC **0.4961 → 0.6939** (39.9%) |
 | **[07](https://pranjal101shrivastava.github.io/Projects/#/p/transformer)** | [Nano Transformer](./projects/07_nano_transformer/) | Deep learning | 1,115,394 characters of Shakespeare | perplexity **4.55** vs **27.5** unigram (6.0×) |
 | **[08](https://pranjal101shrivastava.github.io/Projects/#/p/academy)** | [CRISP-DM Academy](./projects/08_crispdm_academy/) | Statistical education | 5 real datasets, 6 modules | gradient check max error **1.4e-08** |
+| **[09](https://pranjal101shrivastava.github.io/Projects/#/p/similarity-search)** | [Sub-Linear Similarity Search](./projects/09_similarity_search/) | Approximate nearest neighbour | 1,534 real company names (1,175,811 pairs) | **3.0×** at 100% recall; **45×** at 90.0% |
+| **[10](https://pranjal101shrivastava.github.io/Projects/#/p/fairness)** | [Fairness Audit · COMPAS](./projects/10_fairness_audit/) | Algorithmic fairness | 6,172 real COMPAS defendants | FPR **42.3% vs 19.4%**; removing race leaves **0.1425** of a 0.2296 gap |
+| **[11](https://pranjal101shrivastava.github.io/Projects/#/p/dag-engine)** | [Pipeline DAG Engine](./projects/11_pipeline_dag/) | Orchestration | this repository's 18-task graph (48 edges, 5 levels) | speedup ceiling **1.51×** — one task is 97.7% of the critical path |
+| **[12](https://pranjal101shrivastava.github.io/Projects/#/p/backtest)** | [Market Backtest](./projects/12_market_backtest/) | Quantitative finance | 506 real AAPL daily bars | **0 of 2** strategies beat buy-and-hold; price R² **0.9753** vs return R² **-0.0001** |
 
 Each project directory contains its pipeline, its committed artifacts, a README, an
 `abstract.md`, a `paper.md`, a Medium-style `article.md` and its own `audit.md`.
@@ -45,7 +49,7 @@ licence, and an explicit `REAL` or `SIMULATED` marker. There is no third categor
 euphemism. Downloads are cached and **pinned by SHA-256**, so an upstream file that changes
 underneath the work fails loudly instead of quietly shifting every metric downstream.
 
-All **10 of 10** declared sources are `REAL`.
+All **13 of 13** declared sources are `REAL`.
 
 This matters because the reference portfolio this work responds to
 ([`dlmastery/data_science_examples`](https://github.com/dlmastery/data_science_examples))
@@ -66,14 +70,14 @@ actually bite:
 [`tools/audit.py`](./tools/audit.py) then walks the AST of every pipeline to verify it.
 
 **The scanner is itself tested against known-bad code.** Its first version reported zero
-findings across all eight projects, which looked like success and was a bug — it matched only
+findings across every project, which looked like success and was a bug — it matched only
 `StandardScaler().fit(X)` inline and missed `scaler = StandardScaler(); scaler.fit(X)`. A
 deliberately leaky fixture found that in one run.
 [`tools/tests/`](./tools/tests/) now holds 3
 files asserting each leak class is still detected.
 
-Current state: **39 structural checks passed, 0 unacknowledged critical
-findings, 0 warnings, 1 acknowledged** (rule fired, author recorded a written
+Current state: **57 structural checks passed, 0 unacknowledged critical
+findings, 0 warnings, 5 acknowledged** (rule fired, author recorded a written
 reason — a bare suppression is rejected). Full report: [AUDIT.md](./AUDIT.md).
 
 ### 3 · Every metric appears beside its no-skill baseline
@@ -89,11 +93,17 @@ A portfolio where everything worked is evidence of selective reporting, not of s
 
 | Finding | Project |
 |---|---|
-| A conformal interval that under-covered — 71.2% at the nominal 80% level, caused by 82.9% demand growth breaking exchangeability | [01](./projects/01_nyc_mobility/) |
-| Clustering algorithms agreeing at only ARI 0.49 — half the structure is the algorithm's assumption, not the data | [02](./projects/02_customer_segmentation/) |
-| Standard advice for imbalanced boosting made the model 82× worse | [04](./projects/04_fraud_detection/) |
-| A series where no learned model beats the naive baseline | [05](./projects/05_timeseries_forecasting/) |
-| A bias-variance curve that is not a U, and training error that is not monotone | [08](./projects/08_crispdm_academy/) |
+| A conformal interval that under-covered — 71.2% at the nominal 80% level (1 of 3 levels miscalibrated), because demand growth broke exchangeability | [01](./projects/01_nyc_mobility/) |
+| Clustering algorithms agreeing at only ARI 0.49 — much of the structure is the algorithm's assumption, not the data | [02](./projects/02_customer_segmentation/) |
+| Standard advice for imbalanced boosting made the model 80× worse | [04](./projects/04_fraud_detection/) |
+| 1 of 4 series where no learned model beats the naive baseline (sunspots) | [05](./projects/05_timeseries_forecasting/) |
+| A bias-variance curve that is not a U — variance is only 3.6% of test error at maximum capacity, and training error is not monotone | [08](./projects/08_crispdm_academy/) |
+| Full recall costs almost all of LSH's advantage — 3.0× where 90.0% recall buys 45× | [09](./projects/09_similarity_search/) |
+| Removing race from the model left 62.1% of the false-positive-rate gap in place | [10](./projects/10_fairness_audit/) |
+| A DAG scheduler that cannot beat 1.51× at any worker count, because one task is 97.7% of the critical path | [11](./projects/11_pipeline_dag/) |
+| A trading study with no measurable signal — 0 of 2 strategies beat buy-and-hold — published as the result | [12](./projects/12_market_backtest/) |
+
+Every figure in that table is read from an artifact too — including the inconvenient ones.
 
 ### 5 · No number in any document was typed by hand
 
@@ -124,7 +134,7 @@ tools/
   readme.py           this file's generator
   screenshots.py      browser verification + screenshot capture
   sync_artifacts.py   artifacts → web
-web/                  unified React + TypeScript site for all eight projects
+web/                  unified React + TypeScript site for all twelve projects
 docs/screenshots/     verified captures of every page
 .github/workflows/    CI verification and Pages deployment
 ```

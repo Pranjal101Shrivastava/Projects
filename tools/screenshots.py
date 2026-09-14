@@ -13,6 +13,7 @@ than by a reader.
 from __future__ import annotations
 
 import http.server
+import os
 import socketserver
 import subprocess
 import sys
@@ -36,6 +37,10 @@ PAGES = [
     ("/#/p/automl", "06_automl", ".stat-value"),
     ("/#/p/transformer", "07_transformer", ".stat-value"),
     ("/#/p/academy", "08_academy", ".card"),
+    ("/#/p/similarity-search", "09_similarity_search", ".stat-value"),
+    ("/#/p/fairness", "10_fairness", ".stat-value"),
+    ("/#/p/dag-engine", "11_dag_engine", ".stat-value"),
+    ("/#/p/backtest", "12_backtest", ".stat-value"),
 ]
 
 # Tabs worth capturing separately: the CRISP-DM record and the provenance table are two of
@@ -43,6 +48,7 @@ PAGES = [
 TAB_SHOTS = [
     ("/#/p/fraud", "04_fraud_method", "Method (CRISP-DM)"),
     ("/#/p/nyc-mobility", "01_nyc_mobility_data", "Data provenance"),
+    ("/#/p/fairness", "10_fairness_method", "Method (CRISP-DM)"),
 ]
 
 
@@ -82,9 +88,32 @@ def serve() -> socketserver.TCPServer:
     return httpd
 
 
+def ensure_dist_served_at_root() -> None:
+    """Build the site with a root base path if the current build has a different one.
+
+    The committed Vite config targets the GitHub Pages sub-path (``/Projects/``), while this
+    script serves ``web/dist`` at ``/``. A build made for Pages therefore requests
+    ``/Projects/assets/...`` here, every asset 404s, and each page renders an empty body —
+    which previously showed up as fourteen identical "selector never appeared" failures
+    rather than as the one-line cause. Detect the mismatch and rebuild rather than making
+    the caller remember an environment variable.
+    """
+    index = DIST / "index.html"
+    if index.exists() and "/Projects/assets/" not in index.read_text():
+        return
+
+    reason = "web/dist not found" if not index.exists() else "web/dist is built for the Pages sub-path"
+    print(f"{reason} — rebuilding with VITE_BASE=/ for local serving …")
+    subprocess.run(
+        ["npm", "run", "build"],
+        cwd=ROOT / "web",
+        check=True,
+        env={**os.environ, "VITE_BASE": "/"},
+    )
+
+
 def main() -> None:
-    if not DIST.exists():
-        raise SystemExit("web/dist not found — run `npm run build` in web/ first.")
+    ensure_dist_served_at_root()
 
     from playwright.sync_api import sync_playwright
 

@@ -78,14 +78,16 @@ export default function ProjectPage({ meta }: { meta: ProjectMeta }) {
           <Resolved state={state} what="provenance records">
             {(d) => (
               <>
-                <ProvenanceTable datasets={d.provenance.datasets} />
-                <p className="small dim" style={{ marginTop: 16 }}>
-                  Sources are declared once in <code>lib/dsx/data.py</code> and cached under{" "}
-                  <code>.data/</code>. On first download the SHA-256 of the payload is
-                  recorded; later runs verify the cached copy against it, so an upstream file
-                  that changes underneath the work raises an error instead of silently
-                  shifting every metric downstream.
-                </p>
+                <ProvenanceTable datasets={d.provenance.datasets} note={d.provenance.note} />
+                {d.provenance.datasets.length > 0 && (
+                  <p className="small dim" style={{ marginTop: 16 }}>
+                    Sources are declared once in <code>lib/dsx/data.py</code> and cached under{" "}
+                    <code>.data/</code>. On first download the SHA-256 of the payload is
+                    recorded; later runs verify the cached copy against it, so an upstream file
+                    that changes underneath the work raises an error instead of silently
+                    shifting every metric downstream.
+                  </p>
+                )}
                 <RunStamp run={d.provenance._run} />
               </>
             )}

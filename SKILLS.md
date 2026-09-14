@@ -1,6 +1,6 @@
 # Skills
 
-Eight reproduction guides, one per project. Each states a **transferable procedure** for a
+Twelve reproduction guides, one per project. Each states a **transferable procedure** for a
 different dataset — not instructions for rerunning the script already in this repository,
 which would convey nothing.
 
@@ -17,6 +17,10 @@ decision points where a practitioner has to think rather than follow.
 | [`target-leakage-detection`](./projects/06_automl_tournament/skills/target-leakage-detection/SKILL.md) | [06](./projects/06_automl_tournament/) | Finding the feature that cannot exist at scoring time, before it reaches a leaderboard |
 | [`transformer-from-tensor-ops`](./projects/07_nano_transformer/skills/transformer-from-tensor-ops/SKILL.md) | [07](./projects/07_nano_transformer/) | Implementing a decoder from first principles and evaluating it against real baselines |
 | [`teaching-from-real-data`](./projects/08_crispdm_academy/skills/teaching-from-real-data/SKILL.md) | [08](./projects/08_crispdm_academy/) | Building teaching material where assumption violations are the content |
+| [`approximate-similarity-search`](./projects/09_similarity_search/skills/approximate-similarity-search/SKILL.md) | [09](./projects/09_similarity_search/) | Deploying LSH for near-duplicate detection and measuring what the approximation costs |
+| [`group-fairness-audit`](./projects/10_fairness_audit/skills/group-fairness-audit/SKILL.md) | [10](./projects/10_fairness_audit/) | Auditing a scoring system against fairness criteria that cannot all hold at once |
+| [`dependency-graph-scheduling`](./projects/11_pipeline_dag/skills/dependency-graph-scheduling/SKILL.md) | [11](./projects/11_pipeline_dag/) | Deciding whether parallelising a pipeline can help before building the orchestration |
+| [`honest-backtesting`](./projects/12_market_backtest/skills/honest-backtesting/SKILL.md) | [12](./projects/12_market_backtest/) | Evaluating a forward-looking model so that a negative result survives to be reported |
 
 ---
 
@@ -35,6 +39,13 @@ calibration curves, confusion matrices and learning curves all miss — because 
 whether the model fits the data, and a leak is a property of the data.
 
 In Project 06 it was worth **39.9% of PR-AUC**.
+
+The companion to it is
+**[`honest-backtesting`](./projects/12_market_backtest/skills/honest-backtesting/SKILL.md)**,
+which generalises the same instinct to anything that predicts forward in time: measure signal
+before measuring money, purge overlapping labels out of the split, and prove the absence of
+look-ahead by perturbing the future rather than asserting it. Project 12 applied it and found
+nothing — which is the point. A protocol that can only report successes is not a protocol.
 
 ---
 
