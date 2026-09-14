@@ -1,0 +1,70 @@
+{
+  "datasets": [
+    {
+      "id": "titanic",
+      "title": "Titanic Passenger Manifest",
+      "kind": "REAL",
+      "origin": "Encyclopedia Titanica passenger records, as compiled for the Vanderbilt Biostatistics dataset archive. Real passengers and real outcomes.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv",
+      "mirror_note": "Data Science Dojo mirror of the canonical 891-row training split.",
+      "rows": "891 passengers",
+      "notes": "Genuine missingness in Age (177) and Cabin (687) - kept, not imputed away.",
+      "cached_files": [
+        {
+          "file": "titanic.csv",
+          "sha256": "4a437fde05fe5264e1701a7387ac6fb75393772ba38bb2c9c566405af5af4bd7"
+        }
+      ]
+    },
+    {
+      "id": "credit_card_fraud",
+      "title": "Credit Card Fraud Detection (ULB, Sep 2013)",
+      "kind": "REAL",
+      "origin": "Machine Learning Group, Universite Libre de Bruxelles. Real card transactions by European cardholders over two days in September 2013. V1-V28 are PCA components published in place of the raw features for confidentiality; Time and Amount are unmodified.",
+      "license": "Open Database License (ODbL) - research and educational use.",
+      "url": "https://raw.githubusercontent.com/nsethi31/Kaggle-Data-Credit-Card-Fraud-Detection/master/creditcard.csv",
+      "mirror_note": "kaggle.com is unreachable from this build environment (gateway denies CONNECT), so we fetch the identical file from a GitHub mirror. Integrity is pinned by the SHA-256 recorded in .data/manifest.json.",
+      "rows": "284,807 transactions, 492 fraudulent (0.1727%)",
+      "notes": "Severe class imbalance. Accuracy is meaningless here; we report PR-AUC.",
+      "cached_files": [
+        {
+          "file": "credit_card_fraud.csv",
+          "sha256": "33a178be65174943a07d1736acf5898f6c8e1fa80950dbbe598c17eda968ec59"
+        }
+      ]
+    },
+    {
+      "id": "daily_min_temps",
+      "title": "Daily Minimum Temperatures, Melbourne (1981-1990)",
+      "kind": "REAL",
+      "origin": "Australian Bureau of Meteorology, via Hyndman's Time Series Data Library.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv",
+      "mirror_note": "Brownlee's dataset archive.",
+      "rows": "3,650 daily observations",
+      "notes": "Strong annual seasonality, no trend. Good ACF/PACF teaching case.",
+      "cached_files": [
+        {
+          "file": "daily_min_temps.csv",
+          "sha256": "8b9de63ed6789492bf497625e7f9beb96a63d367b4b0a21754006f749fa5e5da"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.29,
+    "generated_at_unix": 1789369529
+  }
+}

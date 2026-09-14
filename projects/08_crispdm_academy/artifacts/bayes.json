@@ -1,0 +1,139 @@
+{
+  "title": "Bayes' theorem and the independence assumption",
+  "dataset": "Titanic (891 real passengers)",
+  "prior": {
+    "survived": 0.3838,
+    "died": 0.6162
+  },
+  "likelihoods": {
+    "Pclass": {
+      "1": {
+        "p_given_survived": 0.39766,
+        "p_given_died": 0.14572,
+        "count": 216
+      },
+      "2": {
+        "p_given_survived": 0.25439,
+        "p_given_died": 0.17668,
+        "count": 184
+      },
+      "3": {
+        "p_given_survived": 0.34795,
+        "p_given_died": 0.6776,
+        "count": 491
+      }
+    },
+    "Sex": {
+      "female": {
+        "p_given_survived": 0.68129,
+        "p_given_died": 0.14754,
+        "count": 314
+      },
+      "male": {
+        "p_given_survived": 0.31871,
+        "p_given_died": 0.85246,
+        "count": 577
+      }
+    },
+    "Embarked": {
+      "C": {
+        "p_given_survived": 0.27193,
+        "p_given_died": 0.13661,
+        "count": 168
+      },
+      "Q": {
+        "p_given_survived": 0.08772,
+        "p_given_died": 0.08561,
+        "count": 77
+      },
+      "S": {
+        "p_given_survived": 0.64035,
+        "p_given_died": 0.77778,
+        "count": 646
+      }
+    }
+  },
+  "dependence_check": [
+    {
+      "pair": "Pclass \u00d7 FareBand",
+      "cramers_v_given_died": 0.4486,
+      "cramers_v_given_survived": 0.6076,
+      "violates_independence": true
+    },
+    {
+      "pair": "FareBand \u00d7 Embarked",
+      "cramers_v_given_died": 0.2106,
+      "cramers_v_given_survived": 0.4003,
+      "violates_independence": true
+    },
+    {
+      "pair": "Pclass \u00d7 Embarked",
+      "cramers_v_given_died": 0.2027,
+      "cramers_v_given_survived": 0.3294,
+      "violates_independence": true
+    },
+    {
+      "pair": "Sex \u00d7 AgeBand",
+      "cramers_v_given_died": 0.2131,
+      "cramers_v_given_survived": 0.1828,
+      "violates_independence": true
+    },
+    {
+      "pair": "Pclass \u00d7 Sex",
+      "cramers_v_given_died": 0.1891,
+      "cramers_v_given_survived": 0.1655,
+      "violates_independence": false
+    }
+  ],
+  "n_pairs_violating": 4,
+  "comparison": {
+    "naive_bayes": {
+      "roc_auc": 0.8368343630479553,
+      "brier": 0.15610882059265097
+    },
+    "logistic_regression": {
+      "roc_auc": 0.8441894674904384,
+      "brier": 0.14458734526112224
+    }
+  },
+  "lesson": "Naive Bayes assumes features are independent given the class. On this data 4 of 5 tested pairs violate that assumption materially \u2014 passenger class and fare band are near-deterministic in each other. The classifier still reaches ROC-AUC 0.837 against 0.844 for logistic regression, which makes no such assumption. The reason is that ranking depends only on the *ordering* of posteriors, and dependence tends to distort their magnitudes more than their order. That is also why Naive Bayes probabilities should not be trusted as probabilities: its Brier score is 0.1561 against 0.1446.",
+  "quiz": [
+    {
+      "question": "Naive Bayes assumes P(A,B|C) = P(A|C)\u00b7P(B|C). On this data, Pclass and FareBand are strongly dependent given survival. What is the most likely consequence?",
+      "options": [
+        "The classifier's ranking collapses to random",
+        "Predicted probabilities become over-confident, but ranking largely survives",
+        "The model cannot be fitted at all",
+        "Nothing \u2014 the assumption is only needed for training speed"
+      ],
+      "answer": 1,
+      "explanation": "Dependent features contribute correlated evidence that the model counts as though it were independent, so posteriors are pushed toward 0 and 1. Ordering is largely preserved, which is why ROC-AUC stays respectable while the Brier score degrades."
+    },
+    {
+      "question": "The prior P(survived) is 0.384. A passenger is female in first class. Which quantity does Bayes' theorem use to convert that evidence into a posterior?",
+      "options": [
+        "The likelihood P(evidence | survived) and the marginal P(evidence)",
+        "Only the prior",
+        "The accuracy of the classifier",
+        "The number of features"
+      ],
+      "answer": 0,
+      "explanation": "Posterior \u221d prior \u00d7 likelihood. The marginal P(evidence) normalises so the posteriors across classes sum to one."
+    }
+  ],
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.25,
+    "generated_at_unix": 1789369529
+  }
+}

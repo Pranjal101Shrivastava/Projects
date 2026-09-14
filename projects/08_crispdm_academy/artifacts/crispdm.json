@@ -1,0 +1,121 @@
+{
+  "project": "08_crispdm_academy",
+  "business_question": "Can the core concepts of applied statistics be taught from real data, including the cases where real data refuses to behave like the textbook?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "Teaching material almost always uses generated data because generated data satisfies its assumptions. Students then meet real data where the assumptions fail and have no framework for it. Every module here is computed from a real dataset used elsewhere in this portfolio, and where an assumption breaks, the breakage is the lesson.",
+      "decisions": [
+        {
+          "question": "Generated illustrations or real data?",
+          "choice": "Real data throughout, including its inconveniences.",
+          "rationale": "A clean simulated bias-variance U-curve teaches the shape but not the judgement. A real curve with a plateau, and a Naive Bayes independence assumption that is measurably violated, teach what the concepts look like when they are actually used.",
+          "alternatives_rejected": [
+            "Synthetic Gaussian illustrations \u2014 clean, and they omit exactly the difficulty the student needs to see."
+          ]
+        }
+      ],
+      "evidence": {
+        "n_modules": 6
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "Five real datasets across six modules: Titanic for Bayes and backpropagation, ULB fraud for thresholds and sampling, Melbourne temperature for optimisation and bias-variance.",
+      "decisions": [],
+      "evidence": {
+        "bayes": "Titanic (891 real passengers)",
+        "threshold": "ULB credit card fraud (71,202 held-out transactions)",
+        "gradient_descent": "Melbourne monthly mean temperature (real, standardised)",
+        "backprop": "Titanic (64 real passengers, 3 standardised features)",
+        "bias_variance": "Melbourne daily temperature (600 real observations, day-of-year \u2192 temp)",
+        "sampling": "ULB transaction amounts (284,807 real values, heavily right-skewed)"
+      },
+      "risks": []
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Each module prepares only what its concept requires: median imputation and quantile banding for Titanic, chronological splitting for fraud, standardisation for the loss surface so learning rates are interpretable.",
+      "decisions": [],
+      "evidence": {
+        "modules": [
+          "bayes",
+          "threshold",
+          "gradient_descent",
+          "backprop",
+          "bias_variance",
+          "sampling"
+        ]
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "Each module fits the smallest model that demonstrates its concept: Naive Bayes against logistic regression, a class-weighted logistic fraud scorer, closed-form and gradient-descent linear fits, a hand-differentiated two-layer network, and bootstrapped polynomials.",
+      "decisions": [],
+      "evidence": {
+        "gradient_check_max_error": 1.4041e-08,
+        "gradient_check_passed": true,
+        "optimal_polynomial_degree": 5
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "Six modules, 8 assessment questions, every figure computed from real data. The backpropagation module verifies its own derivation to a maximum relative error of 1.40e-08.",
+      "decisions": [],
+      "evidence": {
+        "n_modules": 6,
+        "n_quiz_questions": 8,
+        "self_verifying": [
+          "backprop gradient check"
+        ]
+      },
+      "risks": [
+        "Every module uses one dataset per concept. A concept demonstrated on one dataset is illustrated, not established.",
+        "The quiz has a single correct answer per question, which suits concept checks but cannot assess the judgement the modules argue is the real skill."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "Each module exports the arrays behind a live widget \u2014 loss surface grids, ROC and PR traces, bootstrap curves, sampling histograms \u2014 so the published page recomputes nothing and stays interactive offline.",
+      "decisions": [],
+      "evidence": {
+        "modules": [
+          "bayes",
+          "threshold",
+          "gradient_descent",
+          "backprop",
+          "bias_variance",
+          "sampling"
+        ]
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.29,
+    "generated_at_unix": 1789369529
+  }
+}

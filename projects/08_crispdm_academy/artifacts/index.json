@@ -1,0 +1,56 @@
+{
+  "modules": [
+    {
+      "key": "bayes",
+      "title": "Bayes' theorem and the independence assumption",
+      "dataset": "Titanic (891 real passengers)",
+      "n_quiz": 2
+    },
+    {
+      "key": "threshold",
+      "title": "Thresholds, ROC, precision-recall and cost",
+      "dataset": "ULB credit card fraud (71,202 held-out transactions)",
+      "n_quiz": 2
+    },
+    {
+      "key": "gradient_descent",
+      "title": "Gradient descent and the learning rate",
+      "dataset": "Melbourne monthly mean temperature (real, standardised)",
+      "n_quiz": 1
+    },
+    {
+      "key": "backprop",
+      "title": "Backpropagation is the chain rule",
+      "dataset": "Titanic (64 real passengers, 3 standardised features)",
+      "n_quiz": 1
+    },
+    {
+      "key": "bias_variance",
+      "title": "Bias, variance and model capacity",
+      "dataset": "Melbourne daily temperature (600 real observations, day-of-year \u2192 temp)",
+      "n_quiz": 1
+    },
+    {
+      "key": "sampling",
+      "title": "Sampling distributions and the central limit theorem",
+      "dataset": "ULB transaction amounts (284,807 real values, heavily right-skewed)",
+      "n_quiz": 1
+    }
+  ],
+  "n_quiz_questions": 8,
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.29,
+    "generated_at_unix": 1789369529
+  }
+}
