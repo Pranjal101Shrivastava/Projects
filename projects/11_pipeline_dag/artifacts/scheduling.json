@@ -1,0 +1,593 @@
+{
+  "critical_path": {
+    "path": [
+      "dsx_toolkit",
+      "07_nano_transformer",
+      "sync_artifacts",
+      "web_build",
+      "screenshots"
+    ],
+    "seconds": 2644.57,
+    "task_seconds": {
+      "dsx_toolkit": 0.5,
+      "07_nano_transformer": 2583.47,
+      "sync_artifacts": 0.6,
+      "web_build": 12.0,
+      "screenshots": 48.0
+    }
+  },
+  "sequential_seconds": 3980.22,
+  "theoretical_max_speedup": 1.51,
+  "schedules": [
+    {
+      "workers": 1,
+      "makespan_seconds": 3980.22,
+      "timeline": [
+        {
+          "level": 0,
+          "tasks": [
+            "dsx_toolkit"
+          ],
+          "level_seconds": 0.5,
+          "started_at": 0.0,
+          "worker_loads": [
+            0.5
+          ],
+          "idle_worker_seconds": 0.0
+        },
+        {
+          "level": 1,
+          "tasks": [
+            "01_nyc_mobility",
+            "02_customer_segmentation",
+            "03_market_basket",
+            "04_fraud_detection",
+            "05_timeseries_forecasting",
+            "06_automl_tournament",
+            "07_nano_transformer",
+            "08_crispdm_academy",
+            "09_similarity_search",
+            "10_fairness_audit"
+          ],
+          "level_seconds": 3916.12,
+          "started_at": 0.5,
+          "worker_loads": [
+            3916.12
+          ],
+          "idle_worker_seconds": 0.0
+        },
+        {
+          "level": 2,
+          "tasks": [
+            "audit",
+            "docs",
+            "sync_artifacts"
+          ],
+          "level_seconds": 2.8,
+          "started_at": 3916.62,
+          "worker_loads": [
+            2.8
+          ],
+          "idle_worker_seconds": 0.0
+        },
+        {
+          "level": 3,
+          "tasks": [
+            "readme",
+            "web_build"
+          ],
+          "level_seconds": 12.8,
+          "started_at": 3919.42,
+          "worker_loads": [
+            12.8
+          ],
+          "idle_worker_seconds": 0.0
+        },
+        {
+          "level": 4,
+          "tasks": [
+            "screenshots"
+          ],
+          "level_seconds": 48.0,
+          "started_at": 3932.22,
+          "worker_loads": [
+            48.0
+          ],
+          "idle_worker_seconds": 0.0
+        }
+      ],
+      "idle_worker_seconds": 0.0,
+      "idle_fraction_of_capacity": 0.0,
+      "speedup": 1.0,
+      "efficiency": 1.0,
+      "vs_critical_path": 1.505
+    },
+    {
+      "workers": 2,
+      "makespan_seconds": 2645.57,
+      "timeline": [
+        {
+          "level": 0,
+          "tasks": [
+            "dsx_toolkit"
+          ],
+          "level_seconds": 0.5,
+          "started_at": 0.0,
+          "worker_loads": [
+            0.5,
+            0.0
+          ],
+          "idle_worker_seconds": 0.5
+        },
+        {
+          "level": 1,
+          "tasks": [
+            "01_nyc_mobility",
+            "02_customer_segmentation",
+            "03_market_basket",
+            "04_fraud_detection",
+            "05_timeseries_forecasting",
+            "06_automl_tournament",
+            "07_nano_transformer",
+            "08_crispdm_academy",
+            "09_similarity_search",
+            "10_fairness_audit"
+          ],
+          "level_seconds": 2583.47,
+          "started_at": 0.5,
+          "worker_loads": [
+            2583.47,
+            1332.65
+          ],
+          "idle_worker_seconds": 1250.82
+        },
+        {
+          "level": 2,
+          "tasks": [
+            "audit",
+            "docs",
+            "sync_artifacts"
+          ],
+          "level_seconds": 1.6,
+          "started_at": 2583.97,
+          "worker_loads": [
+            1.2,
+            1.6
+          ],
+          "idle_worker_seconds": 0.4
+        },
+        {
+          "level": 3,
+          "tasks": [
+            "readme",
+            "web_build"
+          ],
+          "level_seconds": 12.0,
+          "started_at": 2585.57,
+          "worker_loads": [
+            12.0,
+            0.8
+          ],
+          "idle_worker_seconds": 11.2
+        },
+        {
+          "level": 4,
+          "tasks": [
+            "screenshots"
+          ],
+          "level_seconds": 48.0,
+          "started_at": 2597.57,
+          "worker_loads": [
+            48.0,
+            0.0
+          ],
+          "idle_worker_seconds": 48.0
+        }
+      ],
+      "idle_worker_seconds": 1310.92,
+      "idle_fraction_of_capacity": 0.248,
+      "speedup": 1.5,
+      "efficiency": 0.75,
+      "vs_critical_path": 1.0
+    },
+    {
+      "workers": 4,
+      "makespan_seconds": 2645.17,
+      "timeline": [
+        {
+          "level": 0,
+          "tasks": [
+            "dsx_toolkit"
+          ],
+          "level_seconds": 0.5,
+          "started_at": 0.0,
+          "worker_loads": [
+            0.5,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 1.5
+        },
+        {
+          "level": 1,
+          "tasks": [
+            "01_nyc_mobility",
+            "02_customer_segmentation",
+            "03_market_basket",
+            "04_fraud_detection",
+            "05_timeseries_forecasting",
+            "06_automl_tournament",
+            "07_nano_transformer",
+            "08_crispdm_academy",
+            "09_similarity_search",
+            "10_fairness_audit"
+          ],
+          "level_seconds": 2583.47,
+          "started_at": 0.5,
+          "worker_loads": [
+            2583.47,
+            729.89,
+            347.5,
+            255.26
+          ],
+          "idle_worker_seconds": 6417.76
+        },
+        {
+          "level": 2,
+          "tasks": [
+            "audit",
+            "docs",
+            "sync_artifacts"
+          ],
+          "level_seconds": 1.2,
+          "started_at": 2583.97,
+          "worker_loads": [
+            1.2,
+            1.0,
+            0.6,
+            0.0
+          ],
+          "idle_worker_seconds": 2.0
+        },
+        {
+          "level": 3,
+          "tasks": [
+            "readme",
+            "web_build"
+          ],
+          "level_seconds": 12.0,
+          "started_at": 2585.17,
+          "worker_loads": [
+            12.0,
+            0.8,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 35.2
+        },
+        {
+          "level": 4,
+          "tasks": [
+            "screenshots"
+          ],
+          "level_seconds": 48.0,
+          "started_at": 2597.17,
+          "worker_loads": [
+            48.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 144.0
+        }
+      ],
+      "idle_worker_seconds": 6600.46,
+      "idle_fraction_of_capacity": 0.624,
+      "speedup": 1.5,
+      "efficiency": 0.375,
+      "vs_critical_path": 1.0
+    },
+    {
+      "workers": 8,
+      "makespan_seconds": 2645.17,
+      "timeline": [
+        {
+          "level": 0,
+          "tasks": [
+            "dsx_toolkit"
+          ],
+          "level_seconds": 0.5,
+          "started_at": 0.0,
+          "worker_loads": [
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 3.5
+        },
+        {
+          "level": 1,
+          "tasks": [
+            "01_nyc_mobility",
+            "02_customer_segmentation",
+            "03_market_basket",
+            "04_fraud_detection",
+            "05_timeseries_forecasting",
+            "06_automl_tournament",
+            "07_nano_transformer",
+            "08_crispdm_academy",
+            "09_similarity_search",
+            "10_fairness_audit"
+          ],
+          "level_seconds": 2583.47,
+          "started_at": 0.5,
+          "worker_loads": [
+            2583.47,
+            729.89,
+            347.5,
+            130.63,
+            43.12,
+            33.54,
+            32.98,
+            14.99
+          ],
+          "idle_worker_seconds": 16751.64
+        },
+        {
+          "level": 2,
+          "tasks": [
+            "audit",
+            "docs",
+            "sync_artifacts"
+          ],
+          "level_seconds": 1.2,
+          "started_at": 2583.97,
+          "worker_loads": [
+            1.2,
+            1.0,
+            0.6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 6.8
+        },
+        {
+          "level": 3,
+          "tasks": [
+            "readme",
+            "web_build"
+          ],
+          "level_seconds": 12.0,
+          "started_at": 2585.17,
+          "worker_loads": [
+            12.0,
+            0.8,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 83.2
+        },
+        {
+          "level": 4,
+          "tasks": [
+            "screenshots"
+          ],
+          "level_seconds": 48.0,
+          "started_at": 2597.17,
+          "worker_loads": [
+            48.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 336.0
+        }
+      ],
+      "idle_worker_seconds": 17181.14,
+      "idle_fraction_of_capacity": 0.812,
+      "speedup": 1.5,
+      "efficiency": 0.188,
+      "vs_critical_path": 1.0
+    },
+    {
+      "workers": 16,
+      "makespan_seconds": 2645.17,
+      "timeline": [
+        {
+          "level": 0,
+          "tasks": [
+            "dsx_toolkit"
+          ],
+          "level_seconds": 0.5,
+          "started_at": 0.0,
+          "worker_loads": [
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 7.5
+        },
+        {
+          "level": 1,
+          "tasks": [
+            "01_nyc_mobility",
+            "02_customer_segmentation",
+            "03_market_basket",
+            "04_fraud_detection",
+            "05_timeseries_forecasting",
+            "06_automl_tournament",
+            "07_nano_transformer",
+            "08_crispdm_academy",
+            "09_similarity_search",
+            "10_fairness_audit"
+          ],
+          "level_seconds": 2583.47,
+          "started_at": 0.5,
+          "worker_loads": [
+            2583.47,
+            729.89,
+            347.5,
+            130.63,
+            43.12,
+            33.54,
+            32.98,
+            10.29,
+            4.4,
+            0.3,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 37419.4
+        },
+        {
+          "level": 2,
+          "tasks": [
+            "audit",
+            "docs",
+            "sync_artifacts"
+          ],
+          "level_seconds": 1.2,
+          "started_at": 2583.97,
+          "worker_loads": [
+            1.2,
+            1.0,
+            0.6,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 16.4
+        },
+        {
+          "level": 3,
+          "tasks": [
+            "readme",
+            "web_build"
+          ],
+          "level_seconds": 12.0,
+          "started_at": 2585.17,
+          "worker_loads": [
+            12.0,
+            0.8,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 179.2
+        },
+        {
+          "level": 4,
+          "tasks": [
+            "screenshots"
+          ],
+          "level_seconds": 48.0,
+          "started_at": 2597.17,
+          "worker_loads": [
+            48.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "idle_worker_seconds": 720.0
+        }
+      ],
+      "idle_worker_seconds": 38342.5,
+      "idle_fraction_of_capacity": 0.906,
+      "speedup": 1.5,
+      "efficiency": 0.094,
+      "vs_critical_path": 1.0
+    }
+  ],
+  "best_observed_speedup": 1.5,
+  "workers_for_best": 2,
+  "diminishing_returns_at": 4,
+  "barrier_cost_seconds": 1.0,
+  "dominant_task": {
+    "name": "07_nano_transformer",
+    "seconds": 2583.5,
+    "share_of_critical_path": 0.977
+  },
+  "interpretation": "Sequential execution takes 3980.2s. The critical path is 2644.6s, so no number of workers can beat 1.51\u00d7 \u2014 that bound is a property of this graph, not of the scheduler. The best simulated schedule reaches 1.50\u00d7 at 2 workers, leaving 1.0s on the table to level barriers: a task waits for its whole level even when its own dependencies are already satisfied. A work-stealing scheduler would recover most of that gap.",
+  "_run": {
+    "project": "11_pipeline_dag",
+    "seed": 42,
+    "git_commit": "d69fb42",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.04,
+    "generated_at_unix": 1789379165
+  }
+}

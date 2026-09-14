@@ -1,0 +1,72 @@
+{
+  "cycle_detection": {
+    "detected": true,
+    "cycle": [
+      "extract",
+      "report",
+      "transform"
+    ],
+    "message": "extract \u2192 report \u2192 transform \u2192 extract",
+    "note": "The engine reports the actual cycle rather than only its existence. 'Cycle detected' with no further information leaves the user to find the offending edges by hand, which is the entire difficulty."
+  },
+  "caching": {
+    "fingerprints": {
+      "01_nyc_mobility": "6300486ffe416601",
+      "02_customer_segmentation": "94295b6167783c9f",
+      "03_market_basket": "f1e55f6bc477382e",
+      "04_fraud_detection": "9b65588afc9999a9",
+      "05_timeseries_forecasting": "97e9eeae85e37d75",
+      "06_automl_tournament": "3005d39fe190b794",
+      "07_nano_transformer": "3fd125b3747ae891",
+      "08_crispdm_academy": "0d12fe4546665477",
+      "09_similarity_search": "d961735bd67829c2",
+      "10_fairness_audit": "74218d74b8b7640e",
+      "audit": "b53152b20532e2c2",
+      "docs": "383d89a81f61eb40",
+      "dsx_toolkit": "46a3908a1fa3db9a",
+      "readme": "10088fca485ff6b4",
+      "screenshots": "9e41fd372066655e",
+      "sync_artifacts": "a7a543788c43b631",
+      "web_build": "197d6fd18afd1b42"
+    },
+    "perturbation": "dsx_toolkit fingerprint changed",
+    "n_invalidated": 17,
+    "n_total": 17,
+    "invalidated": [
+      "01_nyc_mobility",
+      "02_customer_segmentation",
+      "03_market_basket",
+      "04_fraud_detection",
+      "05_timeseries_forecasting",
+      "06_automl_tournament",
+      "07_nano_transformer",
+      "08_crispdm_academy",
+      "09_similarity_search",
+      "10_fairness_audit",
+      "audit",
+      "docs",
+      "dsx_toolkit",
+      "readme",
+      "screenshots",
+      "sync_artifacts",
+      "web_build"
+    ],
+    "transitive": true,
+    "note": "Changing the shared library invalidates 17 of 17 tasks \u2014 everything, correctly, since every pipeline imports it. A fingerprint covering only a task's own source would invalidate 1 of 17 and the pipeline would then serve stale results while reporting success. Chaining upstream fingerprints is what makes invalidation transitive."
+  },
+  "_run": {
+    "project": "11_pipeline_dag",
+    "seed": 42,
+    "git_commit": "d69fb42",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.04,
+    "generated_at_unix": 1789379165
+  }
+}
