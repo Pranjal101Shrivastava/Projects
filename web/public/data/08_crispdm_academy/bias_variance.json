@@ -1,0 +1,160 @@
+{
+  "title": "Bias, variance and model capacity",
+  "dataset": "Melbourne daily temperature (600 real observations, day-of-year \u2192 temp)",
+  "n_bootstrap": 40,
+  "curve": [
+    {
+      "degree": 1,
+      "bias_squared": 15.5207,
+      "variance": 0.0757,
+      "total_test_mse": 15.5964,
+      "train_mse": 16.4585,
+      "generalisation_gap": -0.8621
+    },
+    {
+      "degree": 2,
+      "bias_squared": 8.758,
+      "variance": 0.0624,
+      "total_test_mse": 8.8205,
+      "train_mse": 9.34,
+      "generalisation_gap": -0.5195
+    },
+    {
+      "degree": 3,
+      "bias_squared": 8.5219,
+      "variance": 0.0954,
+      "total_test_mse": 8.6173,
+      "train_mse": 8.9745,
+      "generalisation_gap": -0.3572
+    },
+    {
+      "degree": 4,
+      "bias_squared": 7.5618,
+      "variance": 0.0985,
+      "total_test_mse": 7.6603,
+      "train_mse": 7.6068,
+      "generalisation_gap": 0.0535
+    },
+    {
+      "degree": 5,
+      "bias_squared": 7.546,
+      "variance": 0.1034,
+      "total_test_mse": 7.6495,
+      "train_mse": 7.4544,
+      "generalisation_gap": 0.195
+    },
+    {
+      "degree": 6,
+      "bias_squared": 7.6834,
+      "variance": 0.1252,
+      "total_test_mse": 7.8086,
+      "train_mse": 7.4511,
+      "generalisation_gap": 0.3575
+    },
+    {
+      "degree": 7,
+      "bias_squared": 7.7703,
+      "variance": 0.1539,
+      "total_test_mse": 7.9242,
+      "train_mse": 7.4967,
+      "generalisation_gap": 0.4275
+    },
+    {
+      "degree": 8,
+      "bias_squared": 7.7352,
+      "variance": 0.1624,
+      "total_test_mse": 7.8976,
+      "train_mse": 7.4991,
+      "generalisation_gap": 0.3985
+    },
+    {
+      "degree": 9,
+      "bias_squared": 7.6432,
+      "variance": 0.1734,
+      "total_test_mse": 7.8165,
+      "train_mse": 7.428,
+      "generalisation_gap": 0.3885
+    },
+    {
+      "degree": 10,
+      "bias_squared": 7.6744,
+      "variance": 0.1804,
+      "total_test_mse": 7.8548,
+      "train_mse": 7.2367,
+      "generalisation_gap": 0.618
+    },
+    {
+      "degree": 11,
+      "bias_squared": 7.7064,
+      "variance": 0.2381,
+      "total_test_mse": 7.9445,
+      "train_mse": 7.2123,
+      "generalisation_gap": 0.7321
+    },
+    {
+      "degree": 12,
+      "bias_squared": 7.865,
+      "variance": 0.2767,
+      "total_test_mse": 8.1417,
+      "train_mse": 7.3257,
+      "generalisation_gap": 0.816
+    },
+    {
+      "degree": 13,
+      "bias_squared": 7.971,
+      "variance": 0.2248,
+      "total_test_mse": 8.1958,
+      "train_mse": 7.1134,
+      "generalisation_gap": 1.0824
+    },
+    {
+      "degree": 14,
+      "bias_squared": 7.9185,
+      "variance": 0.2704,
+      "total_test_mse": 8.1889,
+      "train_mse": 7.0601,
+      "generalisation_gap": 1.1289
+    },
+    {
+      "degree": 15,
+      "bias_squared": 7.8706,
+      "variance": 0.2946,
+      "total_test_mse": 8.1652,
+      "train_mse": 7.1302,
+      "generalisation_gap": 1.035
+    }
+  ],
+  "optimal_degree": 5,
+  "train_error_monotone": false,
+  "variance_share_at_max_degree": 0.0361,
+  "bias_dominates": true,
+  "lesson": "Test error is minimised at degree 5 (MSE 7.6495), rising to 8.1652 by degree 15. Variance grows monotonically as expected \u2014 from 0.0757 at degree 1 to 0.2946 at degree 15. But this real curve is NOT the textbook U. Variance accounts for only 3.6% of test error even at the highest degree; bias\u00b2 dominates throughout. Day-of-year simply does not determine daily temperature \u2014 the irreducible noise is large, so no amount of capacity helps and the curve flattens rather than turning sharply upward. A simulated example would show the clean U and hide this, which is the more common real situation. Note that training error here does NOT fall monotonically: each degree is averaged over bootstrap resamples, so resampling noise exceeds the small gain from extra capacity once bias has plateaued. The textbook monotone training curve assumes a single fixed training set.",
+  "quiz": [
+    {
+      "question": "Training error keeps decreasing as polynomial degree rises, but test error starts increasing after degree 6. What is happening?",
+      "options": [
+        "The optimiser is failing to converge",
+        "Variance is growing faster than bias is shrinking \u2014 overfitting",
+        "The test set is too small",
+        "The data is non-stationary"
+      ],
+      "answer": 1,
+      "explanation": "Extra capacity lets the model track noise specific to its training sample. Bias\u00b2 keeps falling but variance rises faster, so total error turns upward. Training error cannot reveal this because it falls monotonically with capacity."
+    }
+  ],
+  "_run": {
+    "project": "08_crispdm_academy",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 10.28,
+    "generated_at_unix": 1789369529
+  }
+}

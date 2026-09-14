@@ -1,0 +1,169 @@
+{
+  "label": "with_leak",
+  "features_used": {
+    "numeric": [
+      "age",
+      "duration",
+      "campaign",
+      "pdays",
+      "previous",
+      "emp.var.rate",
+      "cons.price.idx",
+      "cons.conf.idx",
+      "euribor3m",
+      "nr.employed"
+    ],
+    "categorical": [
+      "job",
+      "marital",
+      "education",
+      "default",
+      "housing",
+      "loan",
+      "contact",
+      "month",
+      "day_of_week",
+      "poutcome"
+    ]
+  },
+  "n_features": 20,
+  "split": {
+    "strategy": "stratified_holdout",
+    "n_train": 30891,
+    "n_test": 10297,
+    "train_fraction": 0.75,
+    "shuffled": true,
+    "rationale": "Observations are exchangeable, so shuffling is valid. Stratifying on the target preserves the class base rate in both partitions.",
+    "seed": 42,
+    "positives_train": 3480,
+    "positives_test": 1160,
+    "base_rate_train": 0.112654,
+    "base_rate_test": 0.112654
+  },
+  "leaderboard": [
+    {
+      "model": "stacked_ensemble",
+      "inductive_bias": "logistic meta-learner over out-of-fold predictions of random_forest, hist_gradient_boosting, logistic",
+      "cv_pr_auc_mean": null,
+      "cv_pr_auc_std": null,
+      "test_pr_auc": 0.6939299159124978,
+      "test_roc_auc": 0.9537815173621464,
+      "test_brier": 0.05485121310272949,
+      "test_f1": 0.6786897313213103,
+      "search_seconds": 35.6,
+      "best_params": {
+        "base_models": [
+          "random_forest",
+          "hist_gradient_boosting",
+          "logistic"
+        ]
+      },
+      "generalisation_gap": null
+    },
+    {
+      "model": "random_forest",
+      "inductive_bias": "bagged axis-aligned partitions, variance reduction",
+      "cv_pr_auc_mean": 0.65792,
+      "cv_pr_auc_std": 0.0082,
+      "test_pr_auc": 0.6917322026888358,
+      "test_roc_auc": 0.9520614364482418,
+      "test_brier": 0.05374460034971878,
+      "test_f1": 0.673352435530086,
+      "search_seconds": 300.4,
+      "best_params": {
+        "class_weight": null,
+        "max_depth": 12,
+        "max_features": 0.245536,
+        "min_samples_leaf": 4,
+        "n_estimators": 288
+      },
+      "generalisation_gap": -0.03382
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "inductive_bias": "sequential residual fitting, bias reduction",
+      "cv_pr_auc_mean": 0.66362,
+      "cv_pr_auc_std": 0.00955,
+      "test_pr_auc": 0.6874919040595304,
+      "test_roc_auc": 0.9534745049495609,
+      "test_brier": 0.053301589007845374,
+      "test_f1": 0.6755117513267627,
+      "search_seconds": 50.9,
+      "best_params": {
+        "l2_regularization": 0.035993,
+        "learning_rate": 0.012115,
+        "max_iter": 443,
+        "max_leaf_nodes": 51,
+        "min_samples_leaf": 39
+      },
+      "generalisation_gap": -0.02387
+    },
+    {
+      "model": "logistic",
+      "inductive_bias": "linear decision boundary in the encoded space",
+      "cv_pr_auc_mean": 0.59045,
+      "cv_pr_auc_std": 0.01839,
+      "test_pr_auc": 0.6235321107015859,
+      "test_roc_auc": 0.9422903465636123,
+      "test_brier": 0.06056717532923923,
+      "test_f1": 0.6416726748377793,
+      "search_seconds": 10.6,
+      "best_params": {
+        "C": 1.143578,
+        "class_weight": null
+      },
+      "generalisation_gap": -0.03309
+    },
+    {
+      "model": "gaussian_nb",
+      "inductive_bias": "conditional independence assumption \u2014 deliberately naive reference",
+      "cv_pr_auc_mean": 0.38505,
+      "cv_pr_auc_std": 0.00487,
+      "test_pr_auc": 0.40031553664977315,
+      "test_roc_auc": 0.8427635079800583,
+      "test_brier": 0.13457571686525308,
+      "test_f1": 0.4754036800600826,
+      "search_seconds": 4.8,
+      "best_params": {
+        "var_smoothing": 1e-06
+      },
+      "generalisation_gap": -0.01526
+    }
+  ],
+  "best": {
+    "model": "stacked_ensemble",
+    "inductive_bias": "logistic meta-learner over out-of-fold predictions of random_forest, hist_gradient_boosting, logistic",
+    "cv_pr_auc_mean": null,
+    "cv_pr_auc_std": null,
+    "test_pr_auc": 0.6939299159124978,
+    "test_roc_auc": 0.9537815173621464,
+    "test_brier": 0.05485121310272949,
+    "test_f1": 0.6786897313213103,
+    "search_seconds": 35.6,
+    "best_params": {
+      "base_models": [
+        "random_forest",
+        "hist_gradient_boosting",
+        "logistic"
+      ]
+    },
+    "generalisation_gap": null
+  },
+  "prevalence": 0.112654,
+  "search_protocol": "12 randomised hyperparameter draws per family, 4-fold stratified CV, scored by average precision. Preprocessing is inside the pipeline so it is refitted per fold.",
+  "_run": {
+    "project": "06_automl_tournament",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 729.89,
+    "generated_at_unix": 1789369491
+  }
+}

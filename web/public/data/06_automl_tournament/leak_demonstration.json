@@ -1,0 +1,63 @@
+{
+  "diagnostic": {
+    "column": "duration",
+    "univariate_roc_auc": 0.8184,
+    "correlation_with_target": 0.4053,
+    "mean_duration_subscribed": 553.2,
+    "mean_duration_declined": 220.8,
+    "zero_duration_rows": 4,
+    "zero_duration_subscriptions": 0,
+    "why_this_is_a_leak": "A single column achieving ROC-AUC 0.818 on its own is a red flag, not a feature. Subscribers average 553s on the call against 221s for those who decline \u2014 but that is a consequence of the outcome, not a predictor of it. The value cannot be known before the call is placed, which is exactly when a prioritisation model must score."
+  },
+  "inflation": {
+    "clean_best_pr_auc": 0.49607373336963234,
+    "leaked_best_pr_auc": 0.6939299159124978,
+    "absolute_inflation": 0.19786,
+    "relative_inflation": 0.3988,
+    "clean_best_model": "stacked_ensemble",
+    "leaked_best_model": "stacked_ensemble",
+    "per_model": [
+      {
+        "model": "stacked_ensemble",
+        "clean_pr_auc": 0.49607373336963234,
+        "leaked_pr_auc": 0.6939299159124978
+      },
+      {
+        "model": "random_forest",
+        "clean_pr_auc": 0.4960469861076855,
+        "leaked_pr_auc": 0.6917322026888358
+      },
+      {
+        "model": "hist_gradient_boosting",
+        "clean_pr_auc": 0.49253009897353234,
+        "leaked_pr_auc": 0.6874919040595304
+      },
+      {
+        "model": "logistic",
+        "clean_pr_auc": 0.4694297611863012,
+        "leaked_pr_auc": 0.6235321107015859
+      },
+      {
+        "model": "gaussian_nb",
+        "clean_pr_auc": 0.3606719733736097,
+        "leaked_pr_auc": 0.40031553664977315
+      }
+    ],
+    "verdict": "Including one column that cannot exist at scoring time raises the best PR-AUC from 0.4961 to 0.6939 \u2014 a 39.9% relative gain that would evaporate entirely in production. Nothing in the cross-validation, the confusion matrix or the calibration curve flags it. Only reasoning about when each value becomes known does."
+  },
+  "_run": {
+    "project": "06_automl_tournament",
+    "seed": 42,
+    "git_commit": "fc77533",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 729.88,
+    "generated_at_unix": 1789369491
+  }
+}

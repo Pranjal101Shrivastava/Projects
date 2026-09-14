@@ -1,0 +1,3133 @@
+{
+  "significance": {
+    "n_rules_tested": 52285,
+    "n_significant": 47141,
+    "n_rejected_by_fdr": 5144,
+    "fdr_alpha": 0.05,
+    "method": "Fisher exact (one-sided) with Benjamini-Hochberg FDR control",
+    "rationale": "52,285 candidate rules were tested. 5,144 fail FDR control at \u03b1=0.05 and are excluded from the published shortlist. Reporting only the survivors \u2014 and stating how many did not survive \u2014 prevents the top-by-lift table from being read as though every rule in it were real."
+  },
+  "top_by_lift": [
+    {
+      "antecedent": [
+        "liquor"
+      ],
+      "consequent": [
+        "bottled beer",
+        "red/blush wine"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.17431,
+      "lift": 35.7158,
+      "leverage": 0.0018778,
+      "conviction": 1.2052,
+      "zhang": 0.9768,
+      "p_value": 1.214532021966972e-25,
+      "q_value": 5.772891524413012e-23,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "bottled beer",
+        "red/blush wine"
+      ],
+      "consequent": [
+        "liquor"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.39583,
+      "lift": 35.7158,
+      "leverage": 0.0018778,
+      "conviction": 1.6368,
+      "zhang": 0.9829,
+      "p_value": 1.214532021966972e-25,
+      "q_value": 5.772891524413012e-23,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "Instant food products"
+      ],
+      "consequent": [
+        "hamburger meat",
+        "soda"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.1519,
+      "lift": 26.2092,
+      "leverage": 0.0011736,
+      "conviction": 1.1723,
+      "zhang": 0.9675,
+      "p_value": 1.6044231041483537e-14,
+      "q_value": 1.0551856855395807e-12,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hamburger meat",
+        "soda"
+      ],
+      "consequent": [
+        "Instant food products"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.21053,
+      "lift": 26.2092,
+      "leverage": 0.0011736,
+      "conviction": 1.2565,
+      "zhang": 0.9696,
+      "p_value": 1.6044231041483537e-14,
+      "q_value": 1.0551856855395807e-12,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "processed cheese"
+      ],
+      "consequent": [
+        "ham",
+        "white bread"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.11656,
+      "lift": 22.9282,
+      "leverage": 0.0018476,
+      "conviction": 1.1262,
+      "zhang": 0.9613,
+      "p_value": 9.916262570682602e-22,
+      "q_value": 2.5540482192519205e-19,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "ham",
+        "white bread"
+      ],
+      "consequent": [
+        "processed cheese"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.38,
+      "lift": 22.9282,
+      "leverage": 0.0018476,
+      "conviction": 1.5862,
+      "zhang": 0.9725,
+      "p_value": 9.916262570682602e-22,
+      "q_value": 2.5540482192519205e-19,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "red/blush wine"
+      ],
+      "consequent": [
+        "bottled beer",
+        "liquor"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.10053,
+      "lift": 21.4936,
+      "leverage": 0.001842,
+      "conviction": 1.1066,
+      "zhang": 0.958,
+      "p_value": 2.6002904861329442e-21,
+      "q_value": 6.26526212292447e-19,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "bottled beer",
+        "liquor"
+      ],
+      "consequent": [
+        "red/blush wine"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.41304,
+      "lift": 21.4936,
+      "leverage": 0.001842,
+      "conviction": 1.671,
+      "zhang": 0.9722,
+      "p_value": 2.6002904861329442e-21,
+      "q_value": 6.26526212292447e-19,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit",
+        "grapes"
+      ],
+      "consequent": [
+        "fruit/vegetable juice",
+        "tropical fruit"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.28947,
+      "lift": 21.0887,
+      "leverage": 0.0010654,
+      "conviction": 1.3881,
+      "zhang": 0.9658,
+      "p_value": 1.895715973925303e-12,
+      "q_value": 7.358389732493278e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "fruit/vegetable juice",
+        "tropical fruit"
+      ],
+      "consequent": [
+        "citrus fruit",
+        "grapes"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.08148,
+      "lift": 21.0887,
+      "leverage": 0.0010654,
+      "conviction": 1.0845,
+      "zhang": 0.9563,
+      "p_value": 1.895715973925303e-12,
+      "q_value": 7.358389732493278e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "Instant food products",
+        "soda"
+      ],
+      "consequent": [
+        "hamburger meat"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.63158,
+      "lift": 18.9957,
+      "leverage": 0.0011559,
+      "conviction": 2.624,
+      "zhang": 0.9799,
+      "p_value": 6.116444666375402e-14,
+      "q_value": 3.5415095169594454e-12,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "flour",
+        "whole milk"
+      ],
+      "consequent": [
+        "root vegetables",
+        "sugar"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.12048,
+      "lift": 18.8086,
+      "leverage": 0.0009627,
+      "conviction": 1.1297,
+      "zhang": 0.9529,
+      "p_value": 9.341873590509716e-11,
+      "q_value": 2.178589922746657e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables",
+        "sugar"
+      ],
+      "consequent": [
+        "flour",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.15873,
+      "lift": 18.8086,
+      "leverage": 0.0009627,
+      "conviction": 1.1786,
+      "zhang": 0.9549,
+      "p_value": 9.341873590509716e-11,
+      "q_value": 2.178589922746657e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "flour"
+      ],
+      "consequent": [
+        "curd",
+        "sugar"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.06433,
+      "lift": 18.6077,
+      "leverage": 0.0010583,
+      "conviction": 1.0651,
+      "zhang": 0.9495,
+      "p_value": 6.434576733078935e-12,
+      "q_value": 2.1428779903760008e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "curd",
+        "sugar"
+      ],
+      "consequent": [
+        "flour"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.32353,
+      "lift": 18.6077,
+      "leverage": 0.0010583,
+      "conviction": 1.4526,
+      "zhang": 0.963,
+      "p_value": 6.434576733078935e-12,
+      "q_value": 2.1428779903760008e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "popcorn"
+      ],
+      "consequent": [
+        "salty snack",
+        "soda"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.16901,
+      "lift": 18.068,
+      "leverage": 0.0011526,
+      "conviction": 1.1921,
+      "zhang": 0.9536,
+      "p_value": 1.7511951865794973e-12,
+      "q_value": 6.87396699176494e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "salty snack",
+        "soda"
+      ],
+      "consequent": [
+        "popcorn"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.13043,
+      "lift": 18.068,
+      "leverage": 0.0011526,
+      "conviction": 1.1417,
+      "zhang": 0.9515,
+      "p_value": 1.7511951865794973e-12,
+      "q_value": 6.87396699176494e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "flour"
+      ],
+      "consequent": [
+        "baking powder",
+        "sugar"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.05848,
+      "lift": 17.9733,
+      "leverage": 0.0009602,
+      "conviction": 1.0587,
+      "zhang": 0.9474,
+      "p_value": 8.995613150374939e-11,
+      "q_value": 2.1044099935899493e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "baking powder",
+        "sugar"
+      ],
+      "consequent": [
+        "flour"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.3125,
+      "lift": 17.9733,
+      "leverage": 0.0009602,
+      "conviction": 1.4293,
+      "zhang": 0.9611,
+      "p_value": 8.995613150374939e-11,
+      "q_value": 2.1044099935899493e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "ham"
+      ],
+      "consequent": [
+        "processed cheese",
+        "white bread"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.07422,
+      "lift": 17.8034,
+      "leverage": 0.0018234,
+      "conviction": 1.0757,
+      "zhang": 0.9478,
+      "p_value": 5.899721612237593e-20,
+      "q_value": 1.0899892031655213e-17,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "processed cheese",
+        "white bread"
+      ],
+      "consequent": [
+        "ham"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.46341,
+      "lift": 17.8034,
+      "leverage": 0.0018234,
+      "conviction": 1.8151,
+      "zhang": 0.9691,
+      "p_value": 5.899721612237593e-20,
+      "q_value": 1.0899892031655213e-17,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit",
+        "fruit/vegetable juice"
+      ],
+      "consequent": [
+        "grapes",
+        "tropical fruit"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.10784,
+      "lift": 17.6773,
+      "leverage": 0.0010552,
+      "conviction": 1.114,
+      "zhang": 0.9492,
+      "p_value": 1.937156562343275e-11,
+      "q_value": 5.58039839460706e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "grapes",
+        "tropical fruit"
+      ],
+      "consequent": [
+        "citrus fruit",
+        "fruit/vegetable juice"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.18333,
+      "lift": 17.6773,
+      "leverage": 0.0010552,
+      "conviction": 1.2118,
+      "zhang": 0.9533,
+      "p_value": 1.937156562343275e-11,
+      "q_value": 5.58039839460706e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "processed cheese"
+      ],
+      "consequent": [
+        "fruit/vegetable juice",
+        "ham"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.06748,
+      "lift": 17.4661,
+      "leverage": 0.0010544,
+      "conviction": 1.0682,
+      "zhang": 0.9464,
+      "p_value": 1.510372312870525e-11,
+      "q_value": 4.5048383558719567e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "fruit/vegetable juice",
+        "ham"
+      ],
+      "consequent": [
+        "processed cheese"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.28947,
+      "lift": 17.4661,
+      "leverage": 0.0010544,
+      "conviction": 1.3841,
+      "zhang": 0.9586,
+      "p_value": 1.510372312870525e-11,
+      "q_value": 4.5048383558719567e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit",
+        "tropical fruit"
+      ],
+      "consequent": [
+        "fruit/vegetable juice",
+        "grapes"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.05612,
+      "lift": 17.2489,
+      "leverage": 0.0010536,
+      "conviction": 1.056,
+      "zhang": 0.9451,
+      "p_value": 1.3321005638808519e-11,
+      "q_value": 4.0405154746879697e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "fruit/vegetable juice",
+        "grapes"
+      ],
+      "consequent": [
+        "citrus fruit",
+        "tropical fruit"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.34375,
+      "lift": 17.2489,
+      "leverage": 0.0010536,
+      "conviction": 1.4934,
+      "zhang": 0.9612,
+      "p_value": 1.3321005638808519e-11,
+      "q_value": 4.0405154746879697e-10,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "flour"
+      ],
+      "consequent": [
+        "margarine",
+        "sugar"
+      ],
+      "support": 0.001627,
+      "support_count": 16,
+      "confidence": 0.09357,
+      "lift": 17.0414,
+      "leverage": 0.0015314,
+      "conviction": 1.0972,
+      "zhang": 0.9465,
+      "p_value": 4.0868035726661067e-16,
+      "q_value": 3.640179298072358e-14,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "margarine",
+        "sugar"
+      ],
+      "consequent": [
+        "flour"
+      ],
+      "support": 0.001627,
+      "support_count": 16,
+      "confidence": 0.2963,
+      "lift": 17.0414,
+      "leverage": 0.0015314,
+      "conviction": 1.3963,
+      "zhang": 0.958,
+      "p_value": 4.0868035726661067e-16,
+      "q_value": 3.640179298072358e-14,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit",
+        "oil"
+      ],
+      "consequent": [
+        "fruit/vegetable juice",
+        "root vegetables"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.20408,
+      "lift": 17.0097,
+      "leverage": 0.000957,
+      "conviction": 1.2413,
+      "zhang": 0.9526,
+      "p_value": 2.3304279648006103e-10,
+      "q_value": 4.759626021078121e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "fruit/vegetable juice",
+        "root vegetables"
+      ],
+      "consequent": [
+        "citrus fruit",
+        "oil"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.08475,
+      "lift": 17.0097,
+      "leverage": 0.000957,
+      "conviction": 1.0871,
+      "zhang": 0.9459,
+      "p_value": 2.3304279648006103e-10,
+      "q_value": 4.759626021078121e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "flour"
+      ],
+      "consequent": [
+        "root vegetables",
+        "sugar",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.05848,
+      "lift": 16.9161,
+      "leverage": 0.0009567,
+      "conviction": 1.0584,
+      "zhang": 0.9441,
+      "p_value": 1.774428477382602e-10,
+      "q_value": 3.791383837518882e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables",
+        "sugar",
+        "whole milk"
+      ],
+      "consequent": [
+        "flour"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.29412,
+      "lift": 16.9161,
+      "leverage": 0.0009567,
+      "conviction": 1.392,
+      "zhang": 0.9575,
+      "p_value": 1.774428477382602e-10,
+      "q_value": 3.791383837518882e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "root vegetables"
+      ],
+      "consequent": [
+        "rice",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.07874,
+      "lift": 16.835,
+      "leverage": 0.0009564,
+      "conviction": 1.0804,
+      "zhang": 0.945,
+      "p_value": 2.4802860908604394e-10,
+      "q_value": 5.0309853652205335e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "rice",
+        "whole milk"
+      ],
+      "consequent": [
+        "butter",
+        "root vegetables"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.21739,
+      "lift": 16.835,
+      "leverage": 0.0009564,
+      "conviction": 1.2613,
+      "zhang": 0.9529,
+      "p_value": 2.4802860908604394e-10,
+      "q_value": 5.0309853652205335e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "popcorn",
+        "soda"
+      ],
+      "consequent": [
+        "salty snack"
+      ],
+      "support": 0.00122,
+      "support_count": 12,
+      "confidence": 0.63158,
+      "lift": 16.6978,
+      "leverage": 0.0011471,
+      "conviction": 2.6116,
+      "zhang": 0.9771,
+      "p_value": 2.8577227871178024e-13,
+      "q_value": 1.4109162976813438e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "baking powder",
+        "flour"
+      ],
+      "consequent": [
+        "sugar"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.55556,
+      "lift": 16.4081,
+      "leverage": 0.0009548,
+      "conviction": 2.1738,
+      "zhang": 0.972,
+      "p_value": 5.958423516361307e-11,
+      "q_value": 1.4667428133378104e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "yogurt"
+      ],
+      "consequent": [
+        "hamburger meat",
+        "whipped/sour cream"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.06944,
+      "lift": 16.2616,
+      "leverage": 0.0009543,
+      "conviction": 1.07,
+      "zhang": 0.9425,
+      "p_value": 3.2617987296728317e-10,
+      "q_value": 6.31173747523849e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hamburger meat",
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "butter",
+        "yogurt"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.2381,
+      "lift": 16.2616,
+      "leverage": 0.0009543,
+      "conviction": 1.2933,
+      "zhang": 0.9525,
+      "p_value": 3.2617987296728317e-10,
+      "q_value": 6.31173747523849e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "rice"
+      ],
+      "consequent": [
+        "butter",
+        "root vegetables",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.13333,
+      "lift": 16.1893,
+      "leverage": 0.000954,
+      "conviction": 1.1443,
+      "zhang": 0.946,
+      "p_value": 4.365444673110725e-10,
+      "q_value": 8.18501733202495e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "root vegetables",
+        "whole milk"
+      ],
+      "consequent": [
+        "rice"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.12346,
+      "lift": 16.1893,
+      "leverage": 0.000954,
+      "conviction": 1.1321,
+      "zhang": 0.9454,
+      "p_value": 4.365444673110725e-10,
+      "q_value": 8.18501733202495e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "napkins"
+      ],
+      "consequent": [
+        "hygiene articles",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.20408,
+      "lift": 15.9297,
+      "leverage": 0.0009529,
+      "conviction": 1.2403,
+      "zhang": 0.9494,
+      "p_value": 4.4747570954725635e-10,
+      "q_value": 8.349845636573269e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hygiene articles",
+        "whole milk"
+      ],
+      "consequent": [
+        "butter",
+        "napkins"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.07937,
+      "lift": 15.9297,
+      "leverage": 0.0009529,
+      "conviction": 1.0808,
+      "zhang": 0.9419,
+      "p_value": 4.4747570954725635e-10,
+      "q_value": 8.349845636573269e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "hard cheese",
+        "yogurt"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.1,
+      "lift": 15.6111,
+      "leverage": 0.0009516,
+      "conviction": 1.104,
+      "zhang": 0.942,
+      "p_value": 6.113229130199976e-10,
+      "q_value": 1.0769211087348577e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hard cheese",
+        "yogurt"
+      ],
+      "consequent": [
+        "butter",
+        "whipped/sour cream"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.15873,
+      "lift": 15.6111,
+      "leverage": 0.0009516,
+      "conviction": 1.1766,
+      "zhang": 0.9456,
+      "p_value": 6.113229130199976e-10,
+      "q_value": 1.0769211087348577e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "tropical fruit"
+      ],
+      "consequent": [
+        "onions",
+        "yogurt"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.11224,
+      "lift": 15.5483,
+      "leverage": 0.0010465,
+      "conviction": 1.1183,
+      "zhang": 0.9425,
+      "p_value": 8.475679734037176e-11,
+      "q_value": 1.996175292315918e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "onions",
+        "yogurt"
+      ],
+      "consequent": [
+        "butter",
+        "tropical fruit"
+      ],
+      "support": 0.001118,
+      "support_count": 11,
+      "confidence": 0.15493,
+      "lift": 15.5483,
+      "leverage": 0.0010465,
+      "conviction": 1.1715,
+      "zhang": 0.9451,
+      "p_value": 8.475679734037176e-11,
+      "q_value": 1.996175292315918e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "yogurt"
+      ],
+      "consequent": [
+        "hard cheese",
+        "whipped/sour cream"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.06944,
+      "lift": 15.5224,
+      "leverage": 0.0009513,
+      "conviction": 1.0698,
+      "zhang": 0.9398,
+      "p_value": 5.36480522526959e-10,
+      "q_value": 9.655726031091928e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hard cheese",
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "butter",
+        "yogurt"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.22727,
+      "lift": 15.5224,
+      "leverage": 0.0009513,
+      "conviction": 1.2752,
+      "zhang": 0.9495,
+      "p_value": 5.36480522526959e-10,
+      "q_value": 9.655726031091928e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter",
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "hamburger meat",
+        "yogurt"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.1,
+      "lift": 15.3672,
+      "leverage": 0.0009506,
+      "conviction": 1.1039,
+      "zhang": 0.9411,
+      "p_value": 7.184907197162395e-10,
+      "q_value": 1.2272238464828117e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "hamburger meat",
+        "yogurt"
+      ],
+      "consequent": [
+        "butter",
+        "whipped/sour cream"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.15625,
+      "lift": 15.3672,
+      "leverage": 0.0009506,
+      "conviction": 1.1731,
+      "zhang": 0.9445,
+      "p_value": 7.184907197162395e-10,
+      "q_value": 1.2272238464828117e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "baking powder"
+      ],
+      "consequent": [
+        "sugar",
+        "whipped/sour cream"
+      ],
+      "support": 0.001322,
+      "support_count": 13,
+      "confidence": 0.07471,
+      "lift": 15.3083,
+      "leverage": 0.0012355,
+      "conviction": 1.0755,
+      "zhang": 0.9393,
+      "p_value": 1.194532258269189e-12,
+      "q_value": 4.9838465072676966e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "sugar",
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "baking powder"
+      ],
+      "support": 0.001322,
+      "support_count": 13,
+      "confidence": 0.27083,
+      "lift": 15.3083,
+      "leverage": 0.0012355,
+      "conviction": 1.3472,
+      "zhang": 0.9515,
+      "p_value": 1.194532258269189e-12,
+      "q_value": 4.9838465072676966e-11,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "frozen fish",
+        "tropical fruit"
+      ],
+      "consequent": [
+        "other vegetables",
+        "pip fruit"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.4,
+      "lift": 15.3074,
+      "leverage": 0.0009504,
+      "conviction": 1.6231,
+      "zhang": 0.9598,
+      "p_value": 2.887090775778067e-10,
+      "q_value": 5.704895737398194e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit",
+        "root vegetables"
+      ],
+      "consequent": [
+        "fruit/vegetable juice",
+        "oil"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.05747,
+      "lift": 15.2765,
+      "leverage": 0.0009502,
+      "conviction": 1.057,
+      "zhang": 0.9381,
+      "p_value": 5.346833203548782e-10,
+      "q_value": 9.636648536626958e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "fruit/vegetable juice",
+        "oil"
+      ],
+      "consequent": [
+        "citrus fruit",
+        "root vegetables"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.27027,
+      "lift": 15.2765,
+      "leverage": 0.0009502,
+      "conviction": 1.3461,
+      "zhang": 0.9514,
+      "p_value": 5.346833203548782e-10,
+      "q_value": 9.636648536626958e-09,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "processed cheese"
+      ],
+      "consequent": [
+        "soda",
+        "white bread",
+        "whole milk"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.06135,
+      "lift": 15.0844,
+      "leverage": 0.0009494,
+      "conviction": 1.061,
+      "zhang": 0.9375,
+      "p_value": 6.551782645003106e-10,
+      "q_value": 1.1362741923732372e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "soda",
+        "white bread",
+        "whole milk"
+      ],
+      "consequent": [
+        "processed cheese"
+      ],
+      "support": 0.001017,
+      "support_count": 10,
+      "confidence": 0.25,
+      "lift": 15.0844,
+      "leverage": 0.0009494,
+      "conviction": 1.3112,
+      "zhang": 0.9494,
+      "p_value": 6.551782645003106e-10,
+      "q_value": 1.1362741923732372e-08,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "ham",
+        "processed cheese"
+      ],
+      "consequent": [
+        "white bread"
+      ],
+      "support": 0.001932,
+      "support_count": 19,
+      "confidence": 0.63333,
+      "lift": 15.0455,
+      "leverage": 0.0018035,
+      "conviction": 2.6125,
+      "zhang": 0.9746,
+      "p_value": 1.7255933315968004e-19,
+      "q_value": 2.873332717915245e-17,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "Instant food products",
+        "whole milk"
+      ],
+      "consequent": [
+        "hamburger meat"
+      ],
+      "support": 0.001525,
+      "support_count": 15,
+      "confidence": 0.5,
+      "lift": 15.0382,
+      "leverage": 0.0014237,
+      "conviction": 1.9335,
+      "zhang": 0.9656,
+      "p_value": 4.823801284163681e-15,
+      "q_value": 3.542309693012613e-13,
+      "significant": true
+    }
+  ],
+  "top_by_leverage": [
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "root vegetables"
+      ],
+      "support": 0.047382,
+      "support_count": 466,
+      "confidence": 0.24488,
+      "lift": 2.2466,
+      "leverage": 0.0262914,
+      "conviction": 1.1799,
+      "zhang": 0.6228,
+      "p_value": 1.6576755698559863e-83,
+      "q_value": 4.3335783584960123e-79,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.047382,
+      "support_count": 466,
+      "confidence": 0.4347,
+      "lift": 2.2466,
+      "leverage": 0.0262914,
+      "conviction": 1.4267,
+      "zhang": 0.688,
+      "p_value": 1.6576755698559863e-83,
+      "q_value": 4.3335783584960123e-79,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.074835,
+      "support_count": 736,
+      "confidence": 0.38676,
+      "lift": 1.5136,
+      "leverage": 0.0253943,
+      "conviction": 1.214,
+      "zhang": 0.4558,
+      "p_value": 1.4438915547437522e-45,
+      "q_value": 7.549386993977709e-42,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.074835,
+      "support_count": 736,
+      "confidence": 0.29288,
+      "lift": 1.5136,
+      "leverage": 0.0253943,
+      "conviction": 1.1405,
+      "zhang": 0.4208,
+      "p_value": 1.4438915547437522e-45,
+      "q_value": 7.549386993977709e-42,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.048907,
+      "support_count": 481,
+      "confidence": 0.44869,
+      "lift": 1.756,
+      "leverage": 0.0210561,
+      "conviction": 1.3504,
+      "zhang": 0.5783,
+      "p_value": 2.5461358042463943e-48,
+      "q_value": 2.2187451754170454e-44,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "root vegetables"
+      ],
+      "support": 0.048907,
+      "support_count": 481,
+      "confidence": 0.1914,
+      "lift": 1.756,
+      "leverage": 0.0210561,
+      "conviction": 1.1019,
+      "zhang": 0.4832,
+      "p_value": 2.5461358042463943e-48,
+      "q_value": 2.2187451754170454e-44,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "yogurt"
+      ],
+      "support": 0.056024,
+      "support_count": 551,
+      "confidence": 0.21926,
+      "lift": 1.5717,
+      "leverage": 0.0203795,
+      "conviction": 1.1022,
+      "zhang": 0.4227,
+      "p_value": 6.188890444100428e-38,
+      "q_value": 1.797700760387727e-34,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "yogurt"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.056024,
+      "support_count": 551,
+      "confidence": 0.4016,
+      "lift": 1.5717,
+      "leverage": 0.0203795,
+      "conviction": 1.2441,
+      "zhang": 0.4886,
+      "p_value": 6.188890444100428e-38,
+      "q_value": 1.797700760387727e-34,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "yogurt"
+      ],
+      "support": 0.043416,
+      "support_count": 427,
+      "confidence": 0.22438,
+      "lift": 1.6085,
+      "leverage": 0.0164238,
+      "conviction": 1.1094,
+      "zhang": 0.4396,
+      "p_value": 8.118715573085225e-30,
+      "q_value": 7.580125781049303e-27,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "yogurt"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.043416,
+      "support_count": 427,
+      "confidence": 0.31122,
+      "lift": 1.6085,
+      "leverage": 0.0164238,
+      "conviction": 1.1709,
+      "zhang": 0.469,
+      "p_value": 8.118715573085225e-30,
+      "q_value": 7.580125781049303e-27,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "tropical fruit"
+      ],
+      "support": 0.035892,
+      "support_count": 353,
+      "confidence": 0.1855,
+      "lift": 1.7678,
+      "leverage": 0.0155888,
+      "conviction": 1.0989,
+      "zhang": 0.4852,
+      "p_value": 3.750523119026884e-33,
+      "q_value": 6.720515409461543e-30,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "tropical fruit"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.035892,
+      "support_count": 353,
+      "confidence": 0.34205,
+      "lift": 1.7678,
+      "leverage": 0.0155888,
+      "conviction": 1.2258,
+      "zhang": 0.5385,
+      "p_value": 3.750523119026884e-33,
+      "q_value": 6.720515409461543e-30,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "tropical fruit"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.042298,
+      "support_count": 416,
+      "confidence": 0.4031,
+      "lift": 1.5776,
+      "leverage": 0.0154863,
+      "conviction": 1.2473,
+      "zhang": 0.4918,
+      "p_value": 2.4686565301866745e-28,
+      "q_value": 1.8439100954401469e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "tropical fruit"
+      ],
+      "support": 0.042298,
+      "support_count": 416,
+      "confidence": 0.16554,
+      "lift": 1.5776,
+      "leverage": 0.0154863,
+      "conviction": 1.0726,
+      "zhang": 0.409,
+      "p_value": 2.4686565301866745e-28,
+      "q_value": 1.8439100954401469e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables"
+      ],
+      "consequent": [
+        "other vegetables",
+        "whole milk"
+      ],
+      "support": 0.023183,
+      "support_count": 228,
+      "confidence": 0.21269,
+      "lift": 2.8421,
+      "leverage": 0.0150256,
+      "conviction": 1.1751,
+      "zhang": 0.7006,
+      "p_value": 8.835313535141839e-55,
+      "q_value": 1.1548859204622276e-50,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables",
+        "whole milk"
+      ],
+      "consequent": [
+        "root vegetables"
+      ],
+      "support": 0.023183,
+      "support_count": 228,
+      "confidence": 0.30978,
+      "lift": 2.8421,
+      "leverage": 0.0150256,
+      "conviction": 1.2909,
+      "zhang": 0.7274,
+      "p_value": 8.835313535141839e-55,
+      "q_value": 1.1548859204622276e-50,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "whipped/sour cream"
+      ],
+      "support": 0.028876,
+      "support_count": 284,
+      "confidence": 0.14924,
+      "lift": 2.0819,
+      "leverage": 0.0150064,
+      "conviction": 1.0912,
+      "zhang": 0.5598,
+      "p_value": 6.197780886697982e-41,
+      "q_value": 2.3146498118643145e-37,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.028876,
+      "support_count": 284,
+      "confidence": 0.40284,
+      "lift": 2.0819,
+      "leverage": 0.0150064,
+      "conviction": 1.3506,
+      "zhang": 0.6444,
+      "p_value": 6.197780886697982e-41,
+      "q_value": 2.3146498118643145e-37,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "tropical fruit"
+      ],
+      "consequent": [
+        "yogurt"
+      ],
+      "support": 0.029283,
+      "support_count": 288,
+      "confidence": 0.27907,
+      "lift": 2.0005,
+      "leverage": 0.0146451,
+      "conviction": 1.1936,
+      "zhang": 0.5812,
+      "p_value": 5.327018668227935e-36,
+      "q_value": 1.266014413946807e-32,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "yogurt"
+      ],
+      "consequent": [
+        "tropical fruit"
+      ],
+      "support": 0.029283,
+      "support_count": 288,
+      "confidence": 0.20991,
+      "lift": 2.0005,
+      "leverage": 0.0146451,
+      "conviction": 1.1329,
+      "zhang": 0.5587,
+      "p_value": 5.327018668227935e-36,
+      "q_value": 1.266014413946807e-32,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whipped/sour cream"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.032232,
+      "support_count": 317,
+      "confidence": 0.44965,
+      "lift": 1.7598,
+      "leverage": 0.0139157,
+      "conviction": 1.3527,
+      "zhang": 0.5799,
+      "p_value": 2.786506223542617e-31,
+      "q_value": 3.642311947448143e-28,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "whipped/sour cream"
+      ],
+      "support": 0.032232,
+      "support_count": 317,
+      "confidence": 0.12614,
+      "lift": 1.7598,
+      "leverage": 0.0139157,
+      "conviction": 1.0623,
+      "zhang": 0.4651,
+      "p_value": 2.786506223542617e-31,
+      "q_value": 3.642311947448143e-28,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "domestic eggs"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.029995,
+      "support_count": 295,
+      "confidence": 0.47276,
+      "lift": 1.8502,
+      "leverage": 0.0137832,
+      "conviction": 1.412,
+      "zhang": 0.6172,
+      "p_value": 7.5422226918863496e-34,
+      "q_value": 1.5167119747895299e-30,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "domestic eggs"
+      ],
+      "support": 0.029995,
+      "support_count": 295,
+      "confidence": 0.11739,
+      "lift": 1.8502,
+      "leverage": 0.0137832,
+      "conviction": 1.0611,
+      "zhang": 0.4906,
+      "p_value": 7.5422226918863496e-34,
+      "q_value": 1.5167119747895299e-30,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "root vegetables",
+        "whole milk"
+      ],
+      "support": 0.023183,
+      "support_count": 228,
+      "confidence": 0.11981,
+      "lift": 2.4498,
+      "leverage": 0.0137194,
+      "conviction": 1.0806,
+      "zhang": 0.6222,
+      "p_value": 1.539375681284448e-46,
+      "q_value": 1.006078218699467e-42,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables",
+        "whole milk"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.023183,
+      "support_count": 228,
+      "confidence": 0.47401,
+      "lift": 2.4498,
+      "leverage": 0.0137194,
+      "conviction": 1.5333,
+      "zhang": 0.7338,
+      "p_value": 1.539375681284448e-46,
+      "q_value": 1.006078218699467e-42,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "butter"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.027555,
+      "support_count": 271,
+      "confidence": 0.49725,
+      "lift": 1.9461,
+      "leverage": 0.0133954,
+      "conviction": 1.4808,
+      "zhang": 0.653,
+      "p_value": 8.283217138269826e-36,
+      "q_value": 1.8045333669768242e-32,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "butter"
+      ],
+      "support": 0.027555,
+      "support_count": 271,
+      "confidence": 0.10784,
+      "lift": 1.9461,
+      "leverage": 0.0133954,
+      "conviction": 1.0588,
+      "zhang": 0.5147,
+      "p_value": 8.283217138269826e-36,
+      "q_value": 1.8045333669768242e-32,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "rolls/buns"
+      ],
+      "consequent": [
+        "sausage"
+      ],
+      "support": 0.030605,
+      "support_count": 301,
+      "confidence": 0.16639,
+      "lift": 1.771,
+      "leverage": 0.0133243,
+      "conviction": 1.0869,
+      "zhang": 0.4805,
+      "p_value": 6.381657871634463e-28,
+      "q_value": 4.0690851441269256e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "sausage"
+      ],
+      "consequent": [
+        "rolls/buns"
+      ],
+      "support": 0.030605,
+      "support_count": 301,
+      "confidence": 0.32576,
+      "lift": 1.771,
+      "leverage": 0.0133243,
+      "conviction": 1.2103,
+      "zhang": 0.5335,
+      "p_value": 6.381657871634463e-28,
+      "q_value": 4.0690851441269256e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "citrus fruit"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.028876,
+      "support_count": 284,
+      "confidence": 0.34889,
+      "lift": 1.8031,
+      "leverage": 0.0128619,
+      "conviction": 1.2387,
+      "zhang": 0.5523,
+      "p_value": 5.800684036859848e-28,
+      "q_value": 3.9906416429896995e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables"
+      ],
+      "consequent": [
+        "citrus fruit"
+      ],
+      "support": 0.028876,
+      "support_count": 284,
+      "confidence": 0.14924,
+      "lift": 1.8031,
+      "leverage": 0.0128619,
+      "conviction": 1.0781,
+      "zhang": 0.4856,
+      "p_value": 5.800684036859848e-28,
+      "q_value": 3.9906416429896995e-25,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "curd"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.026131,
+      "support_count": 257,
+      "confidence": 0.49046,
+      "lift": 1.9195,
+      "leverage": 0.0125175,
+      "conviction": 1.4611,
+      "zhang": 0.6434,
+      "p_value": 1.1109565711628575e-32,
+      "q_value": 1.8151988851015626e-29,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "whole milk"
+      ],
+      "consequent": [
+        "curd"
+      ],
+      "support": 0.026131,
+      "support_count": 257,
+      "confidence": 0.10227,
+      "lift": 1.9195,
+      "leverage": 0.0125175,
+      "conviction": 1.0546,
+      "zhang": 0.506,
+      "p_value": 1.1109565711628575e-32,
+      "q_value": 1.8151988851015626e-29,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "pip fruit"
+      ],
+      "consequent": [
+        "tropical fruit"
+      ],
+      "support": 0.020437,
+      "support_count": 201,
+      "confidence": 0.27016,
+      "lift": 2.5746,
+      "leverage": 0.0124993,
+      "conviction": 1.2264,
+      "zhang": 0.6833,
+      "p_value": 1.8614455773635967e-40,
+      "q_value": 6.082855125778478e-37,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "tropical fruit"
+      ],
+      "consequent": [
+        "pip fruit"
+      ],
+      "support": 0.020437,
+      "support_count": 201,
+      "confidence": 0.19477,
+      "lift": 2.5746,
+      "leverage": 0.0124993,
+      "conviction": 1.1479,
+      "zhang": 0.6616,
+      "p_value": 1.8614455773635967e-40,
+      "q_value": 6.082855125778478e-37,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "yogurt"
+      ],
+      "consequent": [
+        "other vegetables",
+        "whole milk"
+      ],
+      "support": 0.022267,
+      "support_count": 219,
+      "confidence": 0.15962,
+      "lift": 2.133,
+      "leverage": 0.0118278,
+      "conviction": 1.1009,
+      "zhang": 0.5741,
+      "p_value": 3.0085140200111752e-31,
+      "q_value": 3.7452417984829597e-28,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "other vegetables",
+        "whole milk"
+      ],
+      "consequent": [
+        "yogurt"
+      ],
+      "support": 0.022267,
+      "support_count": 219,
+      "confidence": 0.29755,
+      "lift": 2.133,
+      "leverage": 0.0118278,
+      "conviction": 1.225,
+      "zhang": 0.6173,
+      "p_value": 3.0085140200111752e-31,
+      "q_value": 3.7452417984829597e-28,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "beef"
+      ],
+      "consequent": [
+        "root vegetables"
+      ],
+      "support": 0.017387,
+      "support_count": 171,
+      "confidence": 0.3314,
+      "lift": 3.0404,
+      "leverage": 0.0116682,
+      "conviction": 1.3326,
+      "zhang": 0.7532,
+      "p_value": 7.668026723315965e-45,
+      "q_value": 3.34102314357146e-41,
+      "significant": true
+    },
+    {
+      "antecedent": [
+        "root vegetables"
+      ],
+      "consequent": [
+        "beef"
+      ],
+      "support": 0.017387,
+      "support_count": 171,
+      "confidence": 0.15951,
+      "lift": 3.0404,
+      "leverage": 0.0116682,
+      "conviction": 1.1274,
+      "zhang": 0.7083,
+      "p_value": 7.668026723315965e-45,
+      "q_value": 3.34102314357146e-41,
+      "significant": true
+    }
+  ],
+  "dissociations": [
+    {
+      "antecedent": [
+        "canned beer"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.008846,
+      "support_count": 87,
+      "confidence": 0.11387,
+      "lift": 0.4457,
+      "leverage": -0.011003,
+      "conviction": 0.8402,
+      "zhang": -0.6256,
+      "p_value": 1.0,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "UHT-milk"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.003965,
+      "support_count": 39,
+      "confidence": 0.11854,
+      "lift": 0.4639,
+      "leverage": -0.0045821,
+      "conviction": 0.8446,
+      "zhang": -0.6082,
+      "p_value": 0.999999999871653,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "canned beer"
+      ],
+      "consequent": [
+        "root vegetables"
+      ],
+      "support": 0.004067,
+      "support_count": 40,
+      "confidence": 0.05236,
+      "lift": 0.4803,
+      "leverage": -0.0044001,
+      "conviction": 0.9402,
+      "zhang": -0.5484,
+      "p_value": 0.9999999961537023,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "canned beer"
+      ],
+      "consequent": [
+        "yogurt"
+      ],
+      "support": 0.005389,
+      "support_count": 53,
+      "confidence": 0.06937,
+      "lift": 0.4973,
+      "leverage": -0.0054478,
+      "conviction": 0.9246,
+      "zhang": -0.5402,
+      "p_value": 0.9999999999080528,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "white wine"
+      ],
+      "consequent": [
+        "whole milk"
+      ],
+      "support": 0.002644,
+      "support_count": 26,
+      "confidence": 0.13904,
+      "lift": 0.5441,
+      "leverage": -0.0022147,
+      "conviction": 0.8647,
+      "zhang": -0.5295,
+      "p_value": 0.9999694212257865,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "canned beer"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.009049,
+      "support_count": 89,
+      "confidence": 0.11649,
+      "lift": 0.602,
+      "leverage": -0.0059815,
+      "conviction": 0.9128,
+      "zhang": -0.4504,
+      "p_value": 0.9999999988706327,
+      "q_value": 1.0,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "white wine"
+      ],
+      "consequent": [
+        "other vegetables"
+      ],
+      "support": 0.002237,
+      "support_count": 22,
+      "confidence": 0.11765,
+      "lift": 0.608,
+      "leverage": -0.0014421,
+      "conviction": 0.914,
+      "zhang": -0.4442,
+      "p_value": 0.9981119123616767,
+      "q_value": 0.9984747510394955,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "butter",
+        "whole milk"
+      ],
+      "consequent": [
+        "soda"
+      ],
+      "support": 0.00305,
+      "support_count": 30,
+      "confidence": 0.1107,
+      "lift": 0.6348,
+      "leverage": -0.0017546,
+      "conviction": 0.9284,
+      "zhang": -0.4106,
+      "p_value": 0.9987894905289332,
+      "q_value": 0.9990952287647606,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "bottled water",
+        "whole milk"
+      ],
+      "consequent": [
+        "shopping bags"
+      ],
+      "support": 0.002135,
+      "support_count": 21,
+      "confidence": 0.06213,
+      "lift": 0.6306,
+      "leverage": -0.0012508,
+      "conviction": 0.9612,
+      "zhang": -0.3939,
+      "p_value": 0.9939805662685222,
+      "q_value": 0.9945702512219099,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "bottled beer"
+      ],
+      "consequent": [
+        "pastry"
+      ],
+      "support": 0.004575,
+      "support_count": 45,
+      "confidence": 0.05682,
+      "lift": 0.6386,
+      "leverage": -0.002589,
+      "conviction": 0.9659,
+      "zhang": -0.3831,
+      "p_value": 0.9998207531605456,
+      "q_value": 0.999954628696567,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "pastry"
+      ],
+      "consequent": [
+        "bottled beer"
+      ],
+      "support": 0.004575,
+      "support_count": 45,
+      "confidence": 0.05143,
+      "lift": 0.6386,
+      "leverage": -0.002589,
+      "conviction": 0.9693,
+      "zhang": -0.381,
+      "p_value": 0.9998207531605456,
+      "q_value": 0.999954628696567,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "canned beer"
+      ],
+      "consequent": [
+        "pastry"
+      ],
+      "support": 0.004474,
+      "support_count": 44,
+      "confidence": 0.05759,
+      "lift": 0.6473,
+      "leverage": -0.0024374,
+      "conviction": 0.9667,
+      "zhang": -0.3742,
+      "p_value": 0.9996797650182873,
+      "q_value": 0.9998518730197633,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "pastry"
+      ],
+      "consequent": [
+        "canned beer"
+      ],
+      "support": 0.004474,
+      "support_count": 44,
+      "confidence": 0.05029,
+      "lift": 0.6473,
+      "leverage": -0.0024374,
+      "conviction": 0.9712,
+      "zhang": -0.3713,
+      "p_value": 0.9996797650182873,
+      "q_value": 0.9998518730197633,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "curd",
+        "other vegetables"
+      ],
+      "consequent": [
+        "soda"
+      ],
+      "support": 0.002034,
+      "support_count": 20,
+      "confidence": 0.11834,
+      "lift": 0.6787,
+      "leverage": -0.0009629,
+      "conviction": 0.9364,
+      "zhang": -0.3645,
+      "p_value": 0.9830506632285645,
+      "q_value": 0.9838221408564715,
+      "significant": false
+    },
+    {
+      "antecedent": [
+        "pork"
+      ],
+      "consequent": [
+        "canned beer"
+      ],
+      "support": 0.002949,
+      "support_count": 29,
+      "confidence": 0.05115,
+      "lift": 0.6584,
+      "leverage": -0.0015298,
+      "conviction": 0.972,
+      "zhang": -0.36,
+      "p_value": 0.9958783257125039,
+      "q_value": 0.99633566636456,
+      "significant": false
+    }
+  ],
+  "graph": {
+    "nodes": [
+      "whole milk",
+      "other vegetables",
+      "rolls/buns",
+      "soda",
+      "yogurt",
+      "bottled water",
+      "root vegetables",
+      "tropical fruit",
+      "shopping bags",
+      "sausage",
+      "pastry",
+      "citrus fruit",
+      "bottled beer",
+      "newspapers",
+      "canned beer",
+      "pip fruit",
+      "fruit/vegetable juice",
+      "whipped/sour cream",
+      "brown bread",
+      "domestic eggs",
+      "frankfurter",
+      "margarine",
+      "coffee",
+      "pork",
+      "butter"
+    ],
+    "edges": [
+      {
+        "source": "butter",
+        "target": "pork",
+        "lift": 1.7187,
+        "support": 0.005491
+      },
+      {
+        "source": "pork",
+        "target": "butter",
+        "lift": 1.7187,
+        "support": 0.005491
+      },
+      {
+        "source": "butter",
+        "target": "coffee",
+        "lift": 1.4854,
+        "support": 0.004779
+      },
+      {
+        "source": "coffee",
+        "target": "butter",
+        "lift": 1.4854,
+        "support": 0.004779
+      },
+      {
+        "source": "butter",
+        "target": "margarine",
+        "lift": 2.0678,
+        "support": 0.006711
+      },
+      {
+        "source": "margarine",
+        "target": "butter",
+        "lift": 2.0678,
+        "support": 0.006711
+      },
+      {
+        "source": "butter",
+        "target": "frankfurter",
+        "lift": 1.4935,
+        "support": 0.004881
+      },
+      {
+        "source": "frankfurter",
+        "target": "butter",
+        "lift": 1.4935,
+        "support": 0.004881
+      },
+      {
+        "source": "butter",
+        "target": "domestic eggs",
+        "lift": 2.7474,
+        "support": 0.009659
+      },
+      {
+        "source": "domestic eggs",
+        "target": "butter",
+        "lift": 2.7474,
+        "support": 0.009659
+      },
+      {
+        "source": "brown bread",
+        "target": "butter",
+        "lift": 1.6122,
+        "support": 0.005796
+      },
+      {
+        "source": "butter",
+        "target": "brown bread",
+        "lift": 1.6122,
+        "support": 0.005796
+      },
+      {
+        "source": "butter",
+        "target": "whipped/sour cream",
+        "lift": 2.5597,
+        "support": 0.010168
+      },
+      {
+        "source": "whipped/sour cream",
+        "target": "butter",
+        "lift": 2.5597,
+        "support": 0.010168
+      },
+      {
+        "source": "butter",
+        "target": "fruit/vegetable juice",
+        "lift": 2.0051,
+        "support": 0.008033
+      },
+      {
+        "source": "fruit/vegetable juice",
+        "target": "butter",
+        "lift": 2.0051,
+        "support": 0.008033
+      },
+      {
+        "source": "butter",
+        "target": "pip fruit",
+        "lift": 1.7464,
+        "support": 0.007321
+      },
+      {
+        "source": "pip fruit",
+        "target": "butter",
+        "lift": 1.7464,
+        "support": 0.007321
+      },
+      {
+        "source": "butter",
+        "target": "newspapers",
+        "lift": 1.3103,
+        "support": 0.005796
+      },
+      {
+        "source": "newspapers",
+        "target": "butter",
+        "lift": 1.3103,
+        "support": 0.005796
+      },
+      {
+        "source": "bottled beer",
+        "target": "butter",
+        "lift": 1.2988,
+        "support": 0.005796
+      },
+      {
+        "source": "butter",
+        "target": "bottled beer",
+        "lift": 1.2988,
+        "support": 0.005796
+      },
+      {
+        "source": "butter",
+        "target": "citrus fruit",
+        "lift": 1.9952,
+        "support": 0.009151
+      },
+      {
+        "source": "citrus fruit",
+        "target": "butter",
+        "lift": 1.9952,
+        "support": 0.009151
+      },
+      {
+        "source": "butter",
+        "target": "pastry",
+        "lift": 1.5468,
+        "support": 0.007626
+      },
+      {
+        "source": "pastry",
+        "target": "butter",
+        "lift": 1.5468,
+        "support": 0.007626
+      },
+      {
+        "source": "butter",
+        "target": "sausage",
+        "lift": 1.6601,
+        "support": 0.008643
+      },
+      {
+        "source": "sausage",
+        "target": "butter",
+        "lift": 1.6601,
+        "support": 0.008643
+      },
+      {
+        "source": "butter",
+        "target": "tropical fruit",
+        "lift": 1.7137,
+        "support": 0.009964
+      },
+      {
+        "source": "tropical fruit",
+        "target": "butter",
+        "lift": 1.7137,
+        "support": 0.009964
+      },
+      {
+        "source": "butter",
+        "target": "root vegetables",
+        "lift": 2.1379,
+        "support": 0.012913
+      },
+      {
+        "source": "root vegetables",
+        "target": "butter",
+        "lift": 2.1379,
+        "support": 0.012913
+      },
+      {
+        "source": "bottled water",
+        "target": "butter",
+        "lift": 1.4609,
+        "support": 0.008948
+      },
+      {
+        "source": "butter",
+        "target": "bottled water",
+        "lift": 1.4609,
+        "support": 0.008948
+      },
+      {
+        "source": "butter",
+        "target": "yogurt",
+        "lift": 1.894,
+        "support": 0.014642
+      },
+      {
+        "source": "yogurt",
+        "target": "butter",
+        "lift": 1.894,
+        "support": 0.014642
+      },
+      {
+        "source": "butter",
+        "target": "rolls/buns",
+        "lift": 1.3168,
+        "support": 0.013421
+      },
+      {
+        "source": "rolls/buns",
+        "target": "butter",
+        "lift": 1.3168,
+        "support": 0.013421
+      },
+      {
+        "source": "butter",
+        "target": "other vegetables",
+        "lift": 1.8681,
+        "support": 0.020031
+      },
+      {
+        "source": "other vegetables",
+        "target": "butter",
+        "lift": 1.8681,
+        "support": 0.020031
+      },
+      {
+        "source": "butter",
+        "target": "whole milk",
+        "lift": 1.9461,
+        "support": 0.027555
+      },
+      {
+        "source": "whole milk",
+        "target": "butter",
+        "lift": 1.9461,
+        "support": 0.027555
+      },
+      {
+        "source": "margarine",
+        "target": "pork",
+        "lift": 1.8972,
+        "support": 0.006406
+      },
+      {
+        "source": "pork",
+        "target": "margarine",
+        "lift": 1.8972,
+        "support": 0.006406
+      },
+      {
+        "source": "frankfurter",
+        "target": "pork",
+        "lift": 1.7346,
+        "support": 0.005897
+      },
+      {
+        "source": "pork",
+        "target": "frankfurter",
+        "lift": 1.7346,
+        "support": 0.005897
+      },
+      {
+        "source": "domestic eggs",
+        "target": "pork",
+        "lift": 1.5289,
+        "support": 0.005592
+      },
+      {
+        "source": "pork",
+        "target": "domestic eggs",
+        "lift": 1.5289,
+        "support": 0.005592
+      },
+      {
+        "source": "brown bread",
+        "target": "pork",
+        "lift": 1.4953,
+        "support": 0.005592
+      },
+      {
+        "source": "pork",
+        "target": "brown bread",
+        "lift": 1.4953,
+        "support": 0.005592
+      },
+      {
+        "source": "pork",
+        "target": "whipped/sour cream",
+        "lift": 1.9929,
+        "support": 0.008236
+      },
+      {
+        "source": "whipped/sour cream",
+        "target": "pork",
+        "lift": 1.9929,
+        "support": 0.008236
+      },
+      {
+        "source": "pip fruit",
+        "target": "pork",
+        "lift": 1.3988,
+        "support": 0.006101
+      },
+      {
+        "source": "pork",
+        "target": "pip fruit",
+        "lift": 1.3988,
+        "support": 0.006101
+      },
+      {
+        "source": "newspapers",
+        "target": "pork",
+        "lift": 1.4363,
+        "support": 0.006609
+      },
+      {
+        "source": "pork",
+        "target": "newspapers",
+        "lift": 1.4363,
+        "support": 0.006609
+      },
+      {
+        "source": "citrus fruit",
+        "target": "pork",
+        "lift": 1.3638,
+        "support": 0.006507
+      },
+      {
+        "source": "pork",
+        "target": "citrus fruit",
+        "lift": 1.3638,
+        "support": 0.006507
+      },
+      {
+        "source": "pork",
+        "target": "tropical fruit",
+        "lift": 1.4119,
+        "support": 0.008541
+      },
+      {
+        "source": "tropical fruit",
+        "target": "pork",
+        "lift": 1.4119,
+        "support": 0.008541
+      },
+      {
+        "source": "pork",
+        "target": "root vegetables",
+        "lift": 2.1682,
+        "support": 0.013625
+      },
+      {
+        "source": "root vegetables",
+        "target": "pork",
+        "lift": 2.1682,
+        "support": 0.013625
+      },
+      {
+        "source": "pork",
+        "target": "yogurt",
+        "lift": 1.1884,
+        "support": 0.009558
+      },
+      {
+        "source": "yogurt",
+        "target": "pork",
+        "lift": 1.1884,
+        "support": 0.009558
+      },
+      {
+        "source": "pork",
+        "target": "soda",
+        "lift": 1.1833,
+        "support": 0.011896
+      },
+      {
+        "source": "soda",
+        "target": "pork",
+        "lift": 1.1833,
+        "support": 0.011896
+      },
+      {
+        "source": "other vegetables",
+        "target": "pork",
+        "lift": 1.9415,
+        "support": 0.021657
+      },
+      {
+        "source": "pork",
+        "target": "other vegetables",
+        "lift": 1.9415,
+        "support": 0.021657
+      },
+      {
+        "source": "pork",
+        "target": "whole milk",
+        "lift": 1.5047,
+        "support": 0.022166
+      },
+      {
+        "source": "whole milk",
+        "target": "pork",
+        "lift": 1.5047,
+        "support": 0.022166
+      },
+      {
+        "source": "coffee",
+        "target": "margarine",
+        "lift": 1.3755,
+        "support": 0.004677
+      },
+      {
+        "source": "margarine",
+        "target": "coffee",
+        "lift": 1.3755,
+        "support": 0.004677
+      },
+      {
+        "source": "coffee",
+        "target": "frankfurter",
+        "lift": 1.4848,
+        "support": 0.005084
+      },
+      {
+        "source": "frankfurter",
+        "target": "coffee",
+        "lift": 1.4848,
+        "support": 0.005084
+      },
+      {
+        "source": "coffee",
+        "target": "domestic eggs",
+        "lift": 1.3525,
+        "support": 0.004982
+      },
+      {
+        "source": "domestic eggs",
+        "target": "coffee",
+        "lift": 1.3525,
+        "support": 0.004982
+      },
+      {
+        "source": "coffee",
+        "target": "whipped/sour cream",
+        "lift": 1.4659,
+        "support": 0.006101
+      },
+      {
+        "source": "whipped/sour cream",
+        "target": "coffee",
+        "lift": 1.4659,
+        "support": 0.006101
+      },
+      {
+        "source": "coffee",
+        "target": "fruit/vegetable juice",
+        "lift": 1.4293,
+        "support": 0.005999
+      },
+      {
+        "source": "fruit/vegetable juice",
+        "target": "coffee",
+        "lift": 1.4293,
+        "support": 0.005999
+      },
+      {
+        "source": "coffee",
+        "target": "pip fruit",
+        "lift": 1.5743,
+        "support": 0.006914
+      },
+      {
+        "source": "pip fruit",
+        "target": "coffee",
+        "lift": 1.5743,
+        "support": 0.006914
+      },
+      {
+        "source": "citrus fruit",
+        "target": "coffee",
+        "lift": 1.3331,
+        "support": 0.006406
+      },
+      {
+        "source": "coffee",
+        "target": "citrus fruit",
+        "lift": 1.3331,
+        "support": 0.006406
+      },
+      {
+        "source": "coffee",
+        "target": "pastry",
+        "lift": 1.3386,
+        "support": 0.006914
+      },
+      {
+        "source": "pastry",
+        "target": "coffee",
+        "lift": 1.3386,
+        "support": 0.006914
+      },
+      {
+        "source": "coffee",
+        "target": "sausage",
+        "lift": 1.2676,
+        "support": 0.006914
+      },
+      {
+        "source": "sausage",
+        "target": "coffee",
+        "lift": 1.2676,
+        "support": 0.006914
+      },
+      {
+        "source": "coffee",
+        "target": "shopping bags",
+        "lift": 1.6353,
+        "support": 0.009354
+      },
+      {
+        "source": "shopping bags",
+        "target": "coffee",
+        "lift": 1.6353,
+        "support": 0.009354
+      },
+      {
+        "source": "coffee",
+        "target": "yogurt",
+        "lift": 1.2052,
+        "support": 0.009761
+      },
+      {
+        "source": "yogurt",
+        "target": "coffee",
+        "lift": 1.2052,
+        "support": 0.009761
+      },
+      {
+        "source": "coffee",
+        "target": "other vegetables",
+        "lift": 1.1947,
+        "support": 0.013421
+      },
+      {
+        "source": "other vegetables",
+        "target": "coffee",
+        "lift": 1.1947,
+        "support": 0.013421
+      },
+      {
+        "source": "coffee",
+        "target": "whole milk",
+        "lift": 1.2611,
+        "support": 0.018709
+      },
+      {
+        "source": "whole milk",
+        "target": "coffee",
+        "lift": 1.2611,
+        "support": 0.018709
+      },
+      {
+        "source": "frankfurter",
+        "target": "margarine",
+        "lift": 1.8547,
+        "support": 0.006406
+      },
+      {
+        "source": "margarine",
+        "target": "frankfurter",
+        "lift": 1.8547,
+        "support": 0.006406
+      },
+      {
+        "source": "domestic eggs",
+        "target": "margarine",
+        "lift": 2.2438,
+        "support": 0.008338
+      },
+      {
+        "source": "margarine",
+        "target": "domestic eggs",
+        "lift": 2.2438,
+        "support": 0.008338
+      },
+      {
+        "source": "brown bread",
+        "target": "margarine",
+        "lift": 1.7128,
+        "support": 0.006507
+      },
+      {
+        "source": "margarine",
+        "target": "brown bread",
+        "lift": 1.7128,
+        "support": 0.006507
+      },
+      {
+        "source": "margarine",
+        "target": "whipped/sour cream",
+        "lift": 1.6227,
+        "support": 0.006812
+      },
+      {
+        "source": "whipped/sour cream",
+        "target": "margarine",
+        "lift": 1.6227,
+        "support": 0.006812
+      },
+      {
+        "source": "fruit/vegetable juice",
+        "target": "margarine",
+        "lift": 1.4649,
+        "support": 0.006202
+      },
+      {
+        "source": "margarine",
+        "target": "fruit/vegetable juice",
+        "lift": 1.4649,
+        "support": 0.006202
+      },
+      {
+        "source": "margarine",
+        "target": "pip fruit",
+        "lift": 1.9278,
+        "support": 0.008541
+      },
+      {
+        "source": "pip fruit",
+        "target": "margarine",
+        "lift": 1.9278,
+        "support": 0.008541
+      },
+      {
+        "source": "margarine",
+        "target": "newspapers",
+        "lift": 1.5226,
+        "support": 0.007117
+      },
+      {
+        "source": "newspapers",
+        "target": "margarine",
+        "lift": 1.5226,
+        "support": 0.007117
+      },
+      {
+        "source": "bottled beer",
+        "target": "margarine",
+        "lift": 1.2935,
+        "support": 0.006101
+      },
+      {
+        "source": "margarine",
+        "target": "bottled beer",
+        "lift": 1.2935,
+        "support": 0.006101
+      },
+      {
+        "source": "citrus fruit",
+        "target": "margarine",
+        "lift": 1.6361,
+        "support": 0.007931
+      },
+      {
+        "source": "margarine",
+        "target": "citrus fruit",
+        "lift": 1.6361,
+        "support": 0.007931
+      },
+      {
+        "source": "margarine",
+        "target": "pastry",
+        "lift": 1.3074,
+        "support": 0.006812
+      },
+      {
+        "source": "pastry",
+        "target": "margarine",
+        "lift": 1.3074,
+        "support": 0.006812
+      },
+      {
+        "source": "margarine",
+        "target": "sausage",
+        "lift": 1.2935,
+        "support": 0.007117
+      },
+      {
+        "source": "sausage",
+        "target": "margarine",
+        "lift": 1.2935,
+        "support": 0.007117
+      },
+      {
+        "source": "margarine",
+        "target": "tropical fruit",
+        "lift": 1.5222,
+        "support": 0.009354
+      },
+      {
+        "source": "tropical fruit",
+        "target": "margarine",
+        "lift": 1.5222,
+        "support": 0.009354
+      },
+      {
+        "source": "margarine",
+        "target": "root vegetables",
+        "lift": 1.7361,
+        "support": 0.011083
+      },
+      {
+        "source": "root vegetables",
+        "target": "margarine",
+        "lift": 1.7361,
+        "support": 0.011083
+      },
+      {
+        "source": "bottled water",
+        "target": "margarine",
+        "lift": 1.5865,
+        "support": 0.010269
+      },
+      {
+        "source": "margarine",
+        "target": "bottled water",
+        "lift": 1.5865,
+        "support": 0.010269
+      },
+      {
+        "source": "margarine",
+        "target": "yogurt",
+        "lift": 1.7423,
+        "support": 0.014235
+      },
+      {
+        "source": "yogurt",
+        "target": "margarine",
+        "lift": 1.7423,
+        "support": 0.014235
+      },
+      {
+        "source": "margarine",
+        "target": "rolls/buns",
+        "lift": 1.3686,
+        "support": 0.014743
+      },
+      {
+        "source": "rolls/buns",
+        "target": "margarine",
+        "lift": 1.3686,
+        "support": 0.014743
+      },
+      {
+        "source": "margarine",
+        "target": "other vegetables",
+        "lift": 1.7407,
+        "support": 0.019725
+      },
+      {
+        "source": "other vegetables",
+        "target": "margarine",
+        "lift": 1.7407,
+        "support": 0.019725
+      },
+      {
+        "source": "margarine",
+        "target": "whole milk",
+        "lift": 1.6171,
+        "support": 0.024199
+      },
+      {
+        "source": "whole milk",
+        "target": "margarine",
+        "lift": 1.6171,
+        "support": 0.024199
+      },
+      {
+        "source": "domestic eggs",
+        "target": "frankfurter",
+        "lift": 1.875,
+        "support": 0.007016
+      },
+      {
+        "source": "frankfurter",
+        "target": "domestic eggs",
+        "lift": 1.875,
+        "support": 0.007016
+      },
+      {
+        "source": "brown bread",
+        "target": "frankfurter",
+        "lift": 1.8605,
+        "support": 0.007117
+      },
+      {
+        "source": "frankfurter",
+        "target": "brown bread",
+        "lift": 1.8605,
+        "support": 0.007117
+      },
+      {
+        "source": "frankfurter",
+        "target": "whipped/sour cream",
+        "lift": 1.4672,
+        "support": 0.006202
+      },
+      {
+        "source": "whipped/sour cream",
+        "target": "frankfurter",
+        "lift": 1.4672,
+        "support": 0.006202
+      },
+      {
+        "source": "frankfurter",
+        "target": "pip fruit",
+        "lift": 1.6182,
+        "support": 0.007219
+      },
+      {
+        "source": "pip fruit",
+        "target": "frankfurter",
+        "lift": 1.6182,
+        "support": 0.007219
+      },
+      {
+        "source": "citrus fruit",
+        "target": "frankfurter",
+        "lift": 1.3332,
+        "support": 0.006507
+      },
+      {
+        "source": "frankfurter",
+        "target": "citrus fruit",
+        "lift": 1.3332,
+        "support": 0.006507
+      },
+      {
+        "source": "frankfurter",
+        "target": "pastry",
+        "lift": 1.5891,
+        "support": 0.008338
+      },
+      {
+        "source": "pastry",
+        "target": "frankfurter",
+        "lift": 1.5891,
+        "support": 0.008338
+      },
+      {
+        "source": "frankfurter",
+        "target": "sausage",
+        "lift": 1.8168,
+        "support": 0.010066
+      },
+      {
+        "source": "sausage",
+        "target": "frankfurter",
+        "lift": 1.8168,
+        "support": 0.010066
+      },
+      {
+        "source": "frankfurter",
+        "target": "shopping bags",
+        "lift": 1.4174,
+        "support": 0.008236
+      },
+      {
+        "source": "shopping bags",
+        "target": "frankfurter",
+        "lift": 1.4174,
+        "support": 0.008236
+      },
+      {
+        "source": "frankfurter",
+        "target": "tropical fruit",
+        "lift": 1.5281,
+        "support": 0.009456
+      },
+      {
+        "source": "tropical fruit",
+        "target": "frankfurter",
+        "lift": 1.5281,
+        "support": 0.009456
+      }
+    ]
+  },
+  "_run": {
+    "project": "03_market_basket",
+    "seed": 42,
+    "git_commit": "b949297",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 130.63,
+    "generated_at_unix": 1789365813
+  }
+}

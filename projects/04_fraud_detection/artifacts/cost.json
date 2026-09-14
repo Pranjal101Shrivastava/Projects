@@ -1,0 +1,970 @@
+{
+  "assumed_cost_false_negative": 500.0,
+  "assumed_cost_false_positive": 10.0,
+  "curve": [
+    {
+      "threshold": 0.0,
+      "tp": 94,
+      "fp": 71108,
+      "fn": 0,
+      "tn": 0,
+      "expected_cost": 711080.0,
+      "alerts": 71202
+    },
+    {
+      "threshold": 0.0101,
+      "tp": 94,
+      "fp": 56593,
+      "fn": 0,
+      "tn": 14515,
+      "expected_cost": 565930.0,
+      "alerts": 56687
+    },
+    {
+      "threshold": 0.0202,
+      "tp": 94,
+      "fp": 46159,
+      "fn": 0,
+      "tn": 24949,
+      "expected_cost": 461590.0,
+      "alerts": 46253
+    },
+    {
+      "threshold": 0.0303,
+      "tp": 94,
+      "fp": 38020,
+      "fn": 0,
+      "tn": 33088,
+      "expected_cost": 380200.0,
+      "alerts": 38114
+    },
+    {
+      "threshold": 0.0404,
+      "tp": 94,
+      "fp": 32140,
+      "fn": 0,
+      "tn": 38968,
+      "expected_cost": 321400.0,
+      "alerts": 32234
+    },
+    {
+      "threshold": 0.0505,
+      "tp": 93,
+      "fp": 27674,
+      "fn": 1,
+      "tn": 43434,
+      "expected_cost": 277240.0,
+      "alerts": 27767
+    },
+    {
+      "threshold": 0.0606,
+      "tp": 93,
+      "fp": 24311,
+      "fn": 1,
+      "tn": 46797,
+      "expected_cost": 243610.0,
+      "alerts": 24404
+    },
+    {
+      "threshold": 0.0707,
+      "tp": 93,
+      "fp": 21706,
+      "fn": 1,
+      "tn": 49402,
+      "expected_cost": 217560.0,
+      "alerts": 21799
+    },
+    {
+      "threshold": 0.0808,
+      "tp": 93,
+      "fp": 19656,
+      "fn": 1,
+      "tn": 51452,
+      "expected_cost": 197060.0,
+      "alerts": 19749
+    },
+    {
+      "threshold": 0.0909,
+      "tp": 93,
+      "fp": 17955,
+      "fn": 1,
+      "tn": 53153,
+      "expected_cost": 180050.0,
+      "alerts": 18048
+    },
+    {
+      "threshold": 0.101,
+      "tp": 93,
+      "fp": 16595,
+      "fn": 1,
+      "tn": 54513,
+      "expected_cost": 166450.0,
+      "alerts": 16688
+    },
+    {
+      "threshold": 0.1111,
+      "tp": 92,
+      "fp": 15430,
+      "fn": 2,
+      "tn": 55678,
+      "expected_cost": 155300.0,
+      "alerts": 15522
+    },
+    {
+      "threshold": 0.1212,
+      "tp": 91,
+      "fp": 14418,
+      "fn": 3,
+      "tn": 56690,
+      "expected_cost": 145680.0,
+      "alerts": 14509
+    },
+    {
+      "threshold": 0.1313,
+      "tp": 91,
+      "fp": 13529,
+      "fn": 3,
+      "tn": 57579,
+      "expected_cost": 136790.0,
+      "alerts": 13620
+    },
+    {
+      "threshold": 0.1414,
+      "tp": 91,
+      "fp": 12744,
+      "fn": 3,
+      "tn": 58364,
+      "expected_cost": 128940.0,
+      "alerts": 12835
+    },
+    {
+      "threshold": 0.1515,
+      "tp": 91,
+      "fp": 12009,
+      "fn": 3,
+      "tn": 59099,
+      "expected_cost": 121590.0,
+      "alerts": 12100
+    },
+    {
+      "threshold": 0.1616,
+      "tp": 90,
+      "fp": 11397,
+      "fn": 4,
+      "tn": 59711,
+      "expected_cost": 115970.0,
+      "alerts": 11487
+    },
+    {
+      "threshold": 0.1717,
+      "tp": 89,
+      "fp": 10828,
+      "fn": 5,
+      "tn": 60280,
+      "expected_cost": 110780.0,
+      "alerts": 10917
+    },
+    {
+      "threshold": 0.1818,
+      "tp": 88,
+      "fp": 10278,
+      "fn": 6,
+      "tn": 60830,
+      "expected_cost": 105780.0,
+      "alerts": 10366
+    },
+    {
+      "threshold": 0.1919,
+      "tp": 88,
+      "fp": 9810,
+      "fn": 6,
+      "tn": 61298,
+      "expected_cost": 101100.0,
+      "alerts": 9898
+    },
+    {
+      "threshold": 0.202,
+      "tp": 88,
+      "fp": 9330,
+      "fn": 6,
+      "tn": 61778,
+      "expected_cost": 96300.0,
+      "alerts": 9418
+    },
+    {
+      "threshold": 0.2121,
+      "tp": 87,
+      "fp": 8904,
+      "fn": 7,
+      "tn": 62204,
+      "expected_cost": 92540.0,
+      "alerts": 8991
+    },
+    {
+      "threshold": 0.2222,
+      "tp": 87,
+      "fp": 8461,
+      "fn": 7,
+      "tn": 62647,
+      "expected_cost": 88110.0,
+      "alerts": 8548
+    },
+    {
+      "threshold": 0.2323,
+      "tp": 87,
+      "fp": 8094,
+      "fn": 7,
+      "tn": 63014,
+      "expected_cost": 84440.0,
+      "alerts": 8181
+    },
+    {
+      "threshold": 0.2424,
+      "tp": 87,
+      "fp": 7723,
+      "fn": 7,
+      "tn": 63385,
+      "expected_cost": 80730.0,
+      "alerts": 7810
+    },
+    {
+      "threshold": 0.2525,
+      "tp": 87,
+      "fp": 7387,
+      "fn": 7,
+      "tn": 63721,
+      "expected_cost": 77370.0,
+      "alerts": 7474
+    },
+    {
+      "threshold": 0.2626,
+      "tp": 87,
+      "fp": 7057,
+      "fn": 7,
+      "tn": 64051,
+      "expected_cost": 74070.0,
+      "alerts": 7144
+    },
+    {
+      "threshold": 0.2727,
+      "tp": 87,
+      "fp": 6769,
+      "fn": 7,
+      "tn": 64339,
+      "expected_cost": 71190.0,
+      "alerts": 6856
+    },
+    {
+      "threshold": 0.2828,
+      "tp": 87,
+      "fp": 6477,
+      "fn": 7,
+      "tn": 64631,
+      "expected_cost": 68270.0,
+      "alerts": 6564
+    },
+    {
+      "threshold": 0.2929,
+      "tp": 87,
+      "fp": 6189,
+      "fn": 7,
+      "tn": 64919,
+      "expected_cost": 65390.0,
+      "alerts": 6276
+    },
+    {
+      "threshold": 0.303,
+      "tp": 86,
+      "fp": 5918,
+      "fn": 8,
+      "tn": 65190,
+      "expected_cost": 63180.0,
+      "alerts": 6004
+    },
+    {
+      "threshold": 0.3131,
+      "tp": 86,
+      "fp": 5659,
+      "fn": 8,
+      "tn": 65449,
+      "expected_cost": 60590.0,
+      "alerts": 5745
+    },
+    {
+      "threshold": 0.3232,
+      "tp": 86,
+      "fp": 5430,
+      "fn": 8,
+      "tn": 65678,
+      "expected_cost": 58300.0,
+      "alerts": 5516
+    },
+    {
+      "threshold": 0.3333,
+      "tp": 86,
+      "fp": 5221,
+      "fn": 8,
+      "tn": 65887,
+      "expected_cost": 56210.0,
+      "alerts": 5307
+    },
+    {
+      "threshold": 0.3434,
+      "tp": 86,
+      "fp": 4995,
+      "fn": 8,
+      "tn": 66113,
+      "expected_cost": 53950.0,
+      "alerts": 5081
+    },
+    {
+      "threshold": 0.3535,
+      "tp": 86,
+      "fp": 4784,
+      "fn": 8,
+      "tn": 66324,
+      "expected_cost": 51840.0,
+      "alerts": 4870
+    },
+    {
+      "threshold": 0.3636,
+      "tp": 85,
+      "fp": 4603,
+      "fn": 9,
+      "tn": 66505,
+      "expected_cost": 50530.0,
+      "alerts": 4688
+    },
+    {
+      "threshold": 0.3737,
+      "tp": 85,
+      "fp": 4420,
+      "fn": 9,
+      "tn": 66688,
+      "expected_cost": 48700.0,
+      "alerts": 4505
+    },
+    {
+      "threshold": 0.3838,
+      "tp": 85,
+      "fp": 4248,
+      "fn": 9,
+      "tn": 66860,
+      "expected_cost": 46980.0,
+      "alerts": 4333
+    },
+    {
+      "threshold": 0.3939,
+      "tp": 85,
+      "fp": 4054,
+      "fn": 9,
+      "tn": 67054,
+      "expected_cost": 45040.0,
+      "alerts": 4139
+    },
+    {
+      "threshold": 0.404,
+      "tp": 85,
+      "fp": 3909,
+      "fn": 9,
+      "tn": 67199,
+      "expected_cost": 43590.0,
+      "alerts": 3994
+    },
+    {
+      "threshold": 0.4141,
+      "tp": 85,
+      "fp": 3743,
+      "fn": 9,
+      "tn": 67365,
+      "expected_cost": 41930.0,
+      "alerts": 3828
+    },
+    {
+      "threshold": 0.4242,
+      "tp": 85,
+      "fp": 3610,
+      "fn": 9,
+      "tn": 67498,
+      "expected_cost": 40600.0,
+      "alerts": 3695
+    },
+    {
+      "threshold": 0.4343,
+      "tp": 85,
+      "fp": 3473,
+      "fn": 9,
+      "tn": 67635,
+      "expected_cost": 39230.0,
+      "alerts": 3558
+    },
+    {
+      "threshold": 0.4444,
+      "tp": 85,
+      "fp": 3336,
+      "fn": 9,
+      "tn": 67772,
+      "expected_cost": 37860.0,
+      "alerts": 3421
+    },
+    {
+      "threshold": 0.4545,
+      "tp": 85,
+      "fp": 3217,
+      "fn": 9,
+      "tn": 67891,
+      "expected_cost": 36670.0,
+      "alerts": 3302
+    },
+    {
+      "threshold": 0.4646,
+      "tp": 85,
+      "fp": 3089,
+      "fn": 9,
+      "tn": 68019,
+      "expected_cost": 35390.0,
+      "alerts": 3174
+    },
+    {
+      "threshold": 0.4747,
+      "tp": 85,
+      "fp": 2977,
+      "fn": 9,
+      "tn": 68131,
+      "expected_cost": 34270.0,
+      "alerts": 3062
+    },
+    {
+      "threshold": 0.4848,
+      "tp": 85,
+      "fp": 2873,
+      "fn": 9,
+      "tn": 68235,
+      "expected_cost": 33230.0,
+      "alerts": 2958
+    },
+    {
+      "threshold": 0.4949,
+      "tp": 85,
+      "fp": 2756,
+      "fn": 9,
+      "tn": 68352,
+      "expected_cost": 32060.0,
+      "alerts": 2841
+    },
+    {
+      "threshold": 0.5051,
+      "tp": 85,
+      "fp": 2646,
+      "fn": 9,
+      "tn": 68462,
+      "expected_cost": 30960.0,
+      "alerts": 2731
+    },
+    {
+      "threshold": 0.5152,
+      "tp": 85,
+      "fp": 2553,
+      "fn": 9,
+      "tn": 68555,
+      "expected_cost": 30030.0,
+      "alerts": 2638
+    },
+    {
+      "threshold": 0.5253,
+      "tp": 85,
+      "fp": 2464,
+      "fn": 9,
+      "tn": 68644,
+      "expected_cost": 29140.0,
+      "alerts": 2549
+    },
+    {
+      "threshold": 0.5354,
+      "tp": 85,
+      "fp": 2379,
+      "fn": 9,
+      "tn": 68729,
+      "expected_cost": 28290.0,
+      "alerts": 2464
+    },
+    {
+      "threshold": 0.5455,
+      "tp": 85,
+      "fp": 2288,
+      "fn": 9,
+      "tn": 68820,
+      "expected_cost": 27380.0,
+      "alerts": 2373
+    },
+    {
+      "threshold": 0.5556,
+      "tp": 85,
+      "fp": 2218,
+      "fn": 9,
+      "tn": 68890,
+      "expected_cost": 26680.0,
+      "alerts": 2303
+    },
+    {
+      "threshold": 0.5657,
+      "tp": 85,
+      "fp": 2145,
+      "fn": 9,
+      "tn": 68963,
+      "expected_cost": 25950.0,
+      "alerts": 2230
+    },
+    {
+      "threshold": 0.5758,
+      "tp": 85,
+      "fp": 2070,
+      "fn": 9,
+      "tn": 69038,
+      "expected_cost": 25200.0,
+      "alerts": 2155
+    },
+    {
+      "threshold": 0.5859,
+      "tp": 84,
+      "fp": 1985,
+      "fn": 10,
+      "tn": 69123,
+      "expected_cost": 24850.0,
+      "alerts": 2069
+    },
+    {
+      "threshold": 0.596,
+      "tp": 84,
+      "fp": 1904,
+      "fn": 10,
+      "tn": 69204,
+      "expected_cost": 24040.0,
+      "alerts": 1988
+    },
+    {
+      "threshold": 0.6061,
+      "tp": 84,
+      "fp": 1850,
+      "fn": 10,
+      "tn": 69258,
+      "expected_cost": 23500.0,
+      "alerts": 1934
+    },
+    {
+      "threshold": 0.6162,
+      "tp": 84,
+      "fp": 1792,
+      "fn": 10,
+      "tn": 69316,
+      "expected_cost": 22920.0,
+      "alerts": 1876
+    },
+    {
+      "threshold": 0.6263,
+      "tp": 84,
+      "fp": 1715,
+      "fn": 10,
+      "tn": 69393,
+      "expected_cost": 22150.0,
+      "alerts": 1799
+    },
+    {
+      "threshold": 0.6364,
+      "tp": 84,
+      "fp": 1655,
+      "fn": 10,
+      "tn": 69453,
+      "expected_cost": 21550.0,
+      "alerts": 1739
+    },
+    {
+      "threshold": 0.6465,
+      "tp": 84,
+      "fp": 1593,
+      "fn": 10,
+      "tn": 69515,
+      "expected_cost": 20930.0,
+      "alerts": 1677
+    },
+    {
+      "threshold": 0.6566,
+      "tp": 83,
+      "fp": 1529,
+      "fn": 11,
+      "tn": 69579,
+      "expected_cost": 20790.0,
+      "alerts": 1612
+    },
+    {
+      "threshold": 0.6667,
+      "tp": 83,
+      "fp": 1476,
+      "fn": 11,
+      "tn": 69632,
+      "expected_cost": 20260.0,
+      "alerts": 1559
+    },
+    {
+      "threshold": 0.6768,
+      "tp": 83,
+      "fp": 1423,
+      "fn": 11,
+      "tn": 69685,
+      "expected_cost": 19730.0,
+      "alerts": 1506
+    },
+    {
+      "threshold": 0.6869,
+      "tp": 83,
+      "fp": 1352,
+      "fn": 11,
+      "tn": 69756,
+      "expected_cost": 19020.0,
+      "alerts": 1435
+    },
+    {
+      "threshold": 0.697,
+      "tp": 83,
+      "fp": 1307,
+      "fn": 11,
+      "tn": 69801,
+      "expected_cost": 18570.0,
+      "alerts": 1390
+    },
+    {
+      "threshold": 0.7071,
+      "tp": 83,
+      "fp": 1255,
+      "fn": 11,
+      "tn": 69853,
+      "expected_cost": 18050.0,
+      "alerts": 1338
+    },
+    {
+      "threshold": 0.7172,
+      "tp": 82,
+      "fp": 1191,
+      "fn": 12,
+      "tn": 69917,
+      "expected_cost": 17910.0,
+      "alerts": 1273
+    },
+    {
+      "threshold": 0.7273,
+      "tp": 81,
+      "fp": 1117,
+      "fn": 13,
+      "tn": 69991,
+      "expected_cost": 17670.0,
+      "alerts": 1198
+    },
+    {
+      "threshold": 0.7374,
+      "tp": 81,
+      "fp": 1054,
+      "fn": 13,
+      "tn": 70054,
+      "expected_cost": 17040.0,
+      "alerts": 1135
+    },
+    {
+      "threshold": 0.7475,
+      "tp": 81,
+      "fp": 1010,
+      "fn": 13,
+      "tn": 70098,
+      "expected_cost": 16600.0,
+      "alerts": 1091
+    },
+    {
+      "threshold": 0.7576,
+      "tp": 81,
+      "fp": 956,
+      "fn": 13,
+      "tn": 70152,
+      "expected_cost": 16060.0,
+      "alerts": 1037
+    },
+    {
+      "threshold": 0.7677,
+      "tp": 81,
+      "fp": 912,
+      "fn": 13,
+      "tn": 70196,
+      "expected_cost": 15620.0,
+      "alerts": 993
+    },
+    {
+      "threshold": 0.7778,
+      "tp": 81,
+      "fp": 852,
+      "fn": 13,
+      "tn": 70256,
+      "expected_cost": 15020.0,
+      "alerts": 933
+    },
+    {
+      "threshold": 0.7879,
+      "tp": 81,
+      "fp": 789,
+      "fn": 13,
+      "tn": 70319,
+      "expected_cost": 14390.0,
+      "alerts": 870
+    },
+    {
+      "threshold": 0.798,
+      "tp": 81,
+      "fp": 732,
+      "fn": 13,
+      "tn": 70376,
+      "expected_cost": 13820.0,
+      "alerts": 813
+    },
+    {
+      "threshold": 0.8081,
+      "tp": 81,
+      "fp": 686,
+      "fn": 13,
+      "tn": 70422,
+      "expected_cost": 13360.0,
+      "alerts": 767
+    },
+    {
+      "threshold": 0.8182,
+      "tp": 81,
+      "fp": 652,
+      "fn": 13,
+      "tn": 70456,
+      "expected_cost": 13020.0,
+      "alerts": 733
+    },
+    {
+      "threshold": 0.8283,
+      "tp": 80,
+      "fp": 614,
+      "fn": 14,
+      "tn": 70494,
+      "expected_cost": 13140.0,
+      "alerts": 694
+    },
+    {
+      "threshold": 0.8384,
+      "tp": 80,
+      "fp": 575,
+      "fn": 14,
+      "tn": 70533,
+      "expected_cost": 12750.0,
+      "alerts": 655
+    },
+    {
+      "threshold": 0.8485,
+      "tp": 80,
+      "fp": 535,
+      "fn": 14,
+      "tn": 70573,
+      "expected_cost": 12350.0,
+      "alerts": 615
+    },
+    {
+      "threshold": 0.8586,
+      "tp": 80,
+      "fp": 497,
+      "fn": 14,
+      "tn": 70611,
+      "expected_cost": 11970.0,
+      "alerts": 577
+    },
+    {
+      "threshold": 0.8687,
+      "tp": 80,
+      "fp": 468,
+      "fn": 14,
+      "tn": 70640,
+      "expected_cost": 11680.0,
+      "alerts": 548
+    },
+    {
+      "threshold": 0.8788,
+      "tp": 80,
+      "fp": 422,
+      "fn": 14,
+      "tn": 70686,
+      "expected_cost": 11220.0,
+      "alerts": 502
+    },
+    {
+      "threshold": 0.8889,
+      "tp": 80,
+      "fp": 383,
+      "fn": 14,
+      "tn": 70725,
+      "expected_cost": 10830.0,
+      "alerts": 463
+    },
+    {
+      "threshold": 0.899,
+      "tp": 80,
+      "fp": 352,
+      "fn": 14,
+      "tn": 70756,
+      "expected_cost": 10520.0,
+      "alerts": 432
+    },
+    {
+      "threshold": 0.9091,
+      "tp": 80,
+      "fp": 323,
+      "fn": 14,
+      "tn": 70785,
+      "expected_cost": 10230.0,
+      "alerts": 403
+    },
+    {
+      "threshold": 0.9192,
+      "tp": 80,
+      "fp": 293,
+      "fn": 14,
+      "tn": 70815,
+      "expected_cost": 9930.0,
+      "alerts": 373
+    },
+    {
+      "threshold": 0.9293,
+      "tp": 80,
+      "fp": 261,
+      "fn": 14,
+      "tn": 70847,
+      "expected_cost": 9610.0,
+      "alerts": 341
+    },
+    {
+      "threshold": 0.9394,
+      "tp": 80,
+      "fp": 229,
+      "fn": 14,
+      "tn": 70879,
+      "expected_cost": 9290.0,
+      "alerts": 309
+    },
+    {
+      "threshold": 0.9495,
+      "tp": 79,
+      "fp": 192,
+      "fn": 15,
+      "tn": 70916,
+      "expected_cost": 9420.0,
+      "alerts": 271
+    },
+    {
+      "threshold": 0.9596,
+      "tp": 78,
+      "fp": 165,
+      "fn": 16,
+      "tn": 70943,
+      "expected_cost": 9650.0,
+      "alerts": 243
+    },
+    {
+      "threshold": 0.9697,
+      "tp": 78,
+      "fp": 137,
+      "fn": 16,
+      "tn": 70971,
+      "expected_cost": 9370.0,
+      "alerts": 215
+    },
+    {
+      "threshold": 0.9798,
+      "tp": 77,
+      "fp": 114,
+      "fn": 17,
+      "tn": 70994,
+      "expected_cost": 9640.0,
+      "alerts": 191
+    },
+    {
+      "threshold": 0.9899,
+      "tp": 77,
+      "fp": 92,
+      "fn": 17,
+      "tn": 71016,
+      "expected_cost": 9420.0,
+      "alerts": 169
+    },
+    {
+      "threshold": 1.0,
+      "tp": 8,
+      "fp": 1,
+      "fn": 86,
+      "tn": 71107,
+      "expected_cost": 43010.0,
+      "alerts": 9
+    }
+  ],
+  "optimal_operating_point": {
+    "threshold": 0.9394,
+    "tp": 80,
+    "fp": 229,
+    "fn": 14,
+    "tn": 70879,
+    "expected_cost": 9290.0,
+    "alerts": 309
+  },
+  "do_nothing_cost": 47000.0,
+  "cost_saved_vs_do_nothing": 37710.0,
+  "alert_budget_analysis": [
+    {
+      "alerts": 50,
+      "threshold": 1.0,
+      "frauds_caught": 49,
+      "recall": 0.5213,
+      "precision": 0.98
+    },
+    {
+      "alerts": 100,
+      "threshold": 0.999887,
+      "frauds_caught": 71,
+      "recall": 0.7553,
+      "precision": 0.71
+    },
+    {
+      "alerts": 250,
+      "threshold": 0.955694,
+      "frauds_caught": 78,
+      "recall": 0.8298,
+      "precision": 0.312
+    },
+    {
+      "alerts": 500,
+      "threshold": 0.878949,
+      "frauds_caught": 80,
+      "recall": 0.8511,
+      "precision": 0.16
+    },
+    {
+      "alerts": 1000,
+      "threshold": 0.765682,
+      "frauds_caught": 81,
+      "recall": 0.8617,
+      "precision": 0.081
+    }
+  ],
+  "caveat": "The cost ratio is an assumption, not a measurement. The full curve is published so a reader with different costs can read off their own operating point rather than inherit this one.",
+  "_run": {
+    "project": "04_fraud_detection",
+    "seed": 42,
+    "git_commit": "1c3d162",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 33.53,
+    "generated_at_unix": 1789374039
+  }
+}

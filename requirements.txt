@@ -1,0 +1,20 @@
+# Core scientific stack
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.4
+
+# Gradient boosting
+lightgbm>=4.1
+
+# Deep learning (CPU build is sufficient for every project here)
+torch>=2.2
+
+# Serving
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.6
+
+# Verification / tooling
+playwright>=1.42
+pytest>=8.0

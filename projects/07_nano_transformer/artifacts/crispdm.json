@@ -1,0 +1,394 @@
+{
+  "project": "07_nano_transformer",
+  "business_question": "What does a four-layer character transformer actually learn from one million characters of Shakespeare on a CPU budget \u2014 and how would we know?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "The objective is pedagogical rather than commercial: build every component of a modern decoder from tensor operations, train it within a few CPU-minutes, and evaluate it honestly. 'Honestly' is the constraint that shapes the work \u2014 a language model can always be made to look good by quoting its best sample.",
+      "decisions": [
+        {
+          "question": "What claim will be made about the trained model?",
+          "choice": "That it learns orthography and dramatic form, not meaning.",
+          "rationale": "A 1.8M-parameter model on 1.1M characters can learn which letter sequences are English-shaped and how a play is laid out. It cannot learn semantics, and claiming otherwise from a cherry-picked sample would be the standard dishonesty of small-LM demos. The evaluation therefore measures held-out perplexity and the proportion of generated words that are real, rather than displaying one good paragraph.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "parameter_budget": "~1.79M",
+        "compute_budget": "CPU, minutes"
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "1,115,394 characters, 65 distinct symbols. A uniform guess gives perplexity 65; the character frequency distribution alone gives 27.462. Those two numbers bound what 'learning something' has to mean.",
+      "decisions": [],
+      "evidence": {
+        "n_characters": 1115394,
+        "vocab_size": 65,
+        "vocabulary": "\n !$&',-.3:;?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+        "train_characters": 1003854,
+        "val_characters": 111540,
+        "split_rationale": "Contiguous chronological split. A random split over a continuous text would interleave validation windows with training windows, so validation context would already have been memorised and perplexity would be optimistic.",
+        "char_frequencies": [
+          {
+            "char": " ",
+            "count": 169892
+          },
+          {
+            "char": "e",
+            "count": 94611
+          },
+          {
+            "char": "t",
+            "count": 67009
+          },
+          {
+            "char": "o",
+            "count": 65798
+          },
+          {
+            "char": "a",
+            "count": 55507
+          },
+          {
+            "char": "h",
+            "count": 51310
+          },
+          {
+            "char": "s",
+            "count": 49696
+          },
+          {
+            "char": "r",
+            "count": 48889
+          },
+          {
+            "char": "n",
+            "count": 48529
+          },
+          {
+            "char": "i",
+            "count": 45537
+          },
+          {
+            "char": "\\n",
+            "count": 40000
+          },
+          {
+            "char": "l",
+            "count": 33339
+          },
+          {
+            "char": "d",
+            "count": 31358
+          },
+          {
+            "char": "u",
+            "count": 26584
+          },
+          {
+            "char": "m",
+            "count": 22243
+          },
+          {
+            "char": "y",
+            "count": 20448
+          },
+          {
+            "char": ",",
+            "count": 19846
+          },
+          {
+            "char": "w",
+            "count": 17585
+          },
+          {
+            "char": "f",
+            "count": 15770
+          },
+          {
+            "char": "c",
+            "count": 15623
+          },
+          {
+            "char": "g",
+            "count": 13356
+          },
+          {
+            "char": "I",
+            "count": 11832
+          },
+          {
+            "char": "b",
+            "count": 11321
+          },
+          {
+            "char": "p",
+            "count": 10808
+          },
+          {
+            "char": ":",
+            "count": 10316
+          }
+        ],
+        "uniform_baseline_perplexity": 65.0
+      },
+      "risks": []
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Character-level tokenisation with no preprocessing: casing, punctuation and line breaks are all retained, because dramatic layout is part of what the model should learn. Contiguous 90/10 split.",
+      "decisions": [
+        {
+          "question": "Character-level or subword tokenisation?",
+          "choice": "Character-level.",
+          "rationale": "A 65-symbol vocabulary keeps the embedding and output layers negligible, so nearly all parameters sit in the transformer blocks where the interesting behaviour is. It also makes spelling an observable achievement rather than something the tokeniser handles invisibly.",
+          "alternatives_rejected": [
+            "BPE \u2014 better perplexity per compute, but the model would never have to learn to spell, removing the clearest evidence of what it learned."
+          ]
+        }
+      ],
+      "evidence": {
+        "tokenisation": "character-level, 65 symbols",
+        "split": "Contiguous chronological split. A random split over a continuous text would interleave validation windows with training windows, so validation context would already have been memorised and perplexity would be optimistic."
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "4-layer pre-norm decoder, 1,785,408 parameters: rotary position embeddings, 6-head causal attention, SwiGLU feed-forward, tied embeddings. AdamW with linear warmup and cosine decay, gradient clipping at 1.0.",
+      "decisions": [
+        {
+          "question": "Rotary or learned absolute position embeddings?",
+          "choice": "Rotary (RoPE).",
+          "rationale": "Rotating q and k by an angle proportional to position makes the attention logit depend on relative offset, since the dot product of two rotated vectors is a function of their angle difference. Nothing is learned, and no absolute index exists for the model to overfit to.",
+          "alternatives_rejected": [
+            "Learned absolute embeddings \u2014 a parameter per position, and no generalisation past the trained context length.",
+            "Sinusoidal \u2014 relative-ish, but added to the residual stream rather than applied where attention actually uses position."
+          ]
+        },
+        {
+          "question": "Pre-norm or post-norm residual blocks?",
+          "choice": "Pre-norm.",
+          "rationale": "Post-norm routes the residual through the normaliser, so gradient magnitude depends on depth and warmup becomes mandatory for stability. Pre-norm keeps an unobstructed residual path, which is why every modern decoder uses it.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "n_parameters": 1785408,
+        "architecture": {
+          "context": 128,
+          "d_model": 192,
+          "n_heads": 6,
+          "n_layers": 4,
+          "d_ff": 512,
+          "dropout": 0.1,
+          "position": "rotary",
+          "ffn": "SwiGLU",
+          "norm": "pre-norm LayerNorm",
+          "weight_tying": true
+        },
+        "optimisation": {
+          "optimiser": "AdamW",
+          "lr": 0.0003,
+          "warmup": 120,
+          "schedule": "cosine",
+          "weight_decay": 0.1,
+          "grad_clip": 1.0,
+          "batch_size": 48,
+          "steps": 2200
+        },
+        "train_seconds": 2570.9
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "Held-out perplexity 4.555 against 27.462 for a unigram model and 65.0 for uniform guessing \u2014 a 6.0\u00d7 improvement over the frequency baseline. 95% of generated words at T=0.8 are real words from the corpus.",
+      "decisions": [],
+      "evidence": {
+        "baselines": {
+          "uniform": {
+            "perplexity": 65.0,
+            "description": "every character equally likely"
+          },
+          "unigram": {
+            "perplexity": 27.462,
+            "description": "characters drawn from the corpus frequency distribution"
+          },
+          "model": {
+            "perplexity": 4.555,
+            "description": "1,785,408-parameter transformer, held-out"
+          }
+        },
+        "improvement_over_unigram": 6.03,
+        "final_train_loss": 1.3091,
+        "final_val_loss": 1.5163,
+        "overfit_gap": 0.2072,
+        "attention_spans": [
+          {
+            "layer": 0,
+            "head": 0,
+            "mean_attention_distance": 6.85
+          },
+          {
+            "layer": 0,
+            "head": 1,
+            "mean_attention_distance": 5.9
+          },
+          {
+            "layer": 0,
+            "head": 2,
+            "mean_attention_distance": 6.49
+          },
+          {
+            "layer": 0,
+            "head": 3,
+            "mean_attention_distance": 5.79
+          },
+          {
+            "layer": 0,
+            "head": 4,
+            "mean_attention_distance": 5.64
+          },
+          {
+            "layer": 0,
+            "head": 5,
+            "mean_attention_distance": 4.64
+          },
+          {
+            "layer": 1,
+            "head": 0,
+            "mean_attention_distance": 10.14
+          },
+          {
+            "layer": 1,
+            "head": 1,
+            "mean_attention_distance": 9.97
+          },
+          {
+            "layer": 1,
+            "head": 2,
+            "mean_attention_distance": 8.5
+          },
+          {
+            "layer": 1,
+            "head": 3,
+            "mean_attention_distance": 8.5
+          },
+          {
+            "layer": 1,
+            "head": 4,
+            "mean_attention_distance": 7.26
+          },
+          {
+            "layer": 1,
+            "head": 5,
+            "mean_attention_distance": 7.76
+          },
+          {
+            "layer": 2,
+            "head": 0,
+            "mean_attention_distance": 8.59
+          },
+          {
+            "layer": 2,
+            "head": 1,
+            "mean_attention_distance": 9.04
+          },
+          {
+            "layer": 2,
+            "head": 2,
+            "mean_attention_distance": 9.1
+          },
+          {
+            "layer": 2,
+            "head": 3,
+            "mean_attention_distance": 13.44
+          },
+          {
+            "layer": 2,
+            "head": 4,
+            "mean_attention_distance": 6.01
+          },
+          {
+            "layer": 2,
+            "head": 5,
+            "mean_attention_distance": 12.47
+          },
+          {
+            "layer": 3,
+            "head": 0,
+            "mean_attention_distance": 13.31
+          },
+          {
+            "layer": 3,
+            "head": 1,
+            "mean_attention_distance": 11.32
+          },
+          {
+            "layer": 3,
+            "head": 2,
+            "mean_attention_distance": 15.48
+          },
+          {
+            "layer": 3,
+            "head": 3,
+            "mean_attention_distance": 14.39
+          },
+          {
+            "layer": 3,
+            "head": 4,
+            "mean_attention_distance": 26.99
+          },
+          {
+            "layer": 3,
+            "head": 5,
+            "mean_attention_distance": 7.66
+          }
+        ],
+        "local_heads": 16,
+        "total_heads": 24
+      },
+      "risks": [
+        "The model learns orthography and dramatic layout, not meaning. Generated text has correct-looking speaker labels and plausible English morphology while being semantically empty. Real-word rate measures the former and says nothing about the latter.",
+        "Train and validation loss differ by 0.2072. That gap indicates the model has begun memorising and a larger corpus or stronger regularisation would be needed to train longer.",
+        "Perplexity is measured on held-out Shakespeare. It says nothing about performance on any other kind of text."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "Training telemetry, attention statistics and generated samples at four temperatures are exported for the dashboard. Generation itself is not run in the browser \u2014 a 1.8M-parameter forward pass per character is not something to ask of a page \u2014 so pre-generated samples are shown and labelled as such.",
+      "decisions": [],
+      "evidence": {
+        "samples": 4
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "07_nano_transformer",
+    "seed": 42,
+    "git_commit": "1c3d162",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 2583.47,
+    "generated_at_unix": 1789373973
+  }
+}

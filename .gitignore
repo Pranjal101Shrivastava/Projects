@@ -1,0 +1,39 @@
+# ---- data & model caches (large, reproducible from source) ----
+.data/
+**/.data/
+*.parquet
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.onnx
+!**/artifacts/**/*.json
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- node ----
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ---- runtime ----
+*.log
+.playwright/
+test-results/

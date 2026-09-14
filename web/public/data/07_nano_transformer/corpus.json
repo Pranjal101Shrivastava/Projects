@@ -1,0 +1,126 @@
+{
+  "n_characters": 1115394,
+  "vocab_size": 65,
+  "vocabulary": "\n !$&',-.3:;?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  "train_characters": 1003854,
+  "val_characters": 111540,
+  "split_rationale": "Contiguous chronological split. A random split over a continuous text would interleave validation windows with training windows, so validation context would already have been memorised and perplexity would be optimistic.",
+  "char_frequencies": [
+    {
+      "char": " ",
+      "count": 169892
+    },
+    {
+      "char": "e",
+      "count": 94611
+    },
+    {
+      "char": "t",
+      "count": 67009
+    },
+    {
+      "char": "o",
+      "count": 65798
+    },
+    {
+      "char": "a",
+      "count": 55507
+    },
+    {
+      "char": "h",
+      "count": 51310
+    },
+    {
+      "char": "s",
+      "count": 49696
+    },
+    {
+      "char": "r",
+      "count": 48889
+    },
+    {
+      "char": "n",
+      "count": 48529
+    },
+    {
+      "char": "i",
+      "count": 45537
+    },
+    {
+      "char": "\\n",
+      "count": 40000
+    },
+    {
+      "char": "l",
+      "count": 33339
+    },
+    {
+      "char": "d",
+      "count": 31358
+    },
+    {
+      "char": "u",
+      "count": 26584
+    },
+    {
+      "char": "m",
+      "count": 22243
+    },
+    {
+      "char": "y",
+      "count": 20448
+    },
+    {
+      "char": ",",
+      "count": 19846
+    },
+    {
+      "char": "w",
+      "count": 17585
+    },
+    {
+      "char": "f",
+      "count": 15770
+    },
+    {
+      "char": "c",
+      "count": 15623
+    },
+    {
+      "char": "g",
+      "count": 13356
+    },
+    {
+      "char": "I",
+      "count": 11832
+    },
+    {
+      "char": "b",
+      "count": 11321
+    },
+    {
+      "char": "p",
+      "count": 10808
+    },
+    {
+      "char": ":",
+      "count": 10316
+    }
+  ],
+  "uniform_baseline_perplexity": 65.0,
+  "_run": {
+    "project": "07_nano_transformer",
+    "seed": 42,
+    "git_commit": "1c3d162",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 2583.46,
+    "generated_at_unix": 1789373973
+  }
+}

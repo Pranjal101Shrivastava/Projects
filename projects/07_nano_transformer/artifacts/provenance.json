@@ -1,0 +1,36 @@
+{
+  "datasets": [
+    {
+      "id": "tiny_shakespeare",
+      "title": "Tiny Shakespeare",
+      "kind": "REAL",
+      "origin": "Concatenated public-domain works of Shakespeare, assembled by Andrej Karpathy as the char-rnn reference corpus.",
+      "license": "Public domain.",
+      "url": "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt",
+      "mirror_note": "Karpathy's char-rnn repository.",
+      "rows": "1,115,394 characters, 65 distinct",
+      "notes": "Small enough to train a character transformer on CPU in minutes.",
+      "cached_files": [
+        {
+          "file": "tiny_shakespeare.txt",
+          "sha256": "86c4e6aa9db7c042ec79f339dcb96d42b0075e16b8fc2e86bf0ca57e2dc565ed"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "07_nano_transformer",
+    "seed": 42,
+    "git_commit": "1c3d162",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 2583.47,
+    "generated_at_unix": 1789373973
+  }
+}

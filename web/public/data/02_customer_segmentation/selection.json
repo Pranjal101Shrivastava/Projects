@@ -1,0 +1,360 @@
+{
+  "sweeps": {
+    "customer_only": [
+      {
+        "k": 2,
+        "silhouette": 0.4811853178866434,
+        "calinski_harabasz": 1074.4964797609182,
+        "davies_bouldin": 0.9873585519107508,
+        "inertia": 48594.69
+      },
+      {
+        "k": 3,
+        "silhouette": 0.19651883315297028,
+        "calinski_harabasz": 839.3704027783177,
+        "davies_bouldin": 1.6149962437001744,
+        "inertia": 44768.11
+      },
+      {
+        "k": 4,
+        "silhouette": 0.1177840337968026,
+        "calinski_harabasz": 790.1306757204245,
+        "davies_bouldin": 2.1781334869743594,
+        "inertia": 41065.63
+      },
+      {
+        "k": 5,
+        "silhouette": 0.10312626709446739,
+        "calinski_harabasz": 702.544556752285,
+        "davies_bouldin": 2.2638824151521018,
+        "inertia": 39012.72
+      },
+      {
+        "k": 6,
+        "silhouette": 0.10678668105909693,
+        "calinski_harabasz": 699.6792601804029,
+        "davies_bouldin": 2.0578032067629017,
+        "inertia": 36182.29
+      },
+      {
+        "k": 7,
+        "silhouette": 0.09132341294851862,
+        "calinski_harabasz": 629.5365563091498,
+        "davies_bouldin": 2.22497900517574,
+        "inertia": 35147.58
+      },
+      {
+        "k": 8,
+        "silhouette": 0.09266513055372518,
+        "calinski_harabasz": 575.5873716208241,
+        "davies_bouldin": 2.3606387938754487,
+        "inertia": 34261.86
+      },
+      {
+        "k": 9,
+        "silhouette": 0.09186408914943088,
+        "calinski_harabasz": 525.176632331179,
+        "davies_bouldin": 2.4141947546267133,
+        "inertia": 33680.43
+      },
+      {
+        "k": 10,
+        "silhouette": 0.08842338863250533,
+        "calinski_harabasz": 493.66927844561536,
+        "davies_bouldin": 2.2966844959180754,
+        "inertia": 32898.18
+      }
+    ],
+    "customer_plus_macro": [
+      {
+        "k": 2,
+        "silhouette": 0.28883037989366434,
+        "calinski_harabasz": 2048.2457687880456,
+        "davies_bouldin": 1.5970546589253496,
+        "inertia": 65124.48
+      },
+      {
+        "k": 3,
+        "silhouette": 0.2882849258787414,
+        "calinski_harabasz": 1574.8933560346832,
+        "davies_bouldin": 1.388658728923886,
+        "inertia": 57279.16
+      },
+      {
+        "k": 4,
+        "silhouette": 0.15062716164509932,
+        "calinski_harabasz": 1268.9970710459977,
+        "davies_bouldin": 2.047920005883288,
+        "inertia": 53436.02
+      },
+      {
+        "k": 5,
+        "silhouette": 0.15745483425291532,
+        "calinski_harabasz": 1109.3956045957202,
+        "davies_bouldin": 2.114244363910208,
+        "inertia": 50202.86
+      },
+      {
+        "k": 6,
+        "silhouette": 0.16102866656358908,
+        "calinski_harabasz": 1010.040110172192,
+        "davies_bouldin": 1.9718729813575984,
+        "inertia": 47414.76
+      },
+      {
+        "k": 7,
+        "silhouette": 0.15941085238397668,
+        "calinski_harabasz": 919.7447807922853,
+        "davies_bouldin": 1.9827553502502864,
+        "inertia": 45482.53
+      },
+      {
+        "k": 8,
+        "silhouette": 0.15036295232366084,
+        "calinski_harabasz": 849.6093748601697,
+        "davies_bouldin": 1.964411278157837,
+        "inertia": 43845.53
+      },
+      {
+        "k": 9,
+        "silhouette": 0.1588673931726438,
+        "calinski_harabasz": 817.275207645058,
+        "davies_bouldin": 1.940700601954996,
+        "inertia": 41774.09
+      },
+      {
+        "k": 10,
+        "silhouette": 0.1716324987074412,
+        "calinski_harabasz": 780.3105352573941,
+        "davies_bouldin": 1.8677624908700963,
+        "inertia": 40214.93
+      }
+    ]
+  },
+  "consensus": {
+    "customer_only": {
+      "votes": {
+        "silhouette": 2,
+        "calinski_harabasz": 2,
+        "davies_bouldin": 2
+      },
+      "unanimous": true
+    },
+    "customer_plus_macro": {
+      "votes": {
+        "silhouette": 2,
+        "calinski_harabasz": 2,
+        "davies_bouldin": 3
+      },
+      "unanimous": false
+    }
+  },
+  "stability": {
+    "customer_only": [
+      {
+        "k": 2,
+        "mean_ari": 0.6576,
+        "std_ari": 0.3433,
+        "min_ari": -0.007,
+        "stable": false
+      },
+      {
+        "k": 3,
+        "mean_ari": 0.1454,
+        "std_ari": 0.1634,
+        "min_ari": 0.0843,
+        "stable": false
+      },
+      {
+        "k": 4,
+        "mean_ari": 0.6997,
+        "std_ari": 0.2477,
+        "min_ari": 0.2313,
+        "stable": false
+      },
+      {
+        "k": 5,
+        "mean_ari": 0.6753,
+        "std_ari": 0.214,
+        "min_ari": 0.4388,
+        "stable": false
+      },
+      {
+        "k": 6,
+        "mean_ari": 0.9515,
+        "std_ari": 0.0804,
+        "min_ari": 0.6071,
+        "stable": true
+      },
+      {
+        "k": 7,
+        "mean_ari": 0.8697,
+        "std_ari": 0.1343,
+        "min_ari": 0.4942,
+        "stable": true
+      },
+      {
+        "k": 8,
+        "mean_ari": 0.7174,
+        "std_ari": 0.1269,
+        "min_ari": 0.4459,
+        "stable": false
+      },
+      {
+        "k": 9,
+        "mean_ari": 0.5651,
+        "std_ari": 0.1118,
+        "min_ari": 0.4195,
+        "stable": false
+      },
+      {
+        "k": 10,
+        "mean_ari": 0.6706,
+        "std_ari": 0.0853,
+        "min_ari": 0.4955,
+        "stable": false
+      }
+    ],
+    "customer_plus_macro": [
+      {
+        "k": 2,
+        "mean_ari": 1.0,
+        "std_ari": 0.0,
+        "min_ari": 1.0,
+        "stable": true
+      },
+      {
+        "k": 3,
+        "mean_ari": 0.9817,
+        "std_ari": 0.0875,
+        "min_ari": 0.5131,
+        "stable": true
+      },
+      {
+        "k": 4,
+        "mean_ari": 0.9654,
+        "std_ari": 0.1098,
+        "min_ari": 0.4703,
+        "stable": true
+      },
+      {
+        "k": 5,
+        "mean_ari": 0.8885,
+        "std_ari": 0.1206,
+        "min_ari": 0.5119,
+        "stable": true
+      },
+      {
+        "k": 6,
+        "mean_ari": 0.854,
+        "std_ari": 0.14,
+        "min_ari": 0.4761,
+        "stable": true
+      },
+      {
+        "k": 7,
+        "mean_ari": 0.6493,
+        "std_ari": 0.139,
+        "min_ari": 0.526,
+        "stable": false
+      },
+      {
+        "k": 8,
+        "mean_ari": 0.6909,
+        "std_ari": 0.1206,
+        "min_ari": 0.5632,
+        "stable": false
+      },
+      {
+        "k": 9,
+        "mean_ari": 0.8683,
+        "std_ari": 0.1087,
+        "min_ari": 0.5581,
+        "stable": true
+      },
+      {
+        "k": 10,
+        "mean_ari": 0.9268,
+        "std_ari": 0.0809,
+        "min_ari": 0.7692,
+        "stable": true
+      }
+    ]
+  },
+  "stability_threshold": 0.75,
+  "n_bootstrap": 30,
+  "chosen_k": 6,
+  "chosen_feature_set": "customer_only",
+  "stability_bar_met": true,
+  "algorithms": {
+    "kmeans": {
+      "label": "K-means",
+      "assumption": "isotropic, equally-sized spherical clusters",
+      "n_clusters": 6,
+      "silhouette": 0.10719010954013451,
+      "calinski_harabasz": 699.4341422967707,
+      "davies_bouldin": 2.055059958301595,
+      "cluster_sizes": {
+        "0": 1612,
+        "1": 229,
+        "2": 1410,
+        "3": 557,
+        "4": 1967,
+        "5": 225
+      }
+    },
+    "gmm": {
+      "label": "Gaussian mixture (full covariance)",
+      "assumption": "elliptical clusters, soft assignment",
+      "bic": -10306793.7,
+      "aic": -10395338.5,
+      "n_clusters": 6,
+      "silhouette": 0.08076464433601059,
+      "calinski_harabasz": 455.547709003543,
+      "davies_bouldin": 3.5936170279969653,
+      "cluster_sizes": {
+        "0": 2325,
+        "1": 229,
+        "2": 848,
+        "3": 505,
+        "4": 1846,
+        "5": 247
+      }
+    },
+    "agglomerative": {
+      "label": "Agglomerative (Ward linkage)",
+      "assumption": "hierarchical, minimises within-cluster variance increase",
+      "n_clusters": 6,
+      "silhouette": 0.08467460113230726,
+      "calinski_harabasz": 588.0535467593813,
+      "davies_bouldin": 2.2763246392285663,
+      "cluster_sizes": {
+        "0": 2034,
+        "1": 2145,
+        "2": 952,
+        "3": 98,
+        "4": 229,
+        "5": 542
+      }
+    }
+  },
+  "cross_algorithm_agreement": {
+    "kmeans_vs_gmm": 0.4924,
+    "kmeans_vs_agglomerative": 0.5046,
+    "interpretation": "Agreement between algorithms with different geometric assumptions is evidence that the structure is in the data rather than in the method. Disagreement means at least one algorithm is imposing its own shape."
+  },
+  "_run": {
+    "project": "02_customer_segmentation",
+    "seed": 42,
+    "git_commit": "4aa8c30",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 347.48,
+    "generated_at_unix": 1789367081
+  }
+}
