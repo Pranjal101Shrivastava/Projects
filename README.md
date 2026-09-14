@@ -134,8 +134,10 @@ tools/
   readme.py           this file's generator
   screenshots.py      browser verification + screenshot capture
   sync_artifacts.py   artifacts → web
+  video_scripts.py    spoken walkthrough script per project, from the same artifacts
 web/                  unified React + TypeScript site for all twelve projects
 docs/screenshots/     verified captures of every page
+docs/video-scripts/   one spoken walkthrough script per project
 .github/workflows/    CI verification and Pages deployment
 ```
 
@@ -143,14 +145,35 @@ docs/screenshots/     verified captures of every page
 
 ## Video walkthrough
 
+One video per project — twelve separate walkthroughs, each standing on its own.
+
 <!-- YOUTUBE-PLACEHOLDER -->
-> 🎬 **A video walkthrough will be linked here.**
->
-> It was explicitly deferred for this submission. In the meantime, the
-> [live site](https://pranjal101shrivastava.github.io/Projects) is fully interactive, and
-> [`docs/screenshots/`](./docs/screenshots/) contains browser-verified captures of every page
-> — each one asserted to have rendered real artifact data with zero console errors before it
-> was saved.
+| # | Project | Script | Video |
+|:---:|---|---|---|
+| 01 | [NYC Ride-Hail Demand](./projects/01_nyc_mobility/) | [script](./docs/video-scripts/01_nyc_mobility.md) · ~6:41 | — |
+| 02 | [Customer Segmentation](./projects/02_customer_segmentation/) | [script](./docs/video-scripts/02_customer_segmentation.md) · ~4:40 | — |
+| 03 | [Market Basket Mining](./projects/03_market_basket/) | [script](./docs/video-scripts/03_market_basket.md) · ~6:55 | — |
+| 04 | [Fraud Detection](./projects/04_fraud_detection/) | [script](./docs/video-scripts/04_fraud_detection.md) · ~6:03 | — |
+| 05 | [Forecasting Tournament](./projects/05_timeseries_forecasting/) | [script](./docs/video-scripts/05_timeseries_forecasting.md) · ~4:25 | — |
+| 06 | [AutoML & the Leak](./projects/06_automl_tournament/) | [script](./docs/video-scripts/06_automl_tournament.md) · ~4:50 | — |
+| 07 | [Nano Transformer](./projects/07_nano_transformer/) | [script](./docs/video-scripts/07_nano_transformer.md) · ~5:31 | — |
+| 08 | [CRISP-DM Academy](./projects/08_crispdm_academy/) | [script](./docs/video-scripts/08_crispdm_academy.md) · ~6:19 | — |
+| 09 | [Sub-Linear Similarity Search](./projects/09_similarity_search/) | [script](./docs/video-scripts/09_similarity_search.md) · ~6:19 | — |
+| 10 | [Fairness Audit · COMPAS](./projects/10_fairness_audit/) | [script](./docs/video-scripts/10_fairness_audit.md) · ~7:10 | — |
+| 11 | [Pipeline DAG Engine](./projects/11_pipeline_dag/) | [script](./docs/video-scripts/11_pipeline_dag.md) · ~5:53 | — |
+| 12 | [Market Backtest](./projects/12_market_backtest/) | [script](./docs/video-scripts/12_market_backtest.md) · ~7:27 | — |
+
+**The scripts are written and generated, not drafted.**
+[`docs/video-scripts/`](./docs/video-scripts/) holds a full spoken script for each project,
+produced by [`tools/video_scripts.py`](./tools/video_scripts.py) from the same committed
+artifacts as everything else. A figure said on camera is therefore the figure on screen
+behind it, and re-running a pipeline updates the script rather than leaving the recording
+contradicting the site.
+
+Until the recordings are linked, the [live site](https://pranjal101shrivastava.github.io/Projects) is fully interactive, and
+[`docs/screenshots/`](./docs/screenshots/) contains browser-verified captures of every page
+— each one asserted to have rendered real artifact data with zero console errors before it
+was saved.
 
 ---
 

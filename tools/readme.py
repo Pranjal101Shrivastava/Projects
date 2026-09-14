@@ -126,6 +126,27 @@ def headline(project: str) -> tuple[str, str]:
             f"**{trap['r2_predicting_return_with_zero']:.4f}**")
 
 
+def video_rows() -> list[str]:
+    """One row per planned video, linking the generated script.
+
+    The Video column stays as a dash until a recording exists. Keeping the table here
+    rather than hand-written means the project list cannot fall out of step with it.
+    """
+    scripts = ROOT / "docs" / "video-scripts"
+    rows = []
+    for project, (title, _domain) in TITLES.items():
+        script = scripts / f"{project}.md"
+        if script.exists():
+            runtime = script.read_text().split("**Estimated runtime:** ~")[1].split(" ")[0]
+            cell = f"[script](./docs/video-scripts/{project}.md) · ~{runtime}"
+        else:
+            cell = "—"
+        rows.append(
+            f"| {project[:2]} | [{title}](./projects/{project}/) | {cell} | — |"
+        )
+    return rows
+
+
 def negative_findings() -> list[str]:
     """The results that did not work, with every figure read from an artifact.
 
@@ -353,8 +374,10 @@ tools/
   readme.py           this file's generator
   screenshots.py      browser verification + screenshot capture
   sync_artifacts.py   artifacts → web
+  video_scripts.py    spoken walkthrough script per project, from the same artifacts
 web/                  unified React + TypeScript site for all twelve projects
 docs/screenshots/     verified captures of every page
+docs/video-scripts/   one spoken walkthrough script per project
 .github/workflows/    CI verification and Pages deployment
 ```
 
@@ -362,14 +385,24 @@ docs/screenshots/     verified captures of every page
 
 ## Video walkthrough
 
+One video per project — twelve separate walkthroughs, each standing on its own.
+
 <!-- YOUTUBE-PLACEHOLDER -->
-> 🎬 **A video walkthrough will be linked here.**
->
-> It was explicitly deferred for this submission. In the meantime, the
-> [live site]({SITE}) is fully interactive, and
-> [`docs/screenshots/`](./docs/screenshots/) contains browser-verified captures of every page
-> — each one asserted to have rendered real artifact data with zero console errors before it
-> was saved.
+| # | Project | Script | Video |
+|:---:|---|---|---|
+""" + "\n".join(video_rows()) + f"""
+
+**The scripts are written and generated, not drafted.**
+[`docs/video-scripts/`](./docs/video-scripts/) holds a full spoken script for each project,
+produced by [`tools/video_scripts.py`](./tools/video_scripts.py) from the same committed
+artifacts as everything else. A figure said on camera is therefore the figure on screen
+behind it, and re-running a pipeline updates the script rather than leaving the recording
+contradicting the site.
+
+Until the recordings are linked, the [live site]({SITE}) is fully interactive, and
+[`docs/screenshots/`](./docs/screenshots/) contains browser-verified captures of every page
+— each one asserted to have rendered real artifact data with zero console errors before it
+was saved.
 
 ---
 
