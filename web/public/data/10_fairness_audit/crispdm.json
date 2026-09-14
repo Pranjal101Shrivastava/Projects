@@ -1,0 +1,659 @@
+{
+  "project": "10_fairness_audit",
+  "business_question": "A risk score used in real sentencing and bail decisions predicts reoffending. Is it fair \u2014 and does that question even have a single answer?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "COMPAS scores informed real bail and sentencing decisions in Broward County. ProPublica reported in 2016 that its errors fell unevenly by race; Northpointe replied that the scores were equally calibrated and therefore fair. Both claims are arithmetically true of the same data. The objective here is not to determine who was right but to measure every criterion and show why they cannot be satisfied simultaneously.",
+      "decisions": [
+        {
+          "question": "Which fairness definition does this audit adopt?",
+          "choice": "None. All are measured; none is declared correct.",
+          "rationale": "Kleinberg et al. (2016) and Chouldechova (2017) proved that calibration within groups and equal false-positive/false-negative rates are mutually incompatible whenever base rates differ, except in degenerate cases. No model can satisfy both. Selecting one is a judgement about which harm matters more \u2014 a wrongly detained person who would not have reoffended, or a wrongly released person who would have \u2014 and that is not a decision a pipeline can make.",
+          "alternatives_rejected": [
+            "Pick equalized odds and declare the tool unfair \u2014 defensible, but presents a value judgement as a measurement.",
+            "Pick calibration and declare it fair \u2014 the same error in the other direction.",
+            "Report a single 'fairness score' \u2014 collapses incompatible criteria into one number and hides the trade-off that is the entire issue."
+          ]
+        },
+        {
+          "question": "How is data about real individuals handled?",
+          "choice": "Names dropped on load; only aggregate group statistics reported.",
+          "rationale": "These are real people with real criminal records. ProPublica published the data for scrutiny of the algorithm, not of its subjects. No individual is identified anywhere in the output.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "impossibility_theorem": "Kleinberg et al. 2016; Chouldechova 2017"
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "7,214 Broward County records reduced to 6,172 by ProPublica's own published filters, applied so these results are directly comparable to theirs. 3 groups have at least 500 records and are compared; smaller groups are reported but not compared, because rate estimates on a few dozen people are too unstable to support a fairness claim.",
+      "decisions": [],
+      "evidence": {
+        "rows_raw": 7214,
+        "rows_after_propublica_filters": 6172,
+        "filters_applied": {
+          "days_b_screening_arrest within [-30, 30]": "charge and screening must correspond",
+          "is_recid != -1": "drop records with no recidivism data",
+          "c_charge_degree != 'O'": "drop ordinary traffic offences, which carry no jail time",
+          "score_text != 'N/A'": "drop rows with no COMPAS score"
+        },
+        "overall_recidivism_rate": 0.4551,
+        "overall_high_risk_rate": 0.4457,
+        "group_sizes": {
+          "African-American": 3175,
+          "Caucasian": 2103,
+          "Hispanic": 509,
+          "Other": 343,
+          "Asian": 31,
+          "Native American": 11
+        },
+        "groups_compared": [
+          "African-American",
+          "Caucasian",
+          "Hispanic"
+        ],
+        "groups_too_small_to_compare": [
+          {
+            "group": "Other",
+            "n": 343
+          },
+          {
+            "group": "Asian",
+            "n": 31
+          },
+          {
+            "group": "Native American",
+            "n": 11
+          }
+        ],
+        "min_group_size": 500,
+        "identifying_columns_dropped": [
+          "name",
+          "first",
+          "last"
+        ],
+        "decile_distribution": {
+          "African-American": {
+            "1": 365,
+            "2": 346,
+            "3": 298,
+            "4": 337,
+            "5": 323,
+            "6": 318,
+            "7": 343,
+            "8": 301,
+            "9": 317,
+            "10": 227
+          },
+          "Caucasian": {
+            "1": 605,
+            "2": 321,
+            "3": 238,
+            "4": 243,
+            "5": 200,
+            "6": 160,
+            "7": 113,
+            "8": 96,
+            "9": 77,
+            "10": 50
+          },
+          "Hispanic": {
+            "1": 159,
+            "2": 89,
+            "3": 73,
+            "4": 47,
+            "5": 39,
+            "6": 27,
+            "7": 28,
+            "8": 14,
+            "9": 17,
+            "10": 16
+          }
+        }
+      },
+      "risks": [
+        "The outcome variable is *rearrest*, not reoffending. Policing intensity differs by neighbourhood and by group, so arrest rates reflect both behaviour and enforcement. Every 'error rate' below therefore measures the tool against a target that is itself shaped by the system being audited. This affects every published analysis of this dataset, including ProPublica's and Northpointe's.",
+        "Two years in one Florida county in 2013-2014. Nothing here establishes how COMPAS behaves elsewhere or now."
+      ]
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "ProPublica's published filters applied verbatim so results are comparable to the original analysis. Identifying columns dropped before any analysis. High risk defined as decile score >= 5, matching ProPublica's cut.",
+      "decisions": [],
+      "evidence": {
+        "filters": {
+          "days_b_screening_arrest within [-30, 30]": "charge and screening must correspond",
+          "is_recid != -1": "drop records with no recidivism data",
+          "c_charge_degree != 'O'": "drop ordinary traffic offences, which carry no jail time",
+          "score_text != 'N/A'": "drop rows with no COMPAS score"
+        },
+        "rows": 6172
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "No model is built to replace COMPAS as the object of the audit \u2014 COMPAS's own published scores are audited directly. A separate logistic model excluding race is trained solely to test whether omitting a protected attribute removes disparity.",
+      "decisions": [
+        {
+          "question": "Does excluding race from the features make a model fair?",
+          "choice": "No \u2014 measured, not assumed.",
+          "rationale": "The replacement model never sees race, yet its false-positive rates still differ by 0.1425 across groups, against 0.2296 for COMPAS. Removing a protected attribute does not remove disparity, because prior convictions and age carry the same information. 'Fairness through unawareness' does not work, and this is what that looks like measured rather than asserted.",
+          "alternatives_rejected": [
+            "Assume 'fairness through unawareness' works \u2014 the most common intuition, and demonstrably false on this data."
+          ]
+        }
+      ],
+      "evidence": {
+        "own_model": {
+          "features_used": [
+            "age",
+            "priors_count",
+            "juv_fel_count",
+            "juv_misd_count",
+            "juv_other_count",
+            "sex",
+            "c_charge_degree",
+            "age_cat"
+          ],
+          "protected_attribute_excluded": "race",
+          "overall": {
+            "pr_auc": 0.6948329174661587,
+            "pr_auc_no_skill": 0.45518358531317493,
+            "pr_auc_lift_over_no_skill": 1.5264893987512764,
+            "roc_auc": 0.7343716750902612,
+            "brier": 0.20813225910669209,
+            "f1": 0.6710837671557028,
+            "precision": 0.5582677165354331,
+            "recall": 0.8410438908659549,
+            "threshold": 0.3414066064065051,
+            "confusion": {
+              "tn": 448,
+              "fp": 561,
+              "fn": 134,
+              "tp": 709
+            },
+            "prevalence": 0.45518358531317493,
+            "n": 1852,
+            "accuracy_trap": {
+              "model_accuracy": 0.6247300215982722,
+              "always_negative_accuracy": 0.5448164146868251,
+              "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+            }
+          },
+          "by_group": {
+            "African-American": {
+              "n": 956,
+              "tp": 350,
+              "fp": 137,
+              "fn": 161,
+              "tn": 308,
+              "base_rate": 0.5345,
+              "selection_rate": 0.5094,
+              "fpr": 0.3079,
+              "fnr": 0.3151,
+              "tpr": 0.6849,
+              "tnr": 0.6921,
+              "ppv": 0.7187,
+              "npv": 0.6567,
+              "accuracy": 0.6883
+            },
+            "Caucasian": {
+              "n": 645,
+              "tp": 91,
+              "fp": 67,
+              "fn": 149,
+              "tn": 338,
+              "base_rate": 0.3721,
+              "selection_rate": 0.245,
+              "fpr": 0.1654,
+              "fnr": 0.6208,
+              "tpr": 0.3792,
+              "tnr": 0.8346,
+              "ppv": 0.5759,
+              "npv": 0.694,
+              "accuracy": 0.6651
+            },
+            "Hispanic": {
+              "n": 141,
+              "tp": 30,
+              "fp": 16,
+              "fn": 30,
+              "tn": 65,
+              "base_rate": 0.4255,
+              "selection_rate": 0.3262,
+              "fpr": 0.1975,
+              "fnr": 0.5,
+              "tpr": 0.5,
+              "tnr": 0.8025,
+              "ppv": 0.6522,
+              "npv": 0.6842,
+              "accuracy": 0.6738
+            }
+          },
+          "fpr_gap": 0.1425,
+          "compas_fpr_gap": 0.2296,
+          "finding": "The replacement model never sees race, yet its false-positive rates still differ by 0.1425 across groups, against 0.2296 for COMPAS. Removing a protected attribute does not remove disparity, because prior convictions and age carry the same information. 'Fairness through unawareness' does not work, and this is what that looks like measured rather than asserted."
+        },
+        "split": {
+          "strategy": "stratified_holdout",
+          "n_train": 4320,
+          "n_test": 1852,
+          "train_fraction": 0.6999,
+          "shuffled": true,
+          "rationale": "Observations are exchangeable, so shuffling is valid. Stratifying on the target preserves the class base rate in both partitions.",
+          "seed": 42,
+          "positives_train": 1966,
+          "positives_test": 843,
+          "base_rate_train": 0.455093,
+          "base_rate_test": 0.455184
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "Of four fairness criteria, 0 are satisfied and 4 are violated. That split is not a defect in the audit \u2014 Chouldechova's identity, verified on this data to within 0.00007, shows the criteria are mathematically incompatible once base rates differ.",
+      "decisions": [],
+      "evidence": {
+        "criteria": {
+          "demographic_parity": {
+            "definition": "P(predicted high risk) is equal across groups.",
+            "measured": {
+              "by_group": {
+                "African-American": 0.5761,
+                "Caucasian": 0.331,
+                "Hispanic": 0.277
+              },
+              "min": 0.277,
+              "min_group": "Hispanic",
+              "max": 0.5761,
+              "max_group": "African-American",
+              "absolute_difference": 0.2991,
+              "ratio": 2.08
+            },
+            "satisfied": false,
+            "disparate_impact_ratio": 0.4808,
+            "passes_four_fifths_rule": false,
+            "note": "Demographic parity ignores the outcome entirely. If two groups truly differ in base rate, enforcing it requires deliberately mis-scoring people \u2014 so failing this test is not on its own evidence of unfairness.",
+            "gap": 0.2991,
+            "rank_closest_to_parity": 4
+          },
+          "equal_opportunity": {
+            "definition": "False negative rate is equal across groups.",
+            "measured": {
+              "by_group": {
+                "African-American": 0.2848,
+                "Caucasian": 0.4964,
+                "Hispanic": 0.582
+              },
+              "min": 0.2848,
+              "min_group": "African-American",
+              "max": 0.582,
+              "max_group": "Hispanic",
+              "absolute_difference": 0.2972,
+              "ratio": 2.044
+            },
+            "satisfied": false,
+            "note": "Concerns people who did reoffend but were scored low risk. Unequal FNR means one group is more often released when they should not have been.",
+            "gap": 0.2972,
+            "rank_closest_to_parity": 3
+          },
+          "predictive_equality": {
+            "definition": "False positive rate is equal across groups.",
+            "measured": {
+              "by_group": {
+                "African-American": 0.4234,
+                "Caucasian": 0.2201,
+                "Hispanic": 0.1938
+              },
+              "min": 0.1938,
+              "min_group": "Hispanic",
+              "max": 0.4234,
+              "max_group": "African-American",
+              "absolute_difference": 0.2296,
+              "ratio": 2.185
+            },
+            "satisfied": false,
+            "note": "Concerns people who did NOT reoffend but were scored high risk \u2014 detained or sentenced more harshly for something they would not have done. This is the criterion ProPublica's analysis centred on.",
+            "gap": 0.2296,
+            "rank_closest_to_parity": 2
+          },
+          "calibration_ppv": {
+            "definition": "Among those labelled high risk, P(reoffends) is equal across groups.",
+            "measured": {
+              "by_group": {
+                "African-American": 0.6495,
+                "Caucasian": 0.5948,
+                "Hispanic": 0.5603
+              },
+              "min": 0.5603,
+              "min_group": "Hispanic",
+              "max": 0.6495,
+              "max_group": "African-American",
+              "absolute_difference": 0.0892,
+              "ratio": 1.159
+            },
+            "satisfied": false,
+            "note": "If satisfied, a 'high risk' label means the same thing whoever receives it. This is the criterion Northpointe's defence centred on.",
+            "gap": 0.0892,
+            "rank_closest_to_parity": 1
+          }
+        },
+        "criteria_summary": {
+          "tolerance_used": 0.05,
+          "n_satisfied": 0,
+          "closest_to_parity": {
+            "criterion": "calibration_ppv",
+            "gap": 0.0892
+          },
+          "furthest_from_parity": {
+            "criterion": "demographic_parity",
+            "gap": 0.2991
+          },
+          "ratio_furthest_to_closest": 3.35,
+          "why_ranking_matters": "At a 5-point tolerance every criterion is rejected, which is true but uninformative: it erases the distinction the whole dispute rested on. The gaps are not comparable in size. calibration_ppv is off by 0.0892 while demographic_parity is off by 0.2991 \u2014 a factor of 3.4. Northpointe's defence was that calibration nearly holds; ProPublica's case was that error rates emphatically do not. Both readings are visible here, and a pass/fail table alone would hide the one that favours the developer."
+        },
+        "impossibility": {
+          "chouldechova_identity": "FPR = (p/(1-p)) \u00b7 ((1-PPV)/PPV) \u00b7 (1-FNR)",
+          "identity_verified_on_real_data": [
+            {
+              "group": "African-American",
+              "base_rate": 0.5231,
+              "observed_fpr": 0.4234,
+              "fpr_implied_by_identity": 0.4233,
+              "discrepancy": 6e-05
+            },
+            {
+              "group": "Caucasian",
+              "base_rate": 0.3909,
+              "observed_fpr": 0.2201,
+              "fpr_implied_by_identity": 0.2202,
+              "discrepancy": 7e-05
+            },
+            {
+              "group": "Hispanic",
+              "base_rate": 0.3713,
+              "observed_fpr": 0.1938,
+              "fpr_implied_by_identity": 0.1937,
+              "discrepancy": 7e-05
+            }
+          ],
+          "max_identity_discrepancy": 7e-05,
+          "base_rates": {
+            "African-American": 0.5231,
+            "Caucasian": 0.3909,
+            "Hispanic": 0.3713
+          },
+          "base_rate_gap": 0.1518,
+          "explanation": "Observed base rates differ by 0.1518 between groups. The identity above is an algebraic fact, not a modelling assumption: it holds on this data to within 0.00007. With PPV held equal across groups and p differing, FPR and FNR are forced apart. No amount of retraining, reweighting or threshold tuning escapes this \u2014 it is arithmetic. Any tool applied to groups with different base rates must violate either calibration or error-rate equality."
+        },
+        "significance": {
+          "comparison": "African-American vs Caucasian",
+          "metric": "false positive rate",
+          "fpr_a": 0.4234,
+          "fpr_b": 0.2201,
+          "chi2": 128.67,
+          "p_value": 7.99571894994104e-30,
+          "significant": true,
+          "note": "Tests whether the FPR difference between the two largest groups could plausibly arise by chance. It does not test whether the difference is unjust \u2014 that is not a statistical question."
+        },
+        "calibration": {
+          "African-American": [
+            {
+              "decile": 1,
+              "n": 365,
+              "observed_recidivism_rate": 0.2329
+            },
+            {
+              "decile": 2,
+              "n": 346,
+              "observed_recidivism_rate": 0.3035
+            },
+            {
+              "decile": 3,
+              "n": 298,
+              "observed_recidivism_rate": 0.4195
+            },
+            {
+              "decile": 4,
+              "n": 337,
+              "observed_recidivism_rate": 0.4688
+            },
+            {
+              "decile": 5,
+              "n": 323,
+              "observed_recidivism_rate": 0.4892
+            },
+            {
+              "decile": 6,
+              "n": 318,
+              "observed_recidivism_rate": 0.5881
+            },
+            {
+              "decile": 7,
+              "n": 343,
+              "observed_recidivism_rate": 0.6093
+            },
+            {
+              "decile": 8,
+              "n": 301,
+              "observed_recidivism_rate": 0.7143
+            },
+            {
+              "decile": 9,
+              "n": 317,
+              "observed_recidivism_rate": 0.7224
+            },
+            {
+              "decile": 10,
+              "n": 227,
+              "observed_recidivism_rate": 0.837
+            }
+          ],
+          "Caucasian": [
+            {
+              "decile": 1,
+              "n": 605,
+              "observed_recidivism_rate": 0.2116
+            },
+            {
+              "decile": 2,
+              "n": 321,
+              "observed_recidivism_rate": 0.3115
+            },
+            {
+              "decile": 3,
+              "n": 238,
+              "observed_recidivism_rate": 0.3445
+            },
+            {
+              "decile": 4,
+              "n": 243,
+              "observed_recidivism_rate": 0.4033
+            },
+            {
+              "decile": 5,
+              "n": 200,
+              "observed_recidivism_rate": 0.455
+            },
+            {
+              "decile": 6,
+              "n": 160,
+              "observed_recidivism_rate": 0.5813
+            },
+            {
+              "decile": 7,
+              "n": 113,
+              "observed_recidivism_rate": 0.6018
+            },
+            {
+              "decile": 8,
+              "n": 96,
+              "observed_recidivism_rate": 0.75
+            },
+            {
+              "decile": 9,
+              "n": 77,
+              "observed_recidivism_rate": 0.7143
+            },
+            {
+              "decile": 10,
+              "n": 50,
+              "observed_recidivism_rate": 0.7
+            }
+          ],
+          "Hispanic": [
+            {
+              "decile": 1,
+              "n": 159,
+              "observed_recidivism_rate": 0.239
+            },
+            {
+              "decile": 2,
+              "n": 89,
+              "observed_recidivism_rate": 0.382
+            },
+            {
+              "decile": 3,
+              "n": 73,
+              "observed_recidivism_rate": 0.3151
+            },
+            {
+              "decile": 4,
+              "n": 47,
+              "observed_recidivism_rate": 0.3191
+            },
+            {
+              "decile": 5,
+              "n": 39,
+              "observed_recidivism_rate": 0.5128
+            },
+            {
+              "decile": 6,
+              "n": 27,
+              "observed_recidivism_rate": 0.6667
+            },
+            {
+              "decile": 7,
+              "n": 28,
+              "observed_recidivism_rate": 0.5
+            },
+            {
+              "decile": 8,
+              "n": 14,
+              "observed_recidivism_rate": 0.5
+            },
+            {
+              "decile": 9,
+              "n": 17,
+              "observed_recidivism_rate": 0.5294
+            },
+            {
+              "decile": 10,
+              "n": 16,
+              "observed_recidivism_rate": 0.6875
+            }
+          ]
+        },
+        "by_group": {
+          "African-American": {
+            "n": 3175,
+            "tp": 1188,
+            "fp": 641,
+            "fn": 473,
+            "tn": 873,
+            "base_rate": 0.5231,
+            "selection_rate": 0.5761,
+            "fpr": 0.4234,
+            "fnr": 0.2848,
+            "tpr": 0.7152,
+            "tnr": 0.5766,
+            "ppv": 0.6495,
+            "npv": 0.6486,
+            "accuracy": 0.6491
+          },
+          "Caucasian": {
+            "n": 2103,
+            "tp": 414,
+            "fp": 282,
+            "fn": 408,
+            "tn": 999,
+            "base_rate": 0.3909,
+            "selection_rate": 0.331,
+            "fpr": 0.2201,
+            "fnr": 0.4964,
+            "tpr": 0.5036,
+            "tnr": 0.7799,
+            "ppv": 0.5948,
+            "npv": 0.71,
+            "accuracy": 0.6719
+          },
+          "Hispanic": {
+            "n": 509,
+            "tp": 79,
+            "fp": 62,
+            "fn": 110,
+            "tn": 258,
+            "base_rate": 0.3713,
+            "selection_rate": 0.277,
+            "fpr": 0.1938,
+            "fnr": 0.582,
+            "tpr": 0.418,
+            "tnr": 0.8063,
+            "ppv": 0.5603,
+            "npv": 0.7011,
+            "accuracy": 0.6621
+          }
+        }
+      },
+      "risks": [
+        "This audit cannot say whether COMPAS is fair, because 'fair' is not a single measurable property. It can say precisely which criteria hold and which do not, and why no tool can satisfy all of them here.",
+        "Rearrest is the proxy for reoffending. If policing differs by group, the 'ground truth' is itself affected by the disparity under investigation, and every error rate inherits that.",
+        "Thresholding a decile score at 5 is ProPublica's choice, adopted for comparability. A different cut changes every rate reported here, though not the impossibility result, which holds at any threshold."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "The audit ships as a dashboard where a reader can select a fairness criterion and see which groups it favours, with the impossibility identity shown alongside so no criterion can be read as the answer.",
+      "decisions": [],
+      "evidence": {
+        "criteria": [
+          "demographic_parity",
+          "equal_opportunity",
+          "predictive_equality",
+          "calibration_ppv"
+        ]
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "10_fairness_audit",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.3,
+    "generated_at_unix": 1789378991
+  }
+}

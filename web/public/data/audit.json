@@ -94,6 +94,77 @@
         "All data requested through the registry by id: credit_card_fraud, daily_min_temps, titanic."
       ],
       "findings": []
+    },
+    {
+      "project": "09_similarity_search",
+      "checks_passed": [
+        "Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.",
+        "Declares a module-level seed (SEED).",
+        "No synthetic data generators. All inputs come from the declared dataset registry.",
+        "All data requested through the registry by id: consumer_complaints."
+      ],
+      "findings": []
+    },
+    {
+      "project": "10_fairness_audit",
+      "checks_passed": [
+        "Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.",
+        "Calls splits.assert_pipeline_safe(), which raises unless preprocessing is inside a scikit-learn Pipeline and therefore refitted per fold.",
+        "Uses stratified_split(), preserving the class base rate across partitions.",
+        "Declares a module-level seed (SEED).",
+        "No synthetic data generators. All inputs come from the declared dataset registry.",
+        "All data requested through the registry by id: compas."
+      ],
+      "findings": []
+    },
+    {
+      "project": "11_pipeline_dag",
+      "checks_passed": [
+        "Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.",
+        "Declares a module-level seed (SEED).",
+        "No synthetic data generators. All inputs come from the declared dataset registry."
+      ],
+      "findings": []
+    },
+    {
+      "project": "12_market_backtest",
+      "checks_passed": [
+        "Run is wrapped in dsx.artifacts.run(), so every RNG is seeded and the git commit, library versions and duration are stamped into the artifact.",
+        "Calls splits.assert_pipeline_safe(), which raises unless preprocessing is inside a scikit-learn Pipeline and therefore refitted per fold.",
+        "Declares a module-level seed (SEED).",
+        "No synthetic data generators. All inputs come from the declared dataset registry.",
+        "All data requested through the registry by id: aapl_daily."
+      ],
+      "findings": [
+        {
+          "severity": "warning",
+          "rule": "lookahead-window",
+          "message": ".rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.",
+          "file": "projects/12_market_backtest/pipeline/build.py",
+          "line": 134
+        },
+        {
+          "severity": "warning",
+          "rule": "lookahead-window",
+          "message": ".rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.",
+          "file": "projects/12_market_backtest/pipeline/build.py",
+          "line": 134
+        },
+        {
+          "severity": "warning",
+          "rule": "lookahead-window",
+          "message": ".rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.",
+          "file": "projects/12_market_backtest/pipeline/build.py",
+          "line": 694
+        },
+        {
+          "severity": "warning",
+          "rule": "lookahead-window",
+          "message": ".rolling() is applied without a preceding .shift(1). If the rolled column is or derives from the target, the window includes the value being predicted and the fit will look excellent while being useless.",
+          "file": "projects/12_market_backtest/pipeline/build.py",
+          "line": 695
+        }
+      ]
     }
   ],
   "total_critical": 0,

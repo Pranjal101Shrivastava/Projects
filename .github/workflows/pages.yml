@@ -69,6 +69,13 @@ jobs:
 
   deploy:
     needs: build
+    # The github-pages environment only accepts deployments from the default branch, so
+    # this job can never succeed on a feature branch: it is rejected before its first step
+    # runs, reporting a red check for a reason that has nothing to do with the diff. The
+    # build job above still runs on every branch — it validates artifacts, runs the leakage
+    # audit and type-checks the site — so branch pushes keep their verification without
+    # attempting a deployment that is structurally impossible.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

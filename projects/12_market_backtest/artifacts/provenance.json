@@ -1,0 +1,36 @@
+{
+  "datasets": [
+    {
+      "id": "aapl_daily",
+      "title": "Apple Inc. Daily OHLCV (Feb 2015 - Feb 2017)",
+      "kind": "REAL",
+      "origin": "Daily open/high/low/close/volume bars for AAPL with split- and dividend-adjusted closes, as distributed in Plotly's finance chart examples.",
+      "license": "Open for educational use.",
+      "url": "https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv",
+      "mirror_note": "Plotly's public dataset archive.",
+      "rows": "506 trading days",
+      "notes": "Two years of daily bars is a short sample for a trading study, and that limitation drives the conclusion rather than being hidden from it. Always use AAPL.Adjusted rather than AAPL.Close: the unadjusted series contains a price discontinuity at every dividend that a naive model reads as a real move.",
+      "cached_files": [
+        {
+          "file": "aapl_daily.csv",
+          "sha256": "24c7604edfd5afe862ddb9f9535e2fd7351f43711bfc442bca52055e15e37bcd"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "12_market_backtest",
+    "seed": 42,
+    "git_commit": "442ebf8",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.77,
+    "generated_at_unix": 1789379452
+  }
+}

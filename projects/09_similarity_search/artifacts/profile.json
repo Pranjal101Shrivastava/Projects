@@ -1,0 +1,167 @@
+{
+  "profile": {
+    "n_complaints": 28156,
+    "n_distinct_company_strings": 1534,
+    "n_products": 11,
+    "n_issues": 89,
+    "exact_pairs": 1175811,
+    "top_companies": [
+      {
+        "company": "Equifax",
+        "complaints": 2049
+      },
+      {
+        "company": "Experian",
+        "complaints": 1940
+      },
+      {
+        "company": "TransUnion",
+        "complaints": 1525
+      },
+      {
+        "company": "Bank of America",
+        "complaints": 1518
+      },
+      {
+        "company": "Wells Fargo",
+        "complaints": 1430
+      },
+      {
+        "company": "JPMorgan Chase",
+        "complaints": 1272
+      },
+      {
+        "company": "Citibank",
+        "complaints": 1016
+      },
+      {
+        "company": "Ocwen",
+        "complaints": 934
+      },
+      {
+        "company": "Nationstar Mortgage",
+        "complaints": 749
+      },
+      {
+        "company": "Capital One",
+        "complaints": 567
+      }
+    ],
+    "name_length": {
+      "bin_edges": [
+        4.0,
+        6.24,
+        8.48,
+        10.72,
+        12.96,
+        15.2,
+        17.44,
+        19.68,
+        21.92,
+        24.16,
+        26.4,
+        28.64,
+        30.88,
+        33.12,
+        35.36,
+        37.6,
+        39.84,
+        42.08,
+        44.32,
+        46.56,
+        48.8,
+        51.04,
+        53.28,
+        55.52,
+        57.76,
+        60.0
+      ],
+      "bin_centers": [
+        5.12,
+        7.36,
+        9.6,
+        11.84,
+        14.08,
+        16.32,
+        18.56,
+        20.8,
+        23.04,
+        25.28,
+        27.52,
+        29.76,
+        32.0,
+        34.24,
+        36.48,
+        38.72,
+        40.96,
+        43.2,
+        45.44,
+        47.68,
+        49.92,
+        52.16,
+        54.4,
+        56.64,
+        58.88
+      ],
+      "counts": [
+        11,
+        34,
+        33,
+        48,
+        86,
+        61,
+        95,
+        134,
+        176,
+        136,
+        155,
+        143,
+        184,
+        76,
+        47,
+        50,
+        30,
+        10,
+        10,
+        3,
+        5,
+        6,
+        0,
+        0,
+        1
+      ],
+      "n": 1534,
+      "mean": 25.35528,
+      "median": 26.0,
+      "std": 8.588574,
+      "p01": 7.0,
+      "p25": 20.0,
+      "p75": 31.0,
+      "p99": 46.0,
+      "min": 4.0,
+      "max": 60.0
+    }
+  },
+  "preparation": {
+    "shingle_size": 3,
+    "mean_shingles_per_name": 21.91,
+    "min_shingles": 2,
+    "max_shingles": 51,
+    "normalisation": "Lowercased, punctuation replaced by spaces, whitespace collapsed. Corporate suffixes (LLC, Inc, Corporation) are deliberately NOT stripped: removing them would make matching artificially easy and obscure the question of whether the approximation finds what exact search finds."
+  },
+  "_run": {
+    "project": "09_similarity_search",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 4.39,
+    "generated_at_unix": 1789378823
+  }
+}

@@ -54,6 +54,22 @@ SKILLS = {
         "teaching-from-real-data",
         "Build statistical teaching material where assumption violations are the content",
     ),
+    "09_similarity_search": (
+        "approximate-similarity-search",
+        "Deploy LSH for near-duplicate detection and measure what the approximation costs",
+    ),
+    "10_fairness_audit": (
+        "group-fairness-audit",
+        "Audit a deployed scoring system against fairness criteria that cannot all hold",
+    ),
+    "11_pipeline_dag": (
+        "dependency-graph-scheduling",
+        "Decide whether parallelising a pipeline can help before building the orchestration",
+    ),
+    "12_market_backtest": (
+        "honest-backtesting",
+        "Evaluate a trading or any forward-looking model so that a negative result survives",
+    ),
 }
 
 BODIES = {
@@ -635,6 +651,282 @@ curve. The artefact is itself a lesson about estimation.
 
 **Single-answer quizzes check recall, not judgement** — which is the actual skill the material
 argues for.
+""",
+    "09_similarity_search": """
+## When to use this
+
+You need to find near-duplicates — customer records, company names, documents, product
+listings — and the number of pairs has made exhaustive comparison unattractive.
+
+## Procedure
+
+### 1. Compute the exact answer while you still can
+
+This is the step almost every LSH write-up skips, and it is the one that makes the rest
+meaningful. Below roughly a million pairs, exhaustive comparison is seconds of work. Do it,
+save the result, and score every approximation against it.
+
+If your data is already too large for this, **subsample it until it is not**. A 5,000-item
+sample gives you a ground-truth recall curve that transfers to the full set far better than
+no curve at all.
+
+### 2. Normalise deliberately, and record what you chose not to do
+
+Lowercasing and punctuation stripping are safe. Removing corporate suffixes (`Inc`, `LLC`,
+`GmbH`) is *not* — it makes matching look better by deleting the exact tokens that
+distinguish two legally separate entities. Whatever you decide, record it beside the results:
+normalisation choices move recall more than parameter tuning does.
+
+### 3. Shingle, then estimate
+
+Character k-grams (k = 3 for short strings like names, larger for documents) turn strings
+into sets so Jaccard applies. MinHash with k permutations estimates Jaccard in O(k) per item
+instead of O(|set|) per pair.
+
+### 4. Choose bands and rows as a threshold decision, not a tuning exercise
+
+P(candidate) = 1 − (1 − sʳ)ᵇ, with the step near (1/b)^(1/r). Pick where you want the step —
+that is the whole design. Sweep several (b, r) pairs and report the curve, not one point.
+
+### 5. Include verification time in every speedup you report
+
+LSH proposes; exact comparison disposes. A speedup computed from banding time alone is
+measuring half the pipeline, and the half it omits grows with recall.
+
+### 6. Report accuracy stratified by true similarity
+
+The estimator's standard deviation is √(s(1−s)/k), maximal at s = 0.5 and near zero at the
+extremes. Since most random pairs are dissimilar, any aggregate error figure is dominated by
+the easy cases and looks far better than the estimator actually is on the pairs you care
+about.
+
+## Decision points requiring judgement
+
+**What recall do you actually need?** Full recall typically costs most of the speed
+advantage. Whether that matters depends on whether a missed pair is an inconvenience or a
+compliance failure — and no benchmark can answer that.
+
+**F1 is probably the wrong selector.** It weights a missed pair and a wasted comparison
+equally. Almost no application does.
+
+## Failure modes this project hit
+
+**Comparing observed spread against 1/√k.** That rule of thumb is *twice* the true maximum of
+0.5/√k. Combined with an unstratified aggregate, it made the estimator appear to beat its own
+theoretical variance — an impossible result, and the signal that the theory line was wrong
+rather than the measurement. If your estimator looks better than theory, you have the theory
+wrong.
+
+**Ground truth that is not ground truth.** "Jaccard above a threshold" is not "the same
+entity". Recall figures measure agreement with exact string search, not with reality, and
+saying so is part of reporting them.
+""",
+    "10_fairness_audit": """
+## When to use this
+
+A scoring system makes or informs decisions about people, and you need to establish whether
+it treats groups differently — in a way that will survive scrutiny from someone who disagrees
+with your conclusion.
+
+## Procedure
+
+### 1. Build one contingency table per group, and derive everything from it
+
+TP, FP, FN, TN per group. Every fairness metric in the literature is a ratio of these four
+numbers. Computing them first means you can evaluate any criterion later without re-running
+anything, and it makes contradictions between criteria visible rather than mysterious.
+
+### 2. Set a minimum group size and honour it
+
+Groups below a few hundred members produce error rates with intervals too wide to interpret.
+Report them as excluded, with their sizes, rather than silently dropping them or quoting
+point estimates. State plainly that the smallest groups are the least likely to be audited
+anywhere — that exclusion is a finding, not housekeeping.
+
+### 3. Evaluate several criteria, and rank them rather than pass/fail them
+
+Demographic parity, equal opportunity (FNR), predictive equality (FPR), predictive parity
+(PPV). At any strict tolerance, a real system fails all of them — and a column of four
+"VIOLATED" verdicts erases the entire substance of the argument. Rank by distance from parity
+and report the ratio between the closest and the furthest.
+
+### 4. Verify the impossibility on your own data
+
+    FPR = (p / (1 − p)) · ((1 − PPV) / PPV) · (1 − FNR)
+
+Compute the right-hand side from your observed counts and compare it to the observed FPR. The
+discrepancy should be floating-point rounding. Once you have shown that on your own numbers,
+"you cannot have equal error rates and equal predictive value when base rates differ" stops
+being a citation and becomes a measurement.
+
+### 5. Test the obvious fix so nobody has to ask
+
+Retrain without the protected attribute. Show the remaining gap. Fairness through unawareness
+is the first thing every stakeholder proposes, and demonstrating that correlated features
+carry the same information is faster than arguing about it.
+
+### 6. Report accuracy only to disarm it
+
+Accuracy is usually near-identical across groups, which is exactly why a vendor can quote it
+truthfully while a critic is also right. Show it, then show why a single number that averages
+a false positive and a false negative hides who each error lands on.
+
+## Decision points requiring judgement
+
+**Which criterion matters is a policy question, not a statistical one.** Your job is to make
+the trade-off legible and to say which one your context privileges — not to pick one and call
+it fairness.
+
+**The threshold is yours, and it moves everything.** A decile score becomes "high risk" only
+once someone draws a line. Every error-rate figure depends on where.
+
+## Failure modes this project hit
+
+**Treating the recorded label as the ground truth it is named after.** Re-arrest is not
+reoffending. Base rates measured through a policing process may themselves be biased — and
+base rates are what drive the impossibility result. No analysis of this data can separate the
+two, and the limitation belongs in the same breath as the finding.
+""",
+    "11_pipeline_dag": """
+## When to use this
+
+Someone has proposed parallelising a pipeline, adding CI runners, or adopting an
+orchestrator, and you would like to know in advance whether it will help.
+
+## Procedure
+
+### 1. Write the graph down before optimising anything
+
+Tasks and their real data dependencies. Not the order you happen to run them in — the order
+they *must* run in. The difference between those two is the parallelism you are looking for.
+
+### 2. Sort with Kahn's algorithm, not depth-first
+
+DFS gives you one valid linear order and discards the width information. Kahn's algorithm
+peels off layers of zero in-degree, and each layer's width is exactly how many tasks can run
+at once. That is the number a scheduler consumes.
+
+### 3. Compute the critical path first — it bounds everything
+
+Longest-path relaxation over the topological order. Speedup can never exceed
+sequential ÷ critical path, at any worker count, with any scheduler. Compute this number
+before writing any scheduling code: it frequently ends the discussion.
+
+### 4. Measure task durations, and look at their distribution
+
+If one task dominates the critical path, no orchestration will help and the only useful moves
+are making that task faster or caching it. This is common and rarely checked.
+
+### 5. Normalise your idle metric
+
+Raw idle worker-seconds grow with fleet size and read as a worsening problem when nothing has
+changed. Report idle ÷ available capacity so the numbers are comparable across worker counts.
+
+### 6. Make cycle detection report the cycle
+
+Tri-colour DFS: an edge into a grey (in-progress) node closes a cycle, and the stack between
+them is the cycle. `CycleError: cycle detected` on a hundred-node graph is barely better than
+silence.
+
+### 7. Chain cache fingerprints through dependencies
+
+fingerprint(t) = H(content(t) ‖ fingerprints of dependencies). Invalidation becomes transitive
+by construction — no separate graph walk, no bookkeeping to get wrong. Verify it by
+perturbing a root node and confirming everything downstream invalidates.
+
+## Decision points requiring judgement
+
+**Level-synchronous scheduling is pessimistic.** A work-stealing executor starts a task the
+moment its own dependencies finish rather than waiting for its whole level. Your measured
+speedups are a lower bound — but the critical-path ceiling binds both.
+
+**Durations are machine-specific.** Move to different hardware and the critical path may run
+through entirely different tasks. The method transfers; the seconds do not.
+
+## Failure modes this project hit
+
+**Reporting a speedup without its ceiling.** 1.50× sounds like a poor result until you know
+the maximum is 1.51×, at which point it is near-optimal. A scheduling number without the
+ceiling beside it cannot be interpreted in either direction.
+
+**Fingerprints that cover code but not the world.** A task reading a clock, an environment
+variable or a network resource can produce different output under an unchanged fingerprint,
+and the cache will serve the stale entry. Know that this is the failure mode you have
+accepted.
+""",
+    "12_market_backtest": """
+## When to use this
+
+You are evaluating a model whose predictions would drive sequential decisions over time —
+trading is the canonical case, but this applies to any forward-looking model where being
+wrong is expensive and the temptation to flatter yourself is strong.
+
+## Procedure
+
+### 1. Check stationarity before choosing a target
+
+Run an ADF test on both the level and the difference. If the level has a unit root, modelling
+it directly produces enormous R² values that measure nothing but the target's own persistence.
+This is the single most common way results in this domain are overstated.
+
+The diagnostic: restate your model as a forecast of the *change*. If R² collapses from 0.97 to
+0.00, you were never predicting anything.
+
+### 2. Measure signal before you measure money
+
+Compute the information coefficient — rank correlation between prediction and realised
+outcome — with a p-value, before building any decision rule. An equity curve derived from
+predictions with no measurable signal is arithmetic on noise, and it will occasionally look
+excellent by chance.
+
+### 3. Purge overlapping labels out of the CV boundary
+
+A k-day forward return computed daily means consecutive rows share k−1 days of outcome.
+Adjacent rows are nearly the same observation. Chronological ordering alone does not fix this:
+remove a band of rows around each train/test boundary.
+
+### 4. Prove the absence of look-ahead, do not assert it
+
+Static rules cannot see through a `.pipe()` boundary or a helper function. Perturb the future
+instead: multiply all inputs from row N onward by some factor, rebuild the entire feature
+matrix, and assert that no feature value at any row before N changed. Maximum drift should be
+exactly zero.
+
+Bake this into the pipeline so it runs on every execution, not once during development.
+
+### 5. Charge costs, and report gross beside net
+
+State the cost assumption explicitly and compute the break-even: a strategy trading n times a
+year at c bps needs n·c of gross alpha before it earns anything. At daily frequency costs are
+usually the whole result.
+
+### 6. Benchmark against doing nothing
+
+Not against zero. Buy-and-hold, or the constant prediction, or the current process. A strategy
+that returns 8% in a year the benchmark returned 20% lost.
+
+### 7. Publish the result you got
+
+This is the hard step, and it is the one that makes every step above worth doing.
+
+## Decision points requiring judgement
+
+**How many models did you try?** Every additional model family and feature set is another
+hypothesis. If something comes out significant, the p-value needs correcting for all of them —
+including the ones you abandoned.
+
+**Instrument selection is a hindsight decision.** Anything with a long liquid history survived
+to be chosen. That biases the benchmark upward and makes it harder to beat, which is worth
+stating explicitly rather than hoping nobody notices.
+
+## Failure modes this project hit
+
+**A stunning R² that was the target's non-stationarity.** Yesterday's price predicts today's
+price with R² ≈ 0.98. The identical model as a return forecast scores ≈ 0.00.
+
+**Fold-to-fold variance wide enough to support any conclusion.** Directional accuracy swung
+across a 30-point range between folds of the same model. Any single fold could have been
+quoted as a triumph. Fixing the protocol in advance is what makes the average meaningful.
 """,
 }
 

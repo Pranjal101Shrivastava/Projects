@@ -28,7 +28,7 @@ them on trust. Each section names the file that implements the thing being descr
 
 ## The shared toolkit
 
-`lib/dsx/` is imported by all eight pipelines. One implementation, audited once.
+`lib/dsx/` is imported by all twelve pipelines. One implementation, audited once.
 
 | Module | What it guarantees |
 |---|---|
@@ -120,7 +120,7 @@ python3 -m pytest tools/tests/ -q
 
 # 2. Is the repository clean right now?
 python3 tools/audit.py
-#    39 checks passed, 0 critical, 1 acknowledged (with its reason printed).
+#    57 checks passed, 0 critical, 5 acknowledged (each with its written reason printed).
 
 # 3. Do the numbers reproduce?
 python3 projects/03_market_basket/pipeline/build.py
@@ -173,6 +173,46 @@ Variance accounts for 3.6% of test error even at degree 15; bias dominates throu
 Training error is also non-monotone under bootstrap averaging. Both departures from the
 textbook figure are detected in code, not asserted from the textbook.
 
+### Full recall costing almost all of the speedup · [Project 09](./projects/09_similarity_search/)
+
+LSH at 26 bands × 4 rows runs 45.2× faster than exhaustive search and misses 166 of 1,659 true
+pairs. Reaching every pair requires 64 × 2, which examines 144,280 candidates and leaves 3.0×.
+Reporting the 45.2× alone would have been the same result with the cost deleted — which is why
+the exact O(n²) answer was computed as ground truth.
+
+The estimator-accuracy claim was also wrong twice before it was right: the observed spread was
+compared against 1/√k, which is *twice* MinHash's true maximum standard deviation, using an
+aggregate dominated by trivially dissimilar pairs. The estimator appeared to beat its own
+variance. An impossible result is a bug in the claim, not a triumph.
+
+### Removing race that did not remove the gap · [Project 10](./projects/10_fairness_audit/)
+
+A replacement model trained without the protected attribute still produced a false-positive-rate
+gap of 0.1425 against COMPAS's 0.2296 — 62% of it survived. Correlated features carry the
+information the deleted column carried.
+
+The first version of the criteria table reported four rows of "VIOLATED", which was true and
+useless: it erased the distance between the criterion nearest parity and the one furthest from
+it, a factor of 3.35 — and that distance is the entire ProPublica/Northpointe argument.
+
+### A scheduler that cannot beat 1.51× · [Project 11](./projects/11_pipeline_dag/)
+
+The critical path is 2,644.6s of a 3,981.0s sequential run, so no worker count can exceed
+1.51×. Four workers reach it; sixteen reach exactly the same makespan with 91% of the fleet
+idle. A measured 1.51× reads as a poor result until the ceiling is printed beside it, at which
+point it is the maximum achievable — a scheduling figure cannot be interpreted in either
+direction without it. One task, the CPU-trained transformer, is 97.7% of the path.
+
+### A trading study with no signal · [Project 12](./projects/12_market_backtest/)
+
+Information coefficients of −0.0624 (p = 0.231) and −0.0938 (p = 0.072): neither
+distinguishable from zero. Directional accuracy within a few points of a coin flip. Neither
+strategy beat buy-and-hold, and both were losing before transaction costs were charged.
+
+The project exists for the number it did *not* report: repeating yesterday's price "predicts"
+tomorrow's price at R² = 0.9753, while the identical model restated as a return forecast scores
+R² = −0.0001. Same model, same data, no information.
+
 ---
 
 ## Screens
@@ -194,3 +234,8 @@ asserts the page rendered real artifact data with no console errors before savin
 | 06 · AutoML & the leak | [`06_automl.png`](./docs/screenshots/06_automl.png) |
 | 07 · Nano transformer | [`07_transformer.png`](./docs/screenshots/07_transformer.png) |
 | 08 · CRISP-DM Academy | [`08_academy.png`](./docs/screenshots/08_academy.png) |
+| 09 · Similarity search | [`09_similarity_search.png`](./docs/screenshots/09_similarity_search.png) |
+| 10 · Fairness audit | [`10_fairness.png`](./docs/screenshots/10_fairness.png) |
+| 10 · CRISP-DM tab | [`10_fairness_method.png`](./docs/screenshots/10_fairness_method.png) |
+| 11 · Pipeline DAG engine | [`11_dag_engine.png`](./docs/screenshots/11_dag_engine.png) |
+| 12 · Market backtest | [`12_backtest.png`](./docs/screenshots/12_backtest.png) |

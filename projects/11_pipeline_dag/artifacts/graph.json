@@ -1,0 +1,459 @@
+{
+  "n_tasks": 18,
+  "n_edges": 48,
+  "n_levels": 5,
+  "levels": [
+    {
+      "level": 0,
+      "tasks": [
+        "dsx_toolkit"
+      ],
+      "width": 1
+    },
+    {
+      "level": 1,
+      "tasks": [
+        "01_nyc_mobility",
+        "02_customer_segmentation",
+        "03_market_basket",
+        "04_fraud_detection",
+        "05_timeseries_forecasting",
+        "06_automl_tournament",
+        "07_nano_transformer",
+        "08_crispdm_academy",
+        "09_similarity_search",
+        "10_fairness_audit",
+        "12_market_backtest"
+      ],
+      "width": 11
+    },
+    {
+      "level": 2,
+      "tasks": [
+        "audit",
+        "docs",
+        "sync_artifacts"
+      ],
+      "width": 3
+    },
+    {
+      "level": 3,
+      "tasks": [
+        "readme",
+        "web_build"
+      ],
+      "width": 2
+    },
+    {
+      "level": 4,
+      "tasks": [
+        "screenshots"
+      ],
+      "width": 1
+    }
+  ],
+  "max_width": 11,
+  "nodes": [
+    {
+      "name": "07_nano_transformer",
+      "kind": "pipeline",
+      "seconds": 2583.47,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "06_automl_tournament",
+      "kind": "pipeline",
+      "seconds": 729.89,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "02_customer_segmentation",
+      "kind": "pipeline",
+      "seconds": 347.5,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "03_market_basket",
+      "kind": "pipeline",
+      "seconds": 130.63,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "screenshots",
+      "kind": "tool",
+      "seconds": 48.0,
+      "depends_on": [
+        "web_build"
+      ],
+      "n_dependents": 0
+    },
+    {
+      "name": "01_nyc_mobility",
+      "kind": "pipeline",
+      "seconds": 43.12,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "04_fraud_detection",
+      "kind": "pipeline",
+      "seconds": 33.54,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "05_timeseries_forecasting",
+      "kind": "pipeline",
+      "seconds": 32.98,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "web_build",
+      "kind": "tool",
+      "seconds": 12.0,
+      "depends_on": [
+        "sync_artifacts"
+      ],
+      "n_dependents": 1
+    },
+    {
+      "name": "08_crispdm_academy",
+      "kind": "pipeline",
+      "seconds": 10.29,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "09_similarity_search",
+      "kind": "pipeline",
+      "seconds": 4.4,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "audit",
+      "kind": "tool",
+      "seconds": 1.2,
+      "depends_on": [
+        "01_nyc_mobility",
+        "02_customer_segmentation",
+        "03_market_basket",
+        "04_fraud_detection",
+        "05_timeseries_forecasting",
+        "06_automl_tournament",
+        "07_nano_transformer",
+        "08_crispdm_academy",
+        "09_similarity_search",
+        "10_fairness_audit",
+        "12_market_backtest"
+      ],
+      "n_dependents": 1
+    },
+    {
+      "name": "docs",
+      "kind": "tool",
+      "seconds": 1.0,
+      "depends_on": [
+        "01_nyc_mobility",
+        "02_customer_segmentation",
+        "03_market_basket",
+        "04_fraud_detection",
+        "05_timeseries_forecasting",
+        "06_automl_tournament",
+        "07_nano_transformer",
+        "08_crispdm_academy",
+        "09_similarity_search",
+        "10_fairness_audit",
+        "12_market_backtest"
+      ],
+      "n_dependents": 1
+    },
+    {
+      "name": "readme",
+      "kind": "tool",
+      "seconds": 0.8,
+      "depends_on": [
+        "audit",
+        "docs"
+      ],
+      "n_dependents": 0
+    },
+    {
+      "name": "12_market_backtest",
+      "kind": "pipeline",
+      "seconds": 0.77,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    },
+    {
+      "name": "sync_artifacts",
+      "kind": "tool",
+      "seconds": 0.6,
+      "depends_on": [
+        "01_nyc_mobility",
+        "02_customer_segmentation",
+        "03_market_basket",
+        "04_fraud_detection",
+        "05_timeseries_forecasting",
+        "06_automl_tournament",
+        "07_nano_transformer",
+        "08_crispdm_academy",
+        "09_similarity_search",
+        "10_fairness_audit",
+        "12_market_backtest"
+      ],
+      "n_dependents": 1
+    },
+    {
+      "name": "dsx_toolkit",
+      "kind": "library",
+      "seconds": 0.5,
+      "depends_on": [],
+      "n_dependents": 11
+    },
+    {
+      "name": "10_fairness_audit",
+      "kind": "pipeline",
+      "seconds": 0.3,
+      "depends_on": [
+        "dsx_toolkit"
+      ],
+      "n_dependents": 3
+    }
+  ],
+  "edges": [
+    {
+      "from": "dsx_toolkit",
+      "to": "01_nyc_mobility"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "02_customer_segmentation"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "03_market_basket"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "04_fraud_detection"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "05_timeseries_forecasting"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "06_automl_tournament"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "07_nano_transformer"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "08_crispdm_academy"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "09_similarity_search"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "10_fairness_audit"
+    },
+    {
+      "from": "dsx_toolkit",
+      "to": "12_market_backtest"
+    },
+    {
+      "from": "01_nyc_mobility",
+      "to": "audit"
+    },
+    {
+      "from": "02_customer_segmentation",
+      "to": "audit"
+    },
+    {
+      "from": "03_market_basket",
+      "to": "audit"
+    },
+    {
+      "from": "04_fraud_detection",
+      "to": "audit"
+    },
+    {
+      "from": "05_timeseries_forecasting",
+      "to": "audit"
+    },
+    {
+      "from": "06_automl_tournament",
+      "to": "audit"
+    },
+    {
+      "from": "07_nano_transformer",
+      "to": "audit"
+    },
+    {
+      "from": "08_crispdm_academy",
+      "to": "audit"
+    },
+    {
+      "from": "09_similarity_search",
+      "to": "audit"
+    },
+    {
+      "from": "10_fairness_audit",
+      "to": "audit"
+    },
+    {
+      "from": "12_market_backtest",
+      "to": "audit"
+    },
+    {
+      "from": "01_nyc_mobility",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "02_customer_segmentation",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "03_market_basket",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "04_fraud_detection",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "05_timeseries_forecasting",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "06_automl_tournament",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "07_nano_transformer",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "08_crispdm_academy",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "09_similarity_search",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "10_fairness_audit",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "12_market_backtest",
+      "to": "sync_artifacts"
+    },
+    {
+      "from": "01_nyc_mobility",
+      "to": "docs"
+    },
+    {
+      "from": "02_customer_segmentation",
+      "to": "docs"
+    },
+    {
+      "from": "03_market_basket",
+      "to": "docs"
+    },
+    {
+      "from": "04_fraud_detection",
+      "to": "docs"
+    },
+    {
+      "from": "05_timeseries_forecasting",
+      "to": "docs"
+    },
+    {
+      "from": "06_automl_tournament",
+      "to": "docs"
+    },
+    {
+      "from": "07_nano_transformer",
+      "to": "docs"
+    },
+    {
+      "from": "08_crispdm_academy",
+      "to": "docs"
+    },
+    {
+      "from": "09_similarity_search",
+      "to": "docs"
+    },
+    {
+      "from": "10_fairness_audit",
+      "to": "docs"
+    },
+    {
+      "from": "12_market_backtest",
+      "to": "docs"
+    },
+    {
+      "from": "sync_artifacts",
+      "to": "web_build"
+    },
+    {
+      "from": "web_build",
+      "to": "screenshots"
+    },
+    {
+      "from": "audit",
+      "to": "readme"
+    },
+    {
+      "from": "docs",
+      "to": "readme"
+    }
+  ],
+  "total_sequential_seconds": 3980.99,
+  "_run": {
+    "project": "11_pipeline_dag",
+    "seed": 42,
+    "git_commit": "dff3e52",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.07,
+    "generated_at_unix": 1789402451
+  }
+}

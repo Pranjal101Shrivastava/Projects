@@ -1,0 +1,19 @@
+{
+  "datasets": [],
+  "note": "This project consumes no external dataset. Its input is this repository's own dependency graph and the runtimes recorded in each pipeline's committed artifacts.",
+  "_run": {
+    "project": "11_pipeline_dag",
+    "seed": 42,
+    "git_commit": "dff3e52",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.08,
+    "generated_at_unix": 1789402451
+  }
+}

@@ -19,7 +19,7 @@ export default function Home() {
         </div>
         <h1>Applied Data Science Portfolio</h1>
         <p className="lead">
-          Eight end-to-end systems built on real, publicly documented datasets — 4.5M NYC
+          {PROJECTS.length} end-to-end systems built on real, publicly documented datasets — 4.5M NYC
           dispatch records, 284,807 card transactions, 41,188 marketing calls. Each one
           ships its data provenance, its leakage controls, its baselines, and the results
           that did not work.
