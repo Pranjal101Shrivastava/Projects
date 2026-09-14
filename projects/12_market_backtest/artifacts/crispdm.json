@@ -254,7 +254,17 @@
           "The target is the only quantity computed forward in time.",
           "Cross-validation purges 5 rows between train and test to remove the label-overlap band.",
           "Adjusted prices throughout, so dividends do not appear as returns."
-        ]
+        ],
+        "lookahead_test": {
+          "test": "future-bar perturbation",
+          "cut_row": 253,
+          "perturbation": "+50% to all price and volume columns from cut onward",
+          "n_features_checked": 14,
+          "n_rows_checked": 254,
+          "max_drift": 0.0,
+          "passed": true,
+          "note": "Two features trip the static lookahead rule because the shift is applied outside the flagged expression \u2014 across a .pipe() boundary in one case and at the end of a helper in the other. This test verifies the composed result rather than the syntax, and is the evidence behind those acknowledgements."
+        }
       },
       "risks": []
     },
@@ -508,7 +518,7 @@
   "_run": {
     "project": "12_market_backtest",
     "seed": 42,
-    "git_commit": "d69fb42",
+    "git_commit": "442ebf8",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
@@ -517,7 +527,7 @@
       "lightgbm": "4.7.0",
       "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 1.33,
-    "generated_at_unix": 1789379297
+    "duration_seconds": 0.77,
+    "generated_at_unix": 1789379452
   }
 }

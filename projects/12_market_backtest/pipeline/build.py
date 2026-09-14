@@ -101,6 +101,91 @@ def performance(returns: np.ndarray, periods: int = TRADING_DAYS) -> dict:
     }
 
 
+def _build_features(frame: pd.DataFrame) -> pd.DataFrame:
+    """Construct every model feature plus the target from raw OHLCV bars.
+
+    Extracted as a pure function of the input frame so assert_no_lookahead() can re-run
+    the real feature code on perturbed data. A leakage test that cannot call the actual
+    feature construction is testing something other than the pipeline.
+
+    Every feature is shifted by at least one period before any window is applied. The
+    target is the only quantity computed forward in time.
+    """
+    price = frame["AAPL.Adjusted"].to_numpy(dtype=float)
+    out = frame.copy()
+    out["log_return"] = np.concatenate([[np.nan], np.diff(np.log(price))])
+    r = out["log_return"]
+
+    for lag in (1, 2, 3, 5, 10):
+        out[f"ret_lag_{lag}"] = r.shift(lag)
+    for window in (5, 10, 21):
+        out[f"mom_{window}"] = r.shift(1).rolling(window).sum()
+        out[f"vol_{window}"] = r.shift(1).rolling(window).std()
+
+    out["rsi_14"] = _rsi(price, 14)
+
+    # audit: ok(lookahead-window) The .shift(1) is applied to the series BEFORE .pipe(),
+    # so the rolling windows inside the lambda operate on already-shifted data. The
+    # scanner cannot trace a shift across the pipe boundary, so the rule fires correctly
+    # on what it can see. assert_no_lookahead() verifies the composed result empirically.
+    out["volume_z"] = (
+        np.log(frame["AAPL.Volume"].replace(0, np.nan))
+        .shift(1)
+        .pipe(lambda s: (s - s.rolling(21).mean()) / s.rolling(21).std())
+    )
+    out["hl_range"] = (
+        ((frame["AAPL.High"] - frame["AAPL.Low"]) / frame["AAPL.Close"]).shift(1)
+    )
+
+    # The forward return is the ONLY quantity here computed forward in time.
+    log_price = pd.Series(np.log(price))
+    out["target"] = (log_price.shift(-HORIZON) - log_price).to_numpy()
+    return out
+
+
+def assert_no_lookahead(build_features, frame: pd.DataFrame, feature_cols: list[str],
+                        cut: int) -> dict:
+    """Prove empirically that no feature at row <= cut uses data from row > cut.
+
+    Static analysis cannot follow a shift across a ``.pipe()`` boundary or out to the end
+    of a helper function, so two of this pipeline's features trip the lookahead rule while
+    being correct. Rather than assert they are fine, this perturbs every price and volume
+    column from ``cut`` onward and checks that not one earlier feature value moves.
+
+    A feature that peeked at the future would change. None do — and if that ever stops
+    being true, this raises instead of quietly producing an inflated backtest.
+    """
+    baseline = build_features(frame)[feature_cols].iloc[: cut + 1]
+
+    tampered = frame.copy()
+    for column in ("AAPL.Adjusted", "AAPL.Close", "AAPL.High", "AAPL.Low", "AAPL.Volume"):
+        tampered.loc[cut:, column] = tampered.loc[cut:, column] * 1.5
+    perturbed = build_features(tampered)[feature_cols].iloc[: cut + 1]
+
+    drift = (baseline.fillna(-999) - perturbed.fillna(-999)).abs().max()
+    offenders = {c: float(v) for c, v in drift.items() if v > 1e-12}
+    if offenders:
+        raise AssertionError(
+            f"Lookahead detected: perturbing bars from row {cut} changed earlier values "
+            f"of {sorted(offenders)}. A feature is using future information."
+        )
+    return {
+        "test": "future-bar perturbation",
+        "cut_row": cut,
+        "perturbation": "+50% to all price and volume columns from cut onward",
+        "n_features_checked": len(feature_cols),
+        "n_rows_checked": cut + 1,
+        "max_drift": 0.0,
+        "passed": True,
+        "note": (
+            "Two features trip the static lookahead rule because the shift is applied "
+            "outside the flagged expression — across a .pipe() boundary in one case and at "
+            "the end of a helper in the other. This test verifies the composed result "
+            "rather than the syntax, and is the evidence behind those acknowledgements."
+        ),
+    }
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     import lightgbm as lgb
@@ -258,29 +343,7 @@ def main() -> None:
 
         # --- Feature engineering ---------------------------------------------------------
         print("\n[3/6] Building strictly backward-looking features …")
-        frame = df.copy()
-        r = frame["log_return"]
-
-        for lag in (1, 2, 3, 5, 10):
-            frame[f"ret_lag_{lag}"] = r.shift(lag)
-        for window in (5, 10, 21):
-            frame[f"mom_{window}"] = r.shift(1).rolling(window).sum()
-            frame[f"vol_{window}"] = r.shift(1).rolling(window).std()
-        frame["rsi_14"] = _rsi(price, 14)
-        frame["volume_z"] = (
-            np.log(df["AAPL.Volume"].replace(0, np.nan))
-            .shift(1)
-            .pipe(lambda s: (s - s.rolling(21).mean()) / s.rolling(21).std())
-        )
-        frame["hl_range"] = (
-            ((df["AAPL.High"] - df["AAPL.Low"]) / df["AAPL.Close"]).shift(1)
-        )
-
-        # Target: forward HORIZON-day log return. Computed with shift(-HORIZON), which is
-        # the only place the future legitimately appears — in the label.
-        # The forward return is the ONLY quantity in this frame computed forward in time.
-        log_price = pd.Series(np.log(price))
-        frame["target"] = (log_price.shift(-HORIZON) - log_price).to_numpy()
+        frame = _build_features(df)
 
         feature_cols = [
             c for c in frame.columns
@@ -309,6 +372,14 @@ def main() -> None:
             ],
         }
         print(f"      {len(feature_cols)} features, {len(model_frame)} usable rows")
+
+        # Verify empirically that nothing looks ahead, and fail the run if it does.
+        lookahead_test = assert_no_lookahead(
+            _build_features, df, feature_cols, cut=len(df) // 2
+        )
+        prep["lookahead_test"] = lookahead_test
+        print(f"      ✓ lookahead test passed: perturbing bars from row "
+              f"{lookahead_test['cut_row']} moved no earlier feature value")
 
         # --- Modelling with purged walk-forward CV ---------------------------------------
         print(f"\n[4/6] Purged walk-forward CV ({N_SPLITS} folds, {EMBARGO}-day purge) …")
@@ -615,6 +686,11 @@ def main() -> None:
 def _rsi(price: np.ndarray, window: int) -> pd.Series:
     """Relative strength index, shifted so it never uses the current bar."""
     delta = pd.Series(price).diff()
+    # audit: ok(lookahead-window) These rolling means are computed on unshifted data and
+    # the whole result is shifted once at the end of the function, which is equivalent and
+    # avoids shifting twice. The scanner sees the rolling call without a preceding shift
+    # and fires correctly on what it can see; assert_no_lookahead() proves the composed
+    # result uses no future information.
     gain = delta.clip(lower=0).rolling(window).mean()
     loss = (-delta.clip(upper=0)).rolling(window).mean()
     rs = gain / loss.replace(0, np.nan)

@@ -1337,7 +1337,7 @@
   "_run": {
     "project": "12_market_backtest",
     "seed": 42,
-    "git_commit": "d69fb42",
+    "git_commit": "442ebf8",
     "libraries": {
       "python": "3.11.15",
       "numpy": "2.4.6",
@@ -1346,7 +1346,7 @@
       "lightgbm": "4.7.0",
       "torch": "2.14.0+cu130"
     },
-    "duration_seconds": 1.32,
-    "generated_at_unix": 1789379297
+    "duration_seconds": 0.76,
+    "generated_at_unix": 1789379452
   }
 }
