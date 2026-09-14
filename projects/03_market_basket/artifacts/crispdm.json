@@ -1,0 +1,493 @@
+{
+  "project": "03_market_basket",
+  "business_question": "Which grocery items are bought together more often than chance explains, and which of those affinities are strong enough \u2014 and statistically solid enough \u2014 to justify changing shelf layout or a promotion?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "Cross-sell placement and bundle promotions both hinge on knowing which products genuinely pull each other into the basket. The commercial risk is acting on a spurious pattern: rearranging an aisle around a rule that was noise costs real money and is hard to detect after the fact.",
+      "decisions": [
+        {
+          "question": "What makes a rule actionable rather than merely high-scoring?",
+          "choice": "It must clear a lift threshold AND survive FDR correction AND carry enough absolute volume (leverage) to matter.",
+          "rationale": "Lift alone rewards rare coincidences: two items appearing together in 3 of 9,835 baskets can show lift above 20. Requiring statistical significance rules out noise, and requiring leverage rules out patterns too small to be worth a merchandising change.",
+          "alternatives_rejected": [
+            "Rank by confidence \u2014 dominated by whatever is popular overall; 'anything \u2192 whole milk' scores well and means nothing.",
+            "Rank by lift alone \u2014 surfaces rare coincidences with no volume."
+          ]
+        }
+      ],
+      "evidence": {
+        "min_support": 0.001,
+        "min_confidence": 0.05,
+        "fdr_alpha": 0.05
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "9,835 real point-of-sale baskets over 169 item categories. Mean basket 4.409 items; the transaction matrix is 97.39% sparse, which is why a low support floor is necessary to see anything beyond staples.",
+      "decisions": [
+        {
+          "question": "Why set minimum support as low as 0.1%?",
+          "choice": "0.1% \u2248 9 baskets.",
+          "rationale": "At 97% sparsity a conventional 1% floor admits only the handful of staples everyone buys, and every rule found is a variation on 'people buy milk'. Lowering the floor surfaces niche affinities \u2014 which is where merchandising value is \u2014 at the cost of many more candidate rules. The FDR correction is what makes that trade safe.",
+          "alternatives_rejected": [
+            "1% support \u2014 yields only staple combinations, no actionable niche findings."
+          ]
+        }
+      ],
+      "evidence": {
+        "n_transactions": 9835,
+        "n_distinct_items": 169,
+        "total_items_sold": 43367,
+        "basket_size": {
+          "mean": 4.409,
+          "median": 3,
+          "max": 32,
+          "singleton_share": 0.2195
+        },
+        "basket_size_distribution": [
+          {
+            "size": 1,
+            "count": 2159
+          },
+          {
+            "size": 2,
+            "count": 1643
+          },
+          {
+            "size": 3,
+            "count": 1299
+          },
+          {
+            "size": 4,
+            "count": 1005
+          },
+          {
+            "size": 5,
+            "count": 855
+          },
+          {
+            "size": 6,
+            "count": 645
+          },
+          {
+            "size": 7,
+            "count": 545
+          },
+          {
+            "size": 8,
+            "count": 438
+          },
+          {
+            "size": 9,
+            "count": 350
+          },
+          {
+            "size": 10,
+            "count": 246
+          },
+          {
+            "size": 11,
+            "count": 182
+          },
+          {
+            "size": 12,
+            "count": 117
+          },
+          {
+            "size": 13,
+            "count": 78
+          },
+          {
+            "size": 14,
+            "count": 77
+          },
+          {
+            "size": 15,
+            "count": 55
+          },
+          {
+            "size": 16,
+            "count": 46
+          },
+          {
+            "size": 17,
+            "count": 29
+          },
+          {
+            "size": 18,
+            "count": 14
+          },
+          {
+            "size": 19,
+            "count": 14
+          },
+          {
+            "size": 20,
+            "count": 9
+          },
+          {
+            "size": 21,
+            "count": 11
+          },
+          {
+            "size": 22,
+            "count": 4
+          },
+          {
+            "size": 23,
+            "count": 6
+          },
+          {
+            "size": 24,
+            "count": 1
+          },
+          {
+            "size": 25,
+            "count": 0
+          },
+          {
+            "size": 26,
+            "count": 1
+          },
+          {
+            "size": 27,
+            "count": 1
+          },
+          {
+            "size": 28,
+            "count": 1
+          },
+          {
+            "size": 29,
+            "count": 3
+          },
+          {
+            "size": 30,
+            "count": 0
+          },
+          {
+            "size": 31,
+            "count": 0
+          },
+          {
+            "size": 32,
+            "count": 1
+          }
+        ],
+        "top_items": [
+          {
+            "item": "whole milk",
+            "count": 2513,
+            "support": 0.25552
+          },
+          {
+            "item": "other vegetables",
+            "count": 1903,
+            "support": 0.19349
+          },
+          {
+            "item": "rolls/buns",
+            "count": 1809,
+            "support": 0.18393
+          },
+          {
+            "item": "soda",
+            "count": 1715,
+            "support": 0.17438
+          },
+          {
+            "item": "yogurt",
+            "count": 1372,
+            "support": 0.1395
+          },
+          {
+            "item": "bottled water",
+            "count": 1087,
+            "support": 0.11052
+          },
+          {
+            "item": "root vegetables",
+            "count": 1072,
+            "support": 0.109
+          },
+          {
+            "item": "tropical fruit",
+            "count": 1032,
+            "support": 0.10493
+          },
+          {
+            "item": "shopping bags",
+            "count": 969,
+            "support": 0.09853
+          },
+          {
+            "item": "sausage",
+            "count": 924,
+            "support": 0.09395
+          },
+          {
+            "item": "pastry",
+            "count": 875,
+            "support": 0.08897
+          },
+          {
+            "item": "citrus fruit",
+            "count": 814,
+            "support": 0.08277
+          },
+          {
+            "item": "bottled beer",
+            "count": 792,
+            "support": 0.08053
+          },
+          {
+            "item": "newspapers",
+            "count": 785,
+            "support": 0.07982
+          },
+          {
+            "item": "canned beer",
+            "count": 764,
+            "support": 0.07768
+          },
+          {
+            "item": "pip fruit",
+            "count": 744,
+            "support": 0.07565
+          },
+          {
+            "item": "fruit/vegetable juice",
+            "count": 711,
+            "support": 0.07229
+          },
+          {
+            "item": "whipped/sour cream",
+            "count": 705,
+            "support": 0.07168
+          },
+          {
+            "item": "brown bread",
+            "count": 638,
+            "support": 0.06487
+          },
+          {
+            "item": "domestic eggs",
+            "count": 624,
+            "support": 0.06345
+          },
+          {
+            "item": "frankfurter",
+            "count": 580,
+            "support": 0.05897
+          },
+          {
+            "item": "margarine",
+            "count": 576,
+            "support": 0.05857
+          },
+          {
+            "item": "coffee",
+            "count": 571,
+            "support": 0.05806
+          },
+          {
+            "item": "pork",
+            "count": 567,
+            "support": 0.05765
+          },
+          {
+            "item": "butter",
+            "count": 545,
+            "support": 0.05541
+          },
+          {
+            "item": "curd",
+            "count": 524,
+            "support": 0.05328
+          },
+          {
+            "item": "beef",
+            "count": 516,
+            "support": 0.05247
+          },
+          {
+            "item": "napkins",
+            "count": 515,
+            "support": 0.05236
+          },
+          {
+            "item": "chocolate",
+            "count": 488,
+            "support": 0.04962
+          },
+          {
+            "item": "frozen vegetables",
+            "count": 473,
+            "support": 0.04809
+          }
+        ],
+        "sparsity": 0.97391
+      },
+      "risks": [
+        "One month from one outlet. Seasonal affinities and store-specific assortment are baked in and will not generalise to other stores.",
+        "Items are categories, not SKUs, so within-category substitution (two brands of yogurt) is invisible."
+      ]
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Minimal by design: the source is already one transaction per line. Parsing splits on commas, trims whitespace and drops empty baskets. No item is merged or renamed, so item identity matches the source.",
+      "decisions": [],
+      "evidence": {
+        "n_parsed": 9835,
+        "empty_dropped": 0
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "Apriori and FP-Growth both implemented from scratch and run on identical input; they agree on all 13,106 frequent itemsets. 52,285 candidate rules were generated and scored on six measures, then filtered by Fisher exact tests under Benjamini-Hochberg FDR control.",
+      "decisions": [
+        {
+          "question": "Why implement both algorithms rather than use a library?",
+          "choice": "Both written from first principles.",
+          "rationale": "The two differ precisely in how they avoid the exponential lattice, and that difference is the substance of the topic. Running both also yields a genuine correctness check: independent implementations agreeing on all 13,106 itemsets is stronger evidence than either completing without error.",
+          "alternatives_rejected": [
+            "mlxtend.apriori \u2014 hides the mechanism and makes the runtime comparison meaningless."
+          ]
+        },
+        {
+          "question": "How is multiple testing handled?",
+          "choice": "Benjamini-Hochberg FDR at \u03b1=0.05, not Bonferroni.",
+          "rationale": "52,285 simultaneous tests make some striking lifts inevitable by chance. Bonferroni would control the family-wise error rate but reject nearly everything including real affinities. BH bounds the expected proportion of false discoveries in the shortlist, which is the right guarantee for a ranked list someone will act on.",
+          "alternatives_rejected": [
+            "No correction \u2014 the standard practice, and the reason published rule tables are often mostly noise.",
+            "Bonferroni \u2014 too conservative at this scale."
+          ]
+        }
+      ],
+      "evidence": {
+        "algorithm_comparison": {
+          "identical_output": true,
+          "n_itemsets": 13106,
+          "apriori": {
+            "seconds": 117.943,
+            "database_scans": 4,
+            "candidates_generated": 267573,
+            "candidates_pruned_by_downward_closure": 192584,
+            "pruning_rate": 0.7197,
+            "levels": [
+              {
+                "k": 1,
+                "candidates": 169,
+                "frequent": 157
+              },
+              {
+                "k": 2,
+                "candidates": 12246,
+                "after_pruning": 12246,
+                "frequent": 2981
+              },
+              {
+                "k": 3,
+                "candidates": 118448,
+                "after_pruning": 45304,
+                "frequent": 6831
+              },
+              {
+                "k": 4,
+                "candidates": 136879,
+                "after_pruning": 17439,
+                "frequent": 3137
+              }
+            ]
+          },
+          "fp_growth": {
+            "seconds": 0.624,
+            "database_scans": 2,
+            "tree_nodes_created": 121317
+          },
+          "speedup_fp_over_apriori": 188.87,
+          "interpretation": "Both implementations return byte-identical itemsets, which is the correctness check that matters: two independent algorithms agreeing is far stronger evidence than either one running without error. FP-Growth needs 2 database scans against Apriori's 4, and avoids generating 267,573 candidates altogether."
+        },
+        "significance": {
+          "n_rules_tested": 52285,
+          "n_significant": 47141,
+          "n_rejected_by_fdr": 5144,
+          "fdr_alpha": 0.05,
+          "method": "Fisher exact (one-sided) with Benjamini-Hochberg FDR control",
+          "rationale": "52,285 candidate rules were tested. 5,144 fail FDR control at \u03b1=0.05 and are excluded from the published shortlist. Reporting only the survivors \u2014 and stating how many did not survive \u2014 prevents the top-by-lift table from being read as though every rule in it were real."
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "47,141 of 52,285 rules survive FDR correction (5,144 rejected). Strongest surviving affinity: {liquor} \u2192 {bottled beer, red/blush wine} at lift 35.72.",
+      "decisions": [],
+      "evidence": {
+        "n_significant": 47141,
+        "n_rejected": 5144,
+        "rejection_share": 0.0984,
+        "top_rule": {
+          "antecedent": [
+            "liquor"
+          ],
+          "consequent": [
+            "bottled beer",
+            "red/blush wine"
+          ],
+          "support": 0.001932,
+          "support_count": 19,
+          "confidence": 0.17431,
+          "lift": 35.7158,
+          "leverage": 0.0018778,
+          "conviction": 1.2052,
+          "zhang": 0.9768,
+          "p_value": 1.214532021966972e-25,
+          "q_value": 5.772891524413012e-23,
+          "significant": true
+        },
+        "n_dissociations_found": 15
+      },
+      "risks": [
+        "Association is not causation. A lift of 3 between two items does not mean moving one next to the other will raise sales of the other; it may only mean both are bought on the same kind of shopping trip.",
+        "Rules are mined and evaluated on the same transactions. A holdout split would test whether affinities persist across periods, which one month of data does not support."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "Rules ship as JSON with every measure attached, driving an interactive rule explorer and a force-directed affinity graph. The explorer exposes the significance filter as a control so a user can see how many rules the FDR correction removes.",
+      "decisions": [],
+      "evidence": {
+        "artifact": "rules.json",
+        "graph_nodes": 30
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "03_market_basket",
+    "seed": 42,
+    "git_commit": "b949297",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 130.63,
+    "generated_at_unix": 1789365813
+  }
+}

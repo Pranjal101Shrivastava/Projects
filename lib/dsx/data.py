@@ -238,6 +238,32 @@ REGISTRY: dict[str, Dataset] = {
         rows="1,461 daily observations",
         notes="Multivariate: precipitation, temp_max, temp_min, wind, weather label.",
     ),
+    "bank_marketing": Dataset(
+        id="bank_marketing",
+        title="Bank Marketing — Portuguese Term Deposit Campaigns (2008–2010)",
+        kind="REAL",
+        origin=(
+            "Direct marketing call records from a Portuguese retail bank, collected "
+            "May 2008 – November 2010 and published by Moro, Cortez & Rita (2014). Each "
+            "row is one real client contacted by phone; the target is whether they "
+            "subscribed to a term deposit. Includes contemporaneous macroeconomic "
+            "indicators (euribor3m, employment variation rate, consumer confidence)."
+        ),
+        license="Creative Commons Attribution 4.0 (UCI Machine Learning Repository).",
+        url="https://raw.githubusercontent.com/selva86/datasets/master/bank-full.csv",
+        mirror_note=(
+            "Selva Prabhakaran's archive of the UCI bank-additional-full variant. "
+            "Semicolon-delimited."
+        ),
+        rows="41,188 contacts, 4,640 subscriptions (11.27%)",
+        notes=(
+            "Carries a documented target leak. The 'duration' column records how long "
+            "the call lasted, which is only known AFTER the outcome is decided — a call "
+            "of zero seconds is necessarily a 'no'. UCI's own documentation warns it "
+            "'should be discarded if the intention is to have a realistic predictive "
+            "model'. Project 06 trains with and without it to quantify the inflation."
+        ),
+    ),
     "tiny_shakespeare": Dataset(
         id="tiny_shakespeare",
         title="Tiny Shakespeare",

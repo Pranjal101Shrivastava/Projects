@@ -1,0 +1,35 @@
+{
+  "datasets": [
+    {
+      "id": "groceries",
+      "title": "Groceries Market Basket Transactions",
+      "kind": "REAL",
+      "origin": "One month of real point-of-sale transactions from a grocery outlet, distributed with the R 'arules' package (Hahsler et al.).",
+      "license": "GPL-2, as distributed with the arules R package.",
+      "url": "https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/groceries.csv",
+      "mirror_note": "Standard GitHub mirror of the arules Groceries dataset.",
+      "rows": "9,835 transactions over 169 item categories",
+      "notes": "Ragged CSV: one transaction per line, variable item count.",
+      "cached_files": [
+        {
+          "file": "groceries.csv",
+          "sha256": "ff1be892fd6b9b57d1a7bc50de067798963dda607619645988b21789bf23ae3b"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "03_market_basket",
+    "seed": 42,
+    "git_commit": "b949297",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 130.64,
+    "generated_at_unix": 1789365813
+  }
+}
