@@ -148,7 +148,7 @@ def footer(project: str) -> str:
     slug = SLUGS[project]
     return f"""---
 
-**Live:** [{SITE}/#/p/{slug}]({SITE}/#/p/{slug}) ·
+**Live:** [{SITE}/#/p/{slug}]({SITE}/#/p/{slug}) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

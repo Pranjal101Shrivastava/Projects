@@ -117,6 +117,10 @@ leakage controls that are enforced in code, baselines reported beside every metr
 results that did not work kept in.
 
 🔗 **Live site: [{SITE}]({SITE})**
+<sub>The interactive site deploys automatically once GitHub Pages is enabled for this
+repository (Settings → Pages → Source: **GitHub Actions**). Until then the link 404s —
+but nothing on this page depends on it: every screenshot below is committed to the repo
+and renders inline on GitHub, and every project runs locally.</sub>
 
 [![Verify](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/verify.yml/badge.svg)](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/verify.yml)
 [![Pages](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/pages.yml/badge.svg)](https://github.com/Pranjal101Shrivastava/Projects/actions/workflows/pages.yml)

@@ -177,7 +177,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/segmentation](https://pranjal101shrivastava.github.io/Projects/#/p/segmentation) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/segmentation](https://pranjal101shrivastava.github.io/Projects/#/p/segmentation) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

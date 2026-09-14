@@ -227,7 +227,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/fraud](https://pranjal101shrivastava.github.io/Projects/#/p/fraud) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/fraud](https://pranjal101shrivastava.github.io/Projects/#/p/fraud) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

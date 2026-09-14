@@ -187,7 +187,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/market-basket](https://pranjal101shrivastava.github.io/Projects/#/p/market-basket) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/market-basket](https://pranjal101shrivastava.github.io/Projects/#/p/market-basket) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

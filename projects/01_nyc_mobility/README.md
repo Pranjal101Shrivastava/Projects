@@ -257,7 +257,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/nyc-mobility](https://pranjal101shrivastava.github.io/Projects/#/p/nyc-mobility) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/nyc-mobility](https://pranjal101shrivastava.github.io/Projects/#/p/nyc-mobility) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

@@ -180,7 +180,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/academy](https://pranjal101shrivastava.github.io/Projects/#/p/academy) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/academy](https://pranjal101shrivastava.github.io/Projects/#/p/academy) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)

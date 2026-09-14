@@ -244,7 +244,7 @@ reproduces the same numbers.
 
 ---
 
-**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/forecasting](https://pranjal101shrivastava.github.io/Projects/#/p/forecasting) ·
+**Live:** [https://pranjal101shrivastava.github.io/Projects/#/p/forecasting](https://pranjal101shrivastava.github.io/Projects/#/p/forecasting) *(requires GitHub Pages enabled)* ·
 **Method:** [`pipeline/build.py`](./pipeline/build.py) ·
 **Audit:** [`audit.md`](./audit.md) ·
 **Artifacts:** [`artifacts/`](./artifacts/)
