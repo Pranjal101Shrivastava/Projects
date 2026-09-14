@@ -1,0 +1,162 @@
+{
+  "results": {
+    "isolation_forest": {
+      "label": "Isolation Forest",
+      "family": "unsupervised",
+      "supervision": "fitted on legitimate transactions only \u2014 never sees a fraud label",
+      "pr_auc": 0.03656671828750372,
+      "pr_auc_no_skill": 0.0013201876351787872,
+      "pr_auc_lift_over_no_skill": 27.698122079859996,
+      "roc_auc": 0.9393611934617885,
+      "brier": 0.030043349951909597,
+      "f1": 0.1078167115902965,
+      "precision": 0.06172839506172839,
+      "recall": 0.425531914893617,
+      "threshold": 0.5567437720639755,
+      "confusion": {
+        "tn": 70500,
+        "fp": 608,
+        "fn": 54,
+        "tp": 40
+      },
+      "prevalence": 0.0013201876351787872,
+      "n": 71202,
+      "accuracy_trap": {
+        "model_accuracy": 0.9907025083565069,
+        "always_negative_accuracy": 0.9986798123648212,
+        "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+      }
+    },
+    "logistic_balanced": {
+      "label": "Logistic regression (class-weighted)",
+      "family": "supervised linear",
+      "supervision": "class_weight='balanced' \u2014 no synthetic points created",
+      "pr_auc": 0.7656599965673782,
+      "pr_auc_no_skill": 0.0013201876351787872,
+      "pr_auc_lift_over_no_skill": 579.9630114424517,
+      "roc_auc": 0.9816030515164826,
+      "brier": 0.03302262190203646,
+      "f1": 0.8023255813953488,
+      "precision": 0.8846153846153846,
+      "recall": 0.7340425531914894,
+      "threshold": 0.999993326220379,
+      "confusion": {
+        "tn": 71099,
+        "fp": 9,
+        "fn": 25,
+        "tp": 69
+      },
+      "prevalence": 0.0013201876351787872,
+      "n": 71202,
+      "accuracy_trap": {
+        "model_accuracy": 0.999522485323446,
+        "always_negative_accuracy": 0.9986798123648212,
+        "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+      }
+    },
+    "lightgbm": {
+      "label": "LightGBM (reweighting: none)",
+      "family": "supervised boosting",
+      "supervision": "best of four reweighting strategies, selected by the published ablation",
+      "pr_auc": 0.7359332250002342,
+      "pr_auc_no_skill": 0.0013201876351787872,
+      "pr_auc_lift_over_no_skill": 557.4459307070922,
+      "roc_auc": 0.9378217311635044,
+      "brier": 0.0005840636181371576,
+      "f1": 0.7577639751552795,
+      "precision": 0.9104477611940298,
+      "recall": 0.648936170212766,
+      "threshold": 0.9999451093076479,
+      "confusion": {
+        "tn": 71102,
+        "fp": 6,
+        "fn": 33,
+        "tp": 61
+      },
+      "prevalence": 0.0013201876351787872,
+      "n": 71202,
+      "accuracy_trap": {
+        "model_accuracy": 0.9994522625768939,
+        "always_negative_accuracy": 0.9986798123648212,
+        "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+      }
+    }
+  },
+  "best": "logistic_balanced",
+  "split": {
+    "strategy": "chronological_holdout",
+    "n_train": 213605,
+    "n_test": 71202,
+    "train_fraction": 0.75,
+    "shuffled": false,
+    "rationale": "Observations are ordered in time, so any shuffle would train on the future and score on the past. The split is a single cut with no reordering.",
+    "embargo": 0,
+    "train_range": [
+      0,
+      213604
+    ],
+    "test_range": [
+      213605,
+      284806
+    ],
+    "frauds_train": 398,
+    "frauds_test": 94,
+    "prevalence_train": 0.00186325,
+    "prevalence_test": 0.00132019,
+    "why_not_random": "Fraud is bursty: a compromised card produces several transactions within minutes. A random split scatters one episode across both partitions, so the model is scored on transactions whose siblings it trained on. That inflates every metric and no metric reveals it. A chronological split reproduces the deployment condition \u2014 score tomorrow's traffic having learned only from yesterday's."
+  },
+  "reweighting_ablation": {
+    "variants": [
+      {
+        "variant": "none",
+        "scale_pos_weight": null,
+        "is_unbalance": false,
+        "pr_auc": 0.7359332250002342,
+        "roc_auc": 0.9378217311635044,
+        "brier": 0.0005840636181371576
+      },
+      {
+        "variant": "scale_pos_weight_10",
+        "scale_pos_weight": 10.0,
+        "is_unbalance": false,
+        "pr_auc": 0.23592756103607548,
+        "roc_auc": 0.8652148395189098,
+        "brier": 0.0025269333932694395
+      },
+      {
+        "variant": "is_unbalance",
+        "scale_pos_weight": null,
+        "is_unbalance": true,
+        "pr_auc": 0.018144785422755834,
+        "roc_auc": 0.828353394716338,
+        "brier": 0.035083284177410745
+      },
+      {
+        "variant": "scale_pos_weight_full",
+        "scale_pos_weight": 535.6959798994975,
+        "is_unbalance": false,
+        "pr_auc": 0.008913267463805273,
+        "roc_auc": 0.8791756979793398,
+        "brier": 0.113915339427102
+      }
+    ],
+    "best": "none",
+    "worst": "scale_pos_weight_full",
+    "pr_auc_spread": 0.727,
+    "finding": "Setting scale_pos_weight to the full negative/positive ratio (536) \u2014 the conventional recommendation for imbalanced boosting \u2014 collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed."
+  },
+  "_run": {
+    "project": "04_fraud_detection",
+    "seed": 42,
+    "git_commit": "22d5161",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 34.05,
+    "generated_at_unix": 1789366193
+  }
+}

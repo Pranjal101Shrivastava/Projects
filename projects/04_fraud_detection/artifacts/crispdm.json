@@ -1,0 +1,1689 @@
+{
+  "project": "04_fraud_detection",
+  "business_question": "Which card transactions should be held for review, given that fraud is 0.17% of volume and every alert consumes analyst time?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "A fraud screen operates under a hard capacity constraint: analysts can only review so many alerts per day. The objective is therefore not 'detect fraud' but 'maximise fraud caught per alert raised'. That framing determines every metric and threshold choice downstream.",
+      "decisions": [
+        {
+          "question": "What is the headline metric?",
+          "choice": "Average precision (PR-AUC), with recall at a fixed alert budget.",
+          "rationale": "With prevalence 0.0017, accuracy is 99.83% for a model that never fires and ROC-AUC is flattered by an enormous negative denominator. Precision is computed against the model's own alert volume, so PR-AUC falls as soon as the model wastes analyst time \u2014 which is exactly the failure the business cares about.",
+          "alternatives_rejected": [
+            "Accuracy \u2014 99.83% for the null model; quoting it would be actively misleading.",
+            "ROC-AUC alone \u2014 reaches 0.95+ for models with unusable precision.",
+            "F1 at threshold 0.5 \u2014 0.5 is a default, not a decision."
+          ]
+        },
+        {
+          "question": "How is the operating threshold chosen?",
+          "choice": "Minimise expected cost at 500:10 false-negative to false-positive ratio.",
+          "rationale": "The costs are asymmetric and the ratio is the only thing that converts a probability into an action. The full cost curve is published so a reader who disagrees with the assumed ratio can read off their own operating point.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "cost_false_negative": 500.0,
+        "cost_false_positive": 10.0,
+        "cost_ratio": 50.0
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "284,807 real transactions over 48 hours, 492 fraudulent (0.1727%). Imbalance is 578:1. No nulls. 1,081 exact duplicate rows are present.",
+      "decisions": [
+        {
+          "question": "What does the imbalance imply for evaluation?",
+          "choice": "Report PR-AUC, and print the null-model accuracy beside it.",
+          "rationale": "A model predicting 'never fraud' achieves 99.8273% accuracy. Showing that figure next to every model's own accuracy makes the metric impossible to quote misleadingly.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "profile": {
+          "n_transactions": 284807,
+          "n_fraud": 492,
+          "prevalence": 0.00172749,
+          "always_negative_accuracy": 0.998273,
+          "imbalance_ratio": 577.9,
+          "duration_hours": 48.0,
+          "nulls": 0,
+          "duplicates": 1081,
+          "amount": {
+            "fraud": {
+              "bin_edges": [
+                0.0,
+                70.862333,
+                141.724667,
+                212.587,
+                283.449333,
+                354.311667,
+                425.174,
+                496.036333,
+                566.898667,
+                637.761,
+                708.623333,
+                779.485667,
+                850.348,
+                921.210333,
+                992.072667,
+                1062.935,
+                1133.797333,
+                1204.659667,
+                1275.522,
+                1346.384333,
+                1417.246667,
+                1488.109,
+                1558.971333,
+                1629.833667,
+                1700.696,
+                1771.558333,
+                1842.420667,
+                1913.283,
+                1984.145333,
+                2055.007667,
+                2125.87
+              ],
+              "bin_centers": [
+                35.431167,
+                106.2935,
+                177.155833,
+                248.018167,
+                318.8805,
+                389.742833,
+                460.605167,
+                531.4675,
+                602.329833,
+                673.192167,
+                744.0545,
+                814.916833,
+                885.779167,
+                956.6415,
+                1027.503833,
+                1098.366167,
+                1169.2285,
+                1240.090833,
+                1310.953167,
+                1381.8155,
+                1452.677833,
+                1523.540167,
+                1594.4025,
+                1665.264833,
+                1736.127167,
+                1806.9895,
+                1877.851833,
+                1948.714167,
+                2019.5765,
+                2090.438833
+              ],
+              "counts": [
+                316,
+                74,
+                20,
+                16,
+                18,
+                6,
+                7,
+                5,
+                5,
+                2,
+                9,
+                3,
+                0,
+                1,
+                1,
+                1,
+                0,
+                1,
+                1,
+                3,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1
+              ],
+              "n": 492,
+              "mean": 122.211321,
+              "median": 9.25,
+              "std": 256.422299,
+              "p01": 0.0,
+              "p25": 1.0,
+              "p75": 105.89,
+              "p99": 1357.4279,
+              "min": 0.0,
+              "max": 2125.87
+            },
+            "legitimate": {
+              "bin_edges": [
+                0.0,
+                856.372,
+                1712.744,
+                2569.116,
+                3425.488,
+                4281.86,
+                5138.232,
+                5994.604,
+                6850.976,
+                7707.348,
+                8563.72,
+                9420.092,
+                10276.464,
+                11132.836,
+                11989.208,
+                12845.58,
+                13701.952,
+                14558.324,
+                15414.696,
+                16271.068,
+                17127.44,
+                17983.812,
+                18840.184,
+                19696.556,
+                20552.928,
+                21409.3,
+                22265.672,
+                23122.044,
+                23978.416,
+                24834.788,
+                25691.16
+              ],
+              "bin_centers": [
+                428.186,
+                1284.558,
+                2140.93,
+                2997.302,
+                3853.674,
+                4710.046,
+                5566.418,
+                6422.79,
+                7279.162,
+                8135.534,
+                8991.906,
+                9848.278,
+                10704.65,
+                11561.022,
+                12417.394,
+                13273.766,
+                14130.138,
+                14986.51,
+                15842.882,
+                16699.254,
+                17555.626,
+                18411.998,
+                19268.37,
+                20124.742,
+                20981.114,
+                21837.486,
+                22693.858,
+                23550.23,
+                24406.602,
+                25262.974
+              ],
+              "counts": [
+                280387,
+                2917,
+                599,
+                208,
+                110,
+                42,
+                19,
+                8,
+                9,
+                6,
+                2,
+                2,
+                0,
+                2,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ],
+              "n": 284315,
+              "mean": 88.291022,
+              "median": 22.0,
+              "std": 250.104652,
+              "p01": 0.12,
+              "p25": 5.65,
+              "p75": 77.05,
+              "p99": 1016.9664,
+              "min": 0.0,
+              "max": 25691.16
+            }
+          },
+          "fraud_rate_by_hour_of_day": [
+            {
+              "hour": 0,
+              "n": 7695,
+              "frauds": 6,
+              "rate": 0.00078
+            },
+            {
+              "hour": 1,
+              "n": 4220,
+              "frauds": 10,
+              "rate": 0.00237
+            },
+            {
+              "hour": 2,
+              "n": 3328,
+              "frauds": 57,
+              "rate": 0.017127
+            },
+            {
+              "hour": 3,
+              "n": 3492,
+              "frauds": 17,
+              "rate": 0.004868
+            },
+            {
+              "hour": 4,
+              "n": 2209,
+              "frauds": 23,
+              "rate": 0.010412
+            },
+            {
+              "hour": 5,
+              "n": 2990,
+              "frauds": 11,
+              "rate": 0.003679
+            },
+            {
+              "hour": 6,
+              "n": 4101,
+              "frauds": 9,
+              "rate": 0.002195
+            },
+            {
+              "hour": 7,
+              "n": 7243,
+              "frauds": 23,
+              "rate": 0.003175
+            },
+            {
+              "hour": 8,
+              "n": 10276,
+              "frauds": 9,
+              "rate": 0.000876
+            },
+            {
+              "hour": 9,
+              "n": 15838,
+              "frauds": 16,
+              "rate": 0.00101
+            },
+            {
+              "hour": 10,
+              "n": 16598,
+              "frauds": 8,
+              "rate": 0.000482
+            },
+            {
+              "hour": 11,
+              "n": 16856,
+              "frauds": 53,
+              "rate": 0.003144
+            },
+            {
+              "hour": 12,
+              "n": 15420,
+              "frauds": 17,
+              "rate": 0.001102
+            },
+            {
+              "hour": 13,
+              "n": 15365,
+              "frauds": 17,
+              "rate": 0.001106
+            },
+            {
+              "hour": 14,
+              "n": 16570,
+              "frauds": 23,
+              "rate": 0.001388
+            },
+            {
+              "hour": 15,
+              "n": 16461,
+              "frauds": 26,
+              "rate": 0.001579
+            },
+            {
+              "hour": 16,
+              "n": 16453,
+              "frauds": 22,
+              "rate": 0.001337
+            },
+            {
+              "hour": 17,
+              "n": 16166,
+              "frauds": 29,
+              "rate": 0.001794
+            },
+            {
+              "hour": 18,
+              "n": 17039,
+              "frauds": 33,
+              "rate": 0.001937
+            },
+            {
+              "hour": 19,
+              "n": 15649,
+              "frauds": 19,
+              "rate": 0.001214
+            },
+            {
+              "hour": 20,
+              "n": 16756,
+              "frauds": 18,
+              "rate": 0.001074
+            },
+            {
+              "hour": 21,
+              "n": 17703,
+              "frauds": 16,
+              "rate": 0.000904
+            },
+            {
+              "hour": 22,
+              "n": 15441,
+              "frauds": 9,
+              "rate": 0.000583
+            },
+            {
+              "hour": 23,
+              "n": 10938,
+              "frauds": 21,
+              "rate": 0.00192
+            }
+          ],
+          "feature_note": "V1\u2013V28 are principal components published in place of the original features for confidentiality. They are already decorrelated and roughly centred, which removes most of the usual preprocessing work but also means no feature carries an interpretable name."
+        },
+        "class_separation": [
+          {
+            "feature": "V14",
+            "cohens_d": -2.2591
+          },
+          {
+            "feature": "V4",
+            "cohens_d": 2.0133
+          },
+          {
+            "feature": "V11",
+            "cohens_d": 1.8822
+          },
+          {
+            "feature": "V12",
+            "cohens_d": -1.867
+          },
+          {
+            "feature": "V10",
+            "cohens_d": -1.6061
+          },
+          {
+            "feature": "V16",
+            "cohens_d": -1.4824
+          },
+          {
+            "feature": "V3",
+            "cohens_d": -1.3726
+          },
+          {
+            "feature": "V17",
+            "cohens_d": -1.347
+          },
+          {
+            "feature": "V9",
+            "cohens_d": -1.3405
+          },
+          {
+            "feature": "V2",
+            "cohens_d": 1.1178
+          },
+          {
+            "feature": "V7",
+            "cohens_d": -1.0803
+          },
+          {
+            "feature": "V18",
+            "cohens_d": -1.0557
+          }
+        ]
+      },
+      "risks": [
+        "Two days of one issuer's European traffic in 2013. Fraud tactics have changed substantially since; this is a methodology exercise, not a deployable screen.",
+        "V1\u2013V28 are anonymised components, so no finding here can be translated into an interpretable business rule."
+      ]
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Chronological 75/25 split on transaction time. Scaling happens inside each model pipeline so it is fitted on training rows only. Amount is the sole unscaled raw feature and hour-of-day is derived from Time.",
+      "decisions": [
+        {
+          "question": "Random stratified split or chronological?",
+          "choice": "Chronological.",
+          "rationale": "Fraud is bursty: a compromised card produces several transactions within minutes. A random split scatters one episode across both partitions, so the model is scored on transactions whose siblings it trained on. That inflates every metric and no metric reveals it. A chronological split reproduces the deployment condition \u2014 score tomorrow's traffic having learned only from yesterday's.",
+          "alternatives_rejected": [
+            "Stratified random split \u2014 standard for this dataset in most published notebooks, and the reason their reported scores are optimistic."
+          ]
+        },
+        {
+          "question": "Should the minority class be resampled (SMOTE)?",
+          "choice": "No.",
+          "rationale": "SMOTE interpolates between neighbouring minority points. In a 28-dimensional PCA space with 492 positives the neighbours are far apart, so the synthetic points land in regions where no real fraud has ever been observed. The model then learns a decision boundary around fabricated data. Class weighting achieves the same rebalancing without inventing observations.",
+          "alternatives_rejected": [
+            "SMOTE / ADASYN \u2014 fabricates minority points in sparse high-dimensional space.",
+            "Random undersampling of the majority \u2014 discards 99.8% of the real evidence about what normal looks like."
+          ]
+        }
+      ],
+      "evidence": {
+        "strategy": "chronological_holdout",
+        "n_train": 213605,
+        "n_test": 71202,
+        "train_fraction": 0.75,
+        "shuffled": false,
+        "rationale": "Observations are ordered in time, so any shuffle would train on the future and score on the past. The split is a single cut with no reordering.",
+        "embargo": 0,
+        "train_range": [
+          0,
+          213604
+        ],
+        "test_range": [
+          213605,
+          284806
+        ],
+        "frauds_train": 398,
+        "frauds_test": 94,
+        "prevalence_train": 0.00186325,
+        "prevalence_test": 0.00132019,
+        "why_not_random": "Fraud is bursty: a compromised card produces several transactions within minutes. A random split scatters one episode across both partitions, so the model is scored on transactions whose siblings it trained on. That inflates every metric and no metric reveals it. A chronological split reproduces the deployment condition \u2014 score tomorrow's traffic having learned only from yesterday's."
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "Three detectors spanning two supervision regimes: an Isolation Forest fitted only on legitimate traffic (the realistic cold-start case), a class-weighted logistic baseline, and a cost-sensitive LightGBM. No synthetic minority points are generated anywhere.",
+      "decisions": [
+        {
+          "question": "Why include an unsupervised detector at all?",
+          "choice": "Isolation Forest fitted on legitimate transactions only.",
+          "rationale": "Supervised models can only catch fraud resembling labelled history. A novel tactic has no labels by definition. The unsupervised detector shows what is achievable with no fraud labels whatsoever, which is the honest cold-start baseline.",
+          "alternatives_rejected": []
+        },
+        {
+          "question": "Should the boosted model use scale_pos_weight?",
+          "choice": "No \u2014 the ablation selects 'none'.",
+          "rationale": "Setting scale_pos_weight to the full negative/positive ratio (536) \u2014 the conventional recommendation for imbalanced boosting \u2014 collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed.",
+          "alternatives_rejected": [
+            "scale_pos_weight = n_neg/n_pos \u2014 the conventional advice; measured here as the single worst configuration.",
+            "is_unbalance=True \u2014 LightGBM's built-in equivalent, also substantially worse than no reweighting."
+          ]
+        }
+      ],
+      "evidence": {
+        "models": [
+          "isolation_forest",
+          "logistic_balanced",
+          "lightgbm"
+        ],
+        "best": "logistic_balanced",
+        "reweighting_ablation": {
+          "variants": [
+            {
+              "variant": "none",
+              "scale_pos_weight": null,
+              "is_unbalance": false,
+              "pr_auc": 0.7359332250002342,
+              "roc_auc": 0.9378217311635044,
+              "brier": 0.0005840636181371576
+            },
+            {
+              "variant": "scale_pos_weight_10",
+              "scale_pos_weight": 10.0,
+              "is_unbalance": false,
+              "pr_auc": 0.23592756103607548,
+              "roc_auc": 0.8652148395189098,
+              "brier": 0.0025269333932694395
+            },
+            {
+              "variant": "is_unbalance",
+              "scale_pos_weight": null,
+              "is_unbalance": true,
+              "pr_auc": 0.018144785422755834,
+              "roc_auc": 0.828353394716338,
+              "brier": 0.035083284177410745
+            },
+            {
+              "variant": "scale_pos_weight_full",
+              "scale_pos_weight": 535.6959798994975,
+              "is_unbalance": false,
+              "pr_auc": 0.008913267463805273,
+              "roc_auc": 0.8791756979793398,
+              "brier": 0.113915339427102
+            }
+          ],
+          "best": "none",
+          "worst": "scale_pos_weight_full",
+          "pr_auc_spread": 0.727,
+          "finding": "Setting scale_pos_weight to the full negative/positive ratio (536) \u2014 the conventional recommendation for imbalanced boosting \u2014 collapses PR-AUC to 0.0089, against 0.7359 with no reweighting at all. With only 398 positives in training, an extreme weight makes every split chase the same handful of rows: the trees fit those points and the ranking of everything else degrades. Reweighting helps a linear model, whose capacity is bounded, and hurts a boosted ensemble, whose capacity is not. This is why the ablation is run rather than the advice followed."
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "Logistic regression (class-weighted) reaches PR-AUC 0.7657 against a no-skill floor of 0.00173 \u2014 a 580\u00d7 lift. At the cost-optimal threshold it catches 80 of 94 frauds for 229 false alarms.",
+      "decisions": [
+        {
+          "question": "Did the unsupervised detector justify itself?",
+          "choice": "It is far weaker than the supervised models, and that gap is the finding.",
+          "rationale": "Isolation Forest reaches PR-AUC 0.0366 against 0.7359 for LightGBM. Labels are worth roughly 20\u00d7 here. Reporting the weak result quantifies the value of labelling effort instead of hiding an unflattering model.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "results": {
+          "isolation_forest": {
+            "label": "Isolation Forest",
+            "family": "unsupervised",
+            "supervision": "fitted on legitimate transactions only \u2014 never sees a fraud label",
+            "pr_auc": 0.03656671828750372,
+            "pr_auc_no_skill": 0.0013201876351787872,
+            "pr_auc_lift_over_no_skill": 27.698122079859996,
+            "roc_auc": 0.9393611934617885,
+            "brier": 0.030043349951909597,
+            "f1": 0.1078167115902965,
+            "precision": 0.06172839506172839,
+            "recall": 0.425531914893617,
+            "threshold": 0.5567437720639755,
+            "confusion": {
+              "tn": 70500,
+              "fp": 608,
+              "fn": 54,
+              "tp": 40
+            },
+            "prevalence": 0.0013201876351787872,
+            "n": 71202,
+            "accuracy_trap": {
+              "model_accuracy": 0.9907025083565069,
+              "always_negative_accuracy": 0.9986798123648212,
+              "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+            }
+          },
+          "logistic_balanced": {
+            "label": "Logistic regression (class-weighted)",
+            "family": "supervised linear",
+            "supervision": "class_weight='balanced' \u2014 no synthetic points created",
+            "pr_auc": 0.7656599965673782,
+            "pr_auc_no_skill": 0.0013201876351787872,
+            "pr_auc_lift_over_no_skill": 579.9630114424517,
+            "roc_auc": 0.9816030515164826,
+            "brier": 0.03302262190203646,
+            "f1": 0.8023255813953488,
+            "precision": 0.8846153846153846,
+            "recall": 0.7340425531914894,
+            "threshold": 0.999993326220379,
+            "confusion": {
+              "tn": 71099,
+              "fp": 9,
+              "fn": 25,
+              "tp": 69
+            },
+            "prevalence": 0.0013201876351787872,
+            "n": 71202,
+            "accuracy_trap": {
+              "model_accuracy": 0.999522485323446,
+              "always_negative_accuracy": 0.9986798123648212,
+              "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+            }
+          },
+          "lightgbm": {
+            "label": "LightGBM (reweighting: none)",
+            "family": "supervised boosting",
+            "supervision": "best of four reweighting strategies, selected by the published ablation",
+            "pr_auc": 0.7359332250002342,
+            "pr_auc_no_skill": 0.0013201876351787872,
+            "pr_auc_lift_over_no_skill": 557.4459307070922,
+            "roc_auc": 0.9378217311635044,
+            "brier": 0.0005840636181371576,
+            "f1": 0.7577639751552795,
+            "precision": 0.9104477611940298,
+            "recall": 0.648936170212766,
+            "threshold": 0.9999451093076479,
+            "confusion": {
+              "tn": 71102,
+              "fp": 6,
+              "fn": 33,
+              "tp": 61
+            },
+            "prevalence": 0.0013201876351787872,
+            "n": 71202,
+            "accuracy_trap": {
+              "model_accuracy": 0.9994522625768939,
+              "always_negative_accuracy": 0.9986798123648212,
+              "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+            }
+          }
+        },
+        "cost": {
+          "assumed_cost_false_negative": 500.0,
+          "assumed_cost_false_positive": 10.0,
+          "curve": [
+            {
+              "threshold": 0.0,
+              "tp": 94,
+              "fp": 71108,
+              "fn": 0,
+              "tn": 0,
+              "expected_cost": 711080.0,
+              "alerts": 71202
+            },
+            {
+              "threshold": 0.0101,
+              "tp": 94,
+              "fp": 56593,
+              "fn": 0,
+              "tn": 14515,
+              "expected_cost": 565930.0,
+              "alerts": 56687
+            },
+            {
+              "threshold": 0.0202,
+              "tp": 94,
+              "fp": 46159,
+              "fn": 0,
+              "tn": 24949,
+              "expected_cost": 461590.0,
+              "alerts": 46253
+            },
+            {
+              "threshold": 0.0303,
+              "tp": 94,
+              "fp": 38020,
+              "fn": 0,
+              "tn": 33088,
+              "expected_cost": 380200.0,
+              "alerts": 38114
+            },
+            {
+              "threshold": 0.0404,
+              "tp": 94,
+              "fp": 32140,
+              "fn": 0,
+              "tn": 38968,
+              "expected_cost": 321400.0,
+              "alerts": 32234
+            },
+            {
+              "threshold": 0.0505,
+              "tp": 93,
+              "fp": 27674,
+              "fn": 1,
+              "tn": 43434,
+              "expected_cost": 277240.0,
+              "alerts": 27767
+            },
+            {
+              "threshold": 0.0606,
+              "tp": 93,
+              "fp": 24311,
+              "fn": 1,
+              "tn": 46797,
+              "expected_cost": 243610.0,
+              "alerts": 24404
+            },
+            {
+              "threshold": 0.0707,
+              "tp": 93,
+              "fp": 21706,
+              "fn": 1,
+              "tn": 49402,
+              "expected_cost": 217560.0,
+              "alerts": 21799
+            },
+            {
+              "threshold": 0.0808,
+              "tp": 93,
+              "fp": 19656,
+              "fn": 1,
+              "tn": 51452,
+              "expected_cost": 197060.0,
+              "alerts": 19749
+            },
+            {
+              "threshold": 0.0909,
+              "tp": 93,
+              "fp": 17955,
+              "fn": 1,
+              "tn": 53153,
+              "expected_cost": 180050.0,
+              "alerts": 18048
+            },
+            {
+              "threshold": 0.101,
+              "tp": 93,
+              "fp": 16595,
+              "fn": 1,
+              "tn": 54513,
+              "expected_cost": 166450.0,
+              "alerts": 16688
+            },
+            {
+              "threshold": 0.1111,
+              "tp": 92,
+              "fp": 15430,
+              "fn": 2,
+              "tn": 55678,
+              "expected_cost": 155300.0,
+              "alerts": 15522
+            },
+            {
+              "threshold": 0.1212,
+              "tp": 91,
+              "fp": 14418,
+              "fn": 3,
+              "tn": 56690,
+              "expected_cost": 145680.0,
+              "alerts": 14509
+            },
+            {
+              "threshold": 0.1313,
+              "tp": 91,
+              "fp": 13529,
+              "fn": 3,
+              "tn": 57579,
+              "expected_cost": 136790.0,
+              "alerts": 13620
+            },
+            {
+              "threshold": 0.1414,
+              "tp": 91,
+              "fp": 12744,
+              "fn": 3,
+              "tn": 58364,
+              "expected_cost": 128940.0,
+              "alerts": 12835
+            },
+            {
+              "threshold": 0.1515,
+              "tp": 91,
+              "fp": 12009,
+              "fn": 3,
+              "tn": 59099,
+              "expected_cost": 121590.0,
+              "alerts": 12100
+            },
+            {
+              "threshold": 0.1616,
+              "tp": 90,
+              "fp": 11397,
+              "fn": 4,
+              "tn": 59711,
+              "expected_cost": 115970.0,
+              "alerts": 11487
+            },
+            {
+              "threshold": 0.1717,
+              "tp": 89,
+              "fp": 10828,
+              "fn": 5,
+              "tn": 60280,
+              "expected_cost": 110780.0,
+              "alerts": 10917
+            },
+            {
+              "threshold": 0.1818,
+              "tp": 88,
+              "fp": 10278,
+              "fn": 6,
+              "tn": 60830,
+              "expected_cost": 105780.0,
+              "alerts": 10366
+            },
+            {
+              "threshold": 0.1919,
+              "tp": 88,
+              "fp": 9810,
+              "fn": 6,
+              "tn": 61298,
+              "expected_cost": 101100.0,
+              "alerts": 9898
+            },
+            {
+              "threshold": 0.202,
+              "tp": 88,
+              "fp": 9330,
+              "fn": 6,
+              "tn": 61778,
+              "expected_cost": 96300.0,
+              "alerts": 9418
+            },
+            {
+              "threshold": 0.2121,
+              "tp": 87,
+              "fp": 8904,
+              "fn": 7,
+              "tn": 62204,
+              "expected_cost": 92540.0,
+              "alerts": 8991
+            },
+            {
+              "threshold": 0.2222,
+              "tp": 87,
+              "fp": 8461,
+              "fn": 7,
+              "tn": 62647,
+              "expected_cost": 88110.0,
+              "alerts": 8548
+            },
+            {
+              "threshold": 0.2323,
+              "tp": 87,
+              "fp": 8094,
+              "fn": 7,
+              "tn": 63014,
+              "expected_cost": 84440.0,
+              "alerts": 8181
+            },
+            {
+              "threshold": 0.2424,
+              "tp": 87,
+              "fp": 7723,
+              "fn": 7,
+              "tn": 63385,
+              "expected_cost": 80730.0,
+              "alerts": 7810
+            },
+            {
+              "threshold": 0.2525,
+              "tp": 87,
+              "fp": 7387,
+              "fn": 7,
+              "tn": 63721,
+              "expected_cost": 77370.0,
+              "alerts": 7474
+            },
+            {
+              "threshold": 0.2626,
+              "tp": 87,
+              "fp": 7057,
+              "fn": 7,
+              "tn": 64051,
+              "expected_cost": 74070.0,
+              "alerts": 7144
+            },
+            {
+              "threshold": 0.2727,
+              "tp": 87,
+              "fp": 6769,
+              "fn": 7,
+              "tn": 64339,
+              "expected_cost": 71190.0,
+              "alerts": 6856
+            },
+            {
+              "threshold": 0.2828,
+              "tp": 87,
+              "fp": 6477,
+              "fn": 7,
+              "tn": 64631,
+              "expected_cost": 68270.0,
+              "alerts": 6564
+            },
+            {
+              "threshold": 0.2929,
+              "tp": 87,
+              "fp": 6189,
+              "fn": 7,
+              "tn": 64919,
+              "expected_cost": 65390.0,
+              "alerts": 6276
+            },
+            {
+              "threshold": 0.303,
+              "tp": 86,
+              "fp": 5918,
+              "fn": 8,
+              "tn": 65190,
+              "expected_cost": 63180.0,
+              "alerts": 6004
+            },
+            {
+              "threshold": 0.3131,
+              "tp": 86,
+              "fp": 5659,
+              "fn": 8,
+              "tn": 65449,
+              "expected_cost": 60590.0,
+              "alerts": 5745
+            },
+            {
+              "threshold": 0.3232,
+              "tp": 86,
+              "fp": 5430,
+              "fn": 8,
+              "tn": 65678,
+              "expected_cost": 58300.0,
+              "alerts": 5516
+            },
+            {
+              "threshold": 0.3333,
+              "tp": 86,
+              "fp": 5221,
+              "fn": 8,
+              "tn": 65887,
+              "expected_cost": 56210.0,
+              "alerts": 5307
+            },
+            {
+              "threshold": 0.3434,
+              "tp": 86,
+              "fp": 4995,
+              "fn": 8,
+              "tn": 66113,
+              "expected_cost": 53950.0,
+              "alerts": 5081
+            },
+            {
+              "threshold": 0.3535,
+              "tp": 86,
+              "fp": 4784,
+              "fn": 8,
+              "tn": 66324,
+              "expected_cost": 51840.0,
+              "alerts": 4870
+            },
+            {
+              "threshold": 0.3636,
+              "tp": 85,
+              "fp": 4603,
+              "fn": 9,
+              "tn": 66505,
+              "expected_cost": 50530.0,
+              "alerts": 4688
+            },
+            {
+              "threshold": 0.3737,
+              "tp": 85,
+              "fp": 4420,
+              "fn": 9,
+              "tn": 66688,
+              "expected_cost": 48700.0,
+              "alerts": 4505
+            },
+            {
+              "threshold": 0.3838,
+              "tp": 85,
+              "fp": 4248,
+              "fn": 9,
+              "tn": 66860,
+              "expected_cost": 46980.0,
+              "alerts": 4333
+            },
+            {
+              "threshold": 0.3939,
+              "tp": 85,
+              "fp": 4054,
+              "fn": 9,
+              "tn": 67054,
+              "expected_cost": 45040.0,
+              "alerts": 4139
+            },
+            {
+              "threshold": 0.404,
+              "tp": 85,
+              "fp": 3909,
+              "fn": 9,
+              "tn": 67199,
+              "expected_cost": 43590.0,
+              "alerts": 3994
+            },
+            {
+              "threshold": 0.4141,
+              "tp": 85,
+              "fp": 3743,
+              "fn": 9,
+              "tn": 67365,
+              "expected_cost": 41930.0,
+              "alerts": 3828
+            },
+            {
+              "threshold": 0.4242,
+              "tp": 85,
+              "fp": 3610,
+              "fn": 9,
+              "tn": 67498,
+              "expected_cost": 40600.0,
+              "alerts": 3695
+            },
+            {
+              "threshold": 0.4343,
+              "tp": 85,
+              "fp": 3473,
+              "fn": 9,
+              "tn": 67635,
+              "expected_cost": 39230.0,
+              "alerts": 3558
+            },
+            {
+              "threshold": 0.4444,
+              "tp": 85,
+              "fp": 3336,
+              "fn": 9,
+              "tn": 67772,
+              "expected_cost": 37860.0,
+              "alerts": 3421
+            },
+            {
+              "threshold": 0.4545,
+              "tp": 85,
+              "fp": 3217,
+              "fn": 9,
+              "tn": 67891,
+              "expected_cost": 36670.0,
+              "alerts": 3302
+            },
+            {
+              "threshold": 0.4646,
+              "tp": 85,
+              "fp": 3089,
+              "fn": 9,
+              "tn": 68019,
+              "expected_cost": 35390.0,
+              "alerts": 3174
+            },
+            {
+              "threshold": 0.4747,
+              "tp": 85,
+              "fp": 2977,
+              "fn": 9,
+              "tn": 68131,
+              "expected_cost": 34270.0,
+              "alerts": 3062
+            },
+            {
+              "threshold": 0.4848,
+              "tp": 85,
+              "fp": 2873,
+              "fn": 9,
+              "tn": 68235,
+              "expected_cost": 33230.0,
+              "alerts": 2958
+            },
+            {
+              "threshold": 0.4949,
+              "tp": 85,
+              "fp": 2756,
+              "fn": 9,
+              "tn": 68352,
+              "expected_cost": 32060.0,
+              "alerts": 2841
+            },
+            {
+              "threshold": 0.5051,
+              "tp": 85,
+              "fp": 2646,
+              "fn": 9,
+              "tn": 68462,
+              "expected_cost": 30960.0,
+              "alerts": 2731
+            },
+            {
+              "threshold": 0.5152,
+              "tp": 85,
+              "fp": 2553,
+              "fn": 9,
+              "tn": 68555,
+              "expected_cost": 30030.0,
+              "alerts": 2638
+            },
+            {
+              "threshold": 0.5253,
+              "tp": 85,
+              "fp": 2464,
+              "fn": 9,
+              "tn": 68644,
+              "expected_cost": 29140.0,
+              "alerts": 2549
+            },
+            {
+              "threshold": 0.5354,
+              "tp": 85,
+              "fp": 2379,
+              "fn": 9,
+              "tn": 68729,
+              "expected_cost": 28290.0,
+              "alerts": 2464
+            },
+            {
+              "threshold": 0.5455,
+              "tp": 85,
+              "fp": 2288,
+              "fn": 9,
+              "tn": 68820,
+              "expected_cost": 27380.0,
+              "alerts": 2373
+            },
+            {
+              "threshold": 0.5556,
+              "tp": 85,
+              "fp": 2218,
+              "fn": 9,
+              "tn": 68890,
+              "expected_cost": 26680.0,
+              "alerts": 2303
+            },
+            {
+              "threshold": 0.5657,
+              "tp": 85,
+              "fp": 2145,
+              "fn": 9,
+              "tn": 68963,
+              "expected_cost": 25950.0,
+              "alerts": 2230
+            },
+            {
+              "threshold": 0.5758,
+              "tp": 85,
+              "fp": 2070,
+              "fn": 9,
+              "tn": 69038,
+              "expected_cost": 25200.0,
+              "alerts": 2155
+            },
+            {
+              "threshold": 0.5859,
+              "tp": 84,
+              "fp": 1985,
+              "fn": 10,
+              "tn": 69123,
+              "expected_cost": 24850.0,
+              "alerts": 2069
+            },
+            {
+              "threshold": 0.596,
+              "tp": 84,
+              "fp": 1904,
+              "fn": 10,
+              "tn": 69204,
+              "expected_cost": 24040.0,
+              "alerts": 1988
+            },
+            {
+              "threshold": 0.6061,
+              "tp": 84,
+              "fp": 1850,
+              "fn": 10,
+              "tn": 69258,
+              "expected_cost": 23500.0,
+              "alerts": 1934
+            },
+            {
+              "threshold": 0.6162,
+              "tp": 84,
+              "fp": 1792,
+              "fn": 10,
+              "tn": 69316,
+              "expected_cost": 22920.0,
+              "alerts": 1876
+            },
+            {
+              "threshold": 0.6263,
+              "tp": 84,
+              "fp": 1715,
+              "fn": 10,
+              "tn": 69393,
+              "expected_cost": 22150.0,
+              "alerts": 1799
+            },
+            {
+              "threshold": 0.6364,
+              "tp": 84,
+              "fp": 1655,
+              "fn": 10,
+              "tn": 69453,
+              "expected_cost": 21550.0,
+              "alerts": 1739
+            },
+            {
+              "threshold": 0.6465,
+              "tp": 84,
+              "fp": 1593,
+              "fn": 10,
+              "tn": 69515,
+              "expected_cost": 20930.0,
+              "alerts": 1677
+            },
+            {
+              "threshold": 0.6566,
+              "tp": 83,
+              "fp": 1529,
+              "fn": 11,
+              "tn": 69579,
+              "expected_cost": 20790.0,
+              "alerts": 1612
+            },
+            {
+              "threshold": 0.6667,
+              "tp": 83,
+              "fp": 1476,
+              "fn": 11,
+              "tn": 69632,
+              "expected_cost": 20260.0,
+              "alerts": 1559
+            },
+            {
+              "threshold": 0.6768,
+              "tp": 83,
+              "fp": 1423,
+              "fn": 11,
+              "tn": 69685,
+              "expected_cost": 19730.0,
+              "alerts": 1506
+            },
+            {
+              "threshold": 0.6869,
+              "tp": 83,
+              "fp": 1352,
+              "fn": 11,
+              "tn": 69756,
+              "expected_cost": 19020.0,
+              "alerts": 1435
+            },
+            {
+              "threshold": 0.697,
+              "tp": 83,
+              "fp": 1307,
+              "fn": 11,
+              "tn": 69801,
+              "expected_cost": 18570.0,
+              "alerts": 1390
+            },
+            {
+              "threshold": 0.7071,
+              "tp": 83,
+              "fp": 1255,
+              "fn": 11,
+              "tn": 69853,
+              "expected_cost": 18050.0,
+              "alerts": 1338
+            },
+            {
+              "threshold": 0.7172,
+              "tp": 82,
+              "fp": 1191,
+              "fn": 12,
+              "tn": 69917,
+              "expected_cost": 17910.0,
+              "alerts": 1273
+            },
+            {
+              "threshold": 0.7273,
+              "tp": 81,
+              "fp": 1117,
+              "fn": 13,
+              "tn": 69991,
+              "expected_cost": 17670.0,
+              "alerts": 1198
+            },
+            {
+              "threshold": 0.7374,
+              "tp": 81,
+              "fp": 1054,
+              "fn": 13,
+              "tn": 70054,
+              "expected_cost": 17040.0,
+              "alerts": 1135
+            },
+            {
+              "threshold": 0.7475,
+              "tp": 81,
+              "fp": 1010,
+              "fn": 13,
+              "tn": 70098,
+              "expected_cost": 16600.0,
+              "alerts": 1091
+            },
+            {
+              "threshold": 0.7576,
+              "tp": 81,
+              "fp": 956,
+              "fn": 13,
+              "tn": 70152,
+              "expected_cost": 16060.0,
+              "alerts": 1037
+            },
+            {
+              "threshold": 0.7677,
+              "tp": 81,
+              "fp": 912,
+              "fn": 13,
+              "tn": 70196,
+              "expected_cost": 15620.0,
+              "alerts": 993
+            },
+            {
+              "threshold": 0.7778,
+              "tp": 81,
+              "fp": 852,
+              "fn": 13,
+              "tn": 70256,
+              "expected_cost": 15020.0,
+              "alerts": 933
+            },
+            {
+              "threshold": 0.7879,
+              "tp": 81,
+              "fp": 789,
+              "fn": 13,
+              "tn": 70319,
+              "expected_cost": 14390.0,
+              "alerts": 870
+            },
+            {
+              "threshold": 0.798,
+              "tp": 81,
+              "fp": 732,
+              "fn": 13,
+              "tn": 70376,
+              "expected_cost": 13820.0,
+              "alerts": 813
+            },
+            {
+              "threshold": 0.8081,
+              "tp": 81,
+              "fp": 686,
+              "fn": 13,
+              "tn": 70422,
+              "expected_cost": 13360.0,
+              "alerts": 767
+            },
+            {
+              "threshold": 0.8182,
+              "tp": 81,
+              "fp": 652,
+              "fn": 13,
+              "tn": 70456,
+              "expected_cost": 13020.0,
+              "alerts": 733
+            },
+            {
+              "threshold": 0.8283,
+              "tp": 80,
+              "fp": 614,
+              "fn": 14,
+              "tn": 70494,
+              "expected_cost": 13140.0,
+              "alerts": 694
+            },
+            {
+              "threshold": 0.8384,
+              "tp": 80,
+              "fp": 575,
+              "fn": 14,
+              "tn": 70533,
+              "expected_cost": 12750.0,
+              "alerts": 655
+            },
+            {
+              "threshold": 0.8485,
+              "tp": 80,
+              "fp": 535,
+              "fn": 14,
+              "tn": 70573,
+              "expected_cost": 12350.0,
+              "alerts": 615
+            },
+            {
+              "threshold": 0.8586,
+              "tp": 80,
+              "fp": 497,
+              "fn": 14,
+              "tn": 70611,
+              "expected_cost": 11970.0,
+              "alerts": 577
+            },
+            {
+              "threshold": 0.8687,
+              "tp": 80,
+              "fp": 468,
+              "fn": 14,
+              "tn": 70640,
+              "expected_cost": 11680.0,
+              "alerts": 548
+            },
+            {
+              "threshold": 0.8788,
+              "tp": 80,
+              "fp": 422,
+              "fn": 14,
+              "tn": 70686,
+              "expected_cost": 11220.0,
+              "alerts": 502
+            },
+            {
+              "threshold": 0.8889,
+              "tp": 80,
+              "fp": 383,
+              "fn": 14,
+              "tn": 70725,
+              "expected_cost": 10830.0,
+              "alerts": 463
+            },
+            {
+              "threshold": 0.899,
+              "tp": 80,
+              "fp": 352,
+              "fn": 14,
+              "tn": 70756,
+              "expected_cost": 10520.0,
+              "alerts": 432
+            },
+            {
+              "threshold": 0.9091,
+              "tp": 80,
+              "fp": 323,
+              "fn": 14,
+              "tn": 70785,
+              "expected_cost": 10230.0,
+              "alerts": 403
+            },
+            {
+              "threshold": 0.9192,
+              "tp": 80,
+              "fp": 293,
+              "fn": 14,
+              "tn": 70815,
+              "expected_cost": 9930.0,
+              "alerts": 373
+            },
+            {
+              "threshold": 0.9293,
+              "tp": 80,
+              "fp": 261,
+              "fn": 14,
+              "tn": 70847,
+              "expected_cost": 9610.0,
+              "alerts": 341
+            },
+            {
+              "threshold": 0.9394,
+              "tp": 80,
+              "fp": 229,
+              "fn": 14,
+              "tn": 70879,
+              "expected_cost": 9290.0,
+              "alerts": 309
+            },
+            {
+              "threshold": 0.9495,
+              "tp": 79,
+              "fp": 192,
+              "fn": 15,
+              "tn": 70916,
+              "expected_cost": 9420.0,
+              "alerts": 271
+            },
+            {
+              "threshold": 0.9596,
+              "tp": 78,
+              "fp": 165,
+              "fn": 16,
+              "tn": 70943,
+              "expected_cost": 9650.0,
+              "alerts": 243
+            },
+            {
+              "threshold": 0.9697,
+              "tp": 78,
+              "fp": 137,
+              "fn": 16,
+              "tn": 70971,
+              "expected_cost": 9370.0,
+              "alerts": 215
+            },
+            {
+              "threshold": 0.9798,
+              "tp": 77,
+              "fp": 114,
+              "fn": 17,
+              "tn": 70994,
+              "expected_cost": 9640.0,
+              "alerts": 191
+            },
+            {
+              "threshold": 0.9899,
+              "tp": 77,
+              "fp": 92,
+              "fn": 17,
+              "tn": 71016,
+              "expected_cost": 9420.0,
+              "alerts": 169
+            },
+            {
+              "threshold": 1.0,
+              "tp": 8,
+              "fp": 1,
+              "fn": 86,
+              "tn": 71107,
+              "expected_cost": 43010.0,
+              "alerts": 9
+            }
+          ],
+          "optimal_operating_point": {
+            "threshold": 0.9394,
+            "tp": 80,
+            "fp": 229,
+            "fn": 14,
+            "tn": 70879,
+            "expected_cost": 9290.0,
+            "alerts": 309
+          },
+          "do_nothing_cost": 47000.0,
+          "cost_saved_vs_do_nothing": 37710.0,
+          "alert_budget_analysis": [
+            {
+              "alerts": 50,
+              "threshold": 1.0,
+              "frauds_caught": 49,
+              "recall": 0.5213,
+              "precision": 0.98
+            },
+            {
+              "alerts": 100,
+              "threshold": 0.999887,
+              "frauds_caught": 71,
+              "recall": 0.7553,
+              "precision": 0.71
+            },
+            {
+              "alerts": 250,
+              "threshold": 0.955694,
+              "frauds_caught": 78,
+              "recall": 0.8298,
+              "precision": 0.312
+            },
+            {
+              "alerts": 500,
+              "threshold": 0.878949,
+              "frauds_caught": 80,
+              "recall": 0.8511,
+              "precision": 0.16
+            },
+            {
+              "alerts": 1000,
+              "threshold": 0.765682,
+              "frauds_caught": 81,
+              "recall": 0.8617,
+              "precision": 0.081
+            }
+          ],
+          "caveat": "The cost ratio is an assumption, not a measurement. The full curve is published so a reader with different costs can read off their own operating point rather than inherit this one."
+        },
+        "accuracy_trap": {
+          "model_accuracy": 0.999522485323446,
+          "always_negative_accuracy": 0.9986798123648212,
+          "note": "Both figures are shown so accuracy cannot be quoted as evidence of skill. A model that never fires matches the second number."
+        }
+      },
+      "risks": [
+        "Only 94 frauds fall in the test window, so recall estimates carry wide confidence intervals \u2014 a single missed episode moves recall by 1.1%.",
+        "The threshold was selected on the same test split it is reported on, which is mildly optimistic. A production system would select it on a separate validation period."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "The published demo scores a transaction client-side from an exported logistic model \u2014 30 coefficients and an intercept, which is small enough to evaluate exactly in the browser rather than approximated.",
+      "decisions": [],
+      "evidence": {
+        "exported_model": "logistic_balanced",
+        "n_coefficients": 30
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "04_fraud_detection",
+    "seed": 42,
+    "git_commit": "22d5161",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 34.06,
+    "generated_at_unix": 1789366193
+  }
+}
