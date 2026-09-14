@@ -1,0 +1,487 @@
+{
+  "project": "05_timeseries_forecasting",
+  "business_question": "Which forecasting method should be the default for a new series, and how much does that answer depend on the structure of the series itself?",
+  "phases": [
+    {
+      "name": "business_understanding",
+      "title": "Business Understanding",
+      "summary": "Forecasting tool selection is usually settled by habit or by a single benchmark. The practical question is narrower and more useful: given a series with an identifiable structure, which family should be reached for first, and when is a classical method still the right answer?",
+      "decisions": [
+        {
+          "question": "How can models be compared across series in different units?",
+          "choice": "MASE, scaled by in-sample seasonal-naive error.",
+          "rationale": "Averaging raw MAE across passenger counts, degrees Celsius and prescription volumes is meaningless. MASE is unit-free and anchored: 1.0 always means 'matched seasonal naive', so results are comparable and interpretable at the same time.",
+          "alternatives_rejected": [
+            "MAPE \u2014 undefined at zero, explodes near it, and asymmetric between over- and under-forecasts.",
+            "Raw RMSE \u2014 not comparable across units."
+          ]
+        },
+        {
+          "question": "Single holdout or rolling origin?",
+          "choice": "Rolling origin with up to 8 refits.",
+          "rationale": "A single split reports where one arbitrary cut happened to fall. Refitting at multiple origins gives a mean and a spread, which is what distinguishes a genuinely better model from a luckier one.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "horizon": 12,
+        "n_origins": 8,
+        "n_series": 4
+      },
+      "risks": []
+    },
+    {
+      "name": "data_understanding",
+      "title": "Data Understanding",
+      "summary": "Four real series with deliberately different structure: International Airline Passengers (upward trend with multiplicative annual seasonality); Melbourne Minimum Temperature (monthly mean) (strong annual seasonality, no trend); Australian Antidiabetic Drug Sales (trend with a sharp December spike); Sunspot Area (~11 year cycle, not calendar-anchored). Each is decomposed by STL and tested for stationarity with both ADF and KPSS, whose null hypotheses are opposites.",
+      "decisions": [
+        {
+          "question": "Why run both ADF and KPSS?",
+          "choice": "Both, with an explicit verdict when they conflict.",
+          "rationale": "ADF's null is a unit root; KPSS's null is stationarity. A single test that fails to reject is ambiguous between 'the null holds' and 'the test is underpowered'. Running both distinguishes trend-stationary from difference-stationary series, which determines whether to detrend or difference.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "airline_passengers": {
+          "n": 144,
+          "trend_strength": 0.9962,
+          "seasonal_strength": 0.9753,
+          "stationarity": "non-stationary (both tests agree) \u2014 differencing required"
+        },
+        "daily_min_temps": {
+          "n": 120,
+          "trend_strength": 0.2555,
+          "seasonal_strength": 0.9498,
+          "stationarity": "conflicting: ADF cannot reject a unit root but KPSS cannot reject stationarity \u2014 the series is likely difference-stationary but the tests are underpowered here"
+        },
+        "drug_sales": {
+          "n": 204,
+          "trend_strength": 0.9851,
+          "seasonal_strength": 0.8539,
+          "stationarity": "non-stationary (both tests agree) \u2014 differencing required"
+        },
+        "sunspots": {
+          "n": 137,
+          "trend_strength": 0.3011,
+          "seasonal_strength": 0.6942,
+          "stationarity": "conflicting: ADF cannot reject a unit root but KPSS cannot reject stationarity \u2014 the series is likely difference-stationary but the tests are underpowered here"
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "data_preparation",
+      "title": "Data Preparation",
+      "summary": "Minimal and identical across series: parse dates, coerce values to float, drop unparseable rows, sort chronologically. No imputation, no outlier removal \u2014 a smoothed series would make every model look better than it is, and the sunspot and temperature series contain genuine extremes that a forecaster ought to be judged on.",
+      "decisions": [],
+      "evidence": {
+        "airline_passengers": {
+          "n": 144,
+          "start": "1949-01-01",
+          "end": "1960-12-01"
+        },
+        "daily_min_temps": {
+          "n": 120,
+          "start": "1981-01-01",
+          "end": "1990-12-01"
+        },
+        "drug_sales": {
+          "n": 204,
+          "start": "1991-07-01",
+          "end": "2008-06-01"
+        },
+        "sunspots": {
+          "n": 137,
+          "start": "1875-01-01",
+          "end": "2011-01-01"
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "modeling",
+      "title": "Modeling",
+      "summary": "Six forecasters from three families \u2014 naive baselines, classical statistical (Holt-Winters, SARIMA) and machine learning (LightGBM direct multi-step) \u2014 each refit at every rolling origin on every series.",
+      "decisions": [
+        {
+          "question": "Recursive or direct multi-step for the ML forecaster?",
+          "choice": "Direct \u2014 a separate model per horizon step.",
+          "rationale": "Recursive forecasting feeds the model its own predictions, so error compounds over the horizon and the last steps are predictions of predictions. Direct multi-step trains h models and avoids the feedback entirely. It costs h times the training, which at this scale is irrelevant.",
+          "alternatives_rejected": [
+            "Recursive one-step \u2014 cheaper, but compounding error is the dominant failure mode at horizon 12."
+          ]
+        }
+      ],
+      "evidence": {
+        "forecasters": {
+          "naive": "Naive (last value)",
+          "seasonal_naive": "Seasonal naive",
+          "drift": "Drift",
+          "holt_winters": "Holt-Winters (add/add)",
+          "sarima": "SARIMA(1,1,1)(1,1,1,m)",
+          "gbm": "LightGBM direct multi-step"
+        }
+      },
+      "risks": []
+    },
+    {
+      "name": "evaluation",
+      "title": "Evaluation",
+      "summary": "No single model wins everywhere: 2 different models take first place across the four series. Best mean rank is SARIMA(1,1,1)(1,1,1,m) at 1.5, but it wins outright on only 3 of 4.",
+      "decisions": [
+        {
+          "question": "Is there a default model to recommend?",
+          "choice": "SARIMA(1,1,1)(1,1,1,m) as a first attempt, but structure should decide.",
+          "rationale": "Mean rank across four structurally different series is a weak recommendation by construction. The per-series table is the real result: a model that dominates on calendar-seasonal data can rank last on a series whose cycle is not calendar-anchored.",
+          "alternatives_rejected": []
+        }
+      ],
+      "evidence": {
+        "winners_by_series": {
+          "airline_passengers": "SARIMA(1,1,1)(1,1,1,m)",
+          "daily_min_temps": "SARIMA(1,1,1)(1,1,1,m)",
+          "drug_sales": "SARIMA(1,1,1)(1,1,1,m)",
+          "sunspots": "Seasonal naive"
+        },
+        "cross_series_ranking": [
+          {
+            "model": "sarima",
+            "label": "SARIMA(1,1,1)(1,1,1,m)",
+            "mean_rank": 1.5,
+            "best_rank": 1,
+            "worst_rank": 3,
+            "wins": 3
+          },
+          {
+            "model": "gbm",
+            "label": "LightGBM direct multi-step",
+            "mean_rank": 2.5,
+            "best_rank": 2,
+            "worst_rank": 3,
+            "wins": 0
+          },
+          {
+            "model": "holt_winters",
+            "label": "Holt-Winters (add/add)",
+            "mean_rank": 2.75,
+            "best_rank": 2,
+            "worst_rank": 4,
+            "wins": 0
+          },
+          {
+            "model": "seasonal_naive",
+            "label": "Seasonal naive",
+            "mean_rank": 3.25,
+            "best_rank": 1,
+            "worst_rank": 4,
+            "wins": 1
+          },
+          {
+            "model": "drift",
+            "label": "Drift",
+            "mean_rank": 5.25,
+            "best_rank": 5,
+            "worst_rank": 6,
+            "wins": 0
+          },
+          {
+            "model": "naive",
+            "label": "Naive (last value)",
+            "mean_rank": 5.75,
+            "best_rank": 5,
+            "worst_rank": 6,
+            "wins": 0
+          }
+        ],
+        "per_series": {
+          "airline_passengers": [
+            {
+              "model": "sarima",
+              "label": "SARIMA(1,1,1)(1,1,1,m)",
+              "mase_mean": 0.6484,
+              "mase_std": 0.3996,
+              "mase_worst_origin": 1.6242,
+              "mae_mean": 17.6818,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "holt_winters",
+              "label": "Holt-Winters (add/add)",
+              "mase_mean": 0.6854,
+              "mase_std": 0.2358,
+              "mase_worst_origin": 1.2007,
+              "mae_mean": 18.2792,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "gbm",
+              "label": "LightGBM direct multi-step",
+              "mase_mean": 1.187,
+              "mase_std": 0.1621,
+              "mase_worst_origin": 1.4875,
+              "mae_mean": 32.2407,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "seasonal_naive",
+              "label": "Seasonal naive",
+              "mase_mean": 1.3133,
+              "mase_std": 0.4937,
+              "mase_worst_origin": 1.9587,
+              "mae_mean": 35.25,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "drift",
+              "label": "Drift",
+              "mase_mean": 1.8128,
+              "mase_std": 0.4739,
+              "mase_worst_origin": 2.7663,
+              "mae_mean": 49.643,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "naive",
+              "label": "Naive (last value)",
+              "mase_mean": 2.1187,
+              "mase_std": 0.5367,
+              "mase_worst_origin": 3.1964,
+              "mae_mean": 57.8854,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            }
+          ],
+          "daily_min_temps": [
+            {
+              "model": "sarima",
+              "label": "SARIMA(1,1,1)(1,1,1,m)",
+              "mase_mean": 0.8939,
+              "mase_std": 0.2744,
+              "mase_worst_origin": 1.2766,
+              "mae_mean": 0.9916,
+              "beats_seasonal_naive": true,
+              "n_origins": 7
+            },
+            {
+              "model": "gbm",
+              "label": "LightGBM direct multi-step",
+              "mase_mean": 0.9197,
+              "mase_std": 0.225,
+              "mase_worst_origin": 1.2912,
+              "mae_mean": 1.0186,
+              "beats_seasonal_naive": true,
+              "n_origins": 7
+            },
+            {
+              "model": "holt_winters",
+              "label": "Holt-Winters (add/add)",
+              "mase_mean": 0.9248,
+              "mase_std": 0.2708,
+              "mase_worst_origin": 1.3306,
+              "mae_mean": 1.031,
+              "beats_seasonal_naive": true,
+              "n_origins": 7
+            },
+            {
+              "model": "seasonal_naive",
+              "label": "Seasonal naive",
+              "mase_mean": 0.9256,
+              "mase_std": 0.2075,
+              "mase_worst_origin": 1.2268,
+              "mae_mean": 1.0235,
+              "beats_seasonal_naive": false,
+              "n_origins": 7
+            },
+            {
+              "model": "drift",
+              "label": "Drift",
+              "mase_mean": 2.6873,
+              "mase_std": 0.5775,
+              "mase_worst_origin": 4.0038,
+              "mae_mean": 2.984,
+              "beats_seasonal_naive": false,
+              "n_origins": 7
+            },
+            {
+              "model": "naive",
+              "label": "Naive (last value)",
+              "mase_mean": 2.8921,
+              "mase_std": 0.5913,
+              "mase_worst_origin": 4.1324,
+              "mae_mean": 3.2168,
+              "beats_seasonal_naive": false,
+              "n_origins": 7
+            }
+          ],
+          "drug_sales": [
+            {
+              "model": "sarima",
+              "label": "SARIMA(1,1,1)(1,1,1,m)",
+              "mase_mean": 1.1157,
+              "mase_std": 0.4969,
+              "mase_worst_origin": 2.0879,
+              "mae_mean": 1.074,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "holt_winters",
+              "label": "Holt-Winters (add/add)",
+              "mase_mean": 1.1236,
+              "mase_std": 0.4705,
+              "mase_worst_origin": 2.136,
+              "mae_mean": 1.0745,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "gbm",
+              "label": "LightGBM direct multi-step",
+              "mase_mean": 1.5927,
+              "mase_std": 0.2841,
+              "mase_worst_origin": 1.9939,
+              "mae_mean": 1.4912,
+              "beats_seasonal_naive": true,
+              "n_origins": 8
+            },
+            {
+              "model": "seasonal_naive",
+              "label": "Seasonal naive",
+              "mase_mean": 1.9147,
+              "mase_std": 0.7107,
+              "mase_worst_origin": 3.1286,
+              "mae_mean": 1.823,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "drift",
+              "label": "Drift",
+              "mase_mean": 2.3449,
+              "mase_std": 0.5348,
+              "mase_worst_origin": 3.5803,
+              "mae_mean": 2.1966,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "naive",
+              "label": "Naive (last value)",
+              "mase_mean": 2.5817,
+              "mase_std": 0.5557,
+              "mase_worst_origin": 3.9265,
+              "mae_mean": 2.4148,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            }
+          ],
+          "sunspots": [
+            {
+              "model": "seasonal_naive",
+              "label": "Seasonal naive",
+              "mase_mean": 1.5006,
+              "mase_std": 0.3492,
+              "mase_worst_origin": 2.2553,
+              "mae_mean": 470.6772,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "gbm",
+              "label": "LightGBM direct multi-step",
+              "mase_mean": 1.6923,
+              "mase_std": 0.3817,
+              "mase_worst_origin": 2.1574,
+              "mae_mean": 524.5645,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "sarima",
+              "label": "SARIMA(1,1,1)(1,1,1,m)",
+              "mase_mean": 1.7966,
+              "mase_std": 0.6562,
+              "mase_worst_origin": 2.9969,
+              "mae_mean": 544.7804,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "holt_winters",
+              "label": "Holt-Winters (add/add)",
+              "mase_mean": 1.8413,
+              "mase_std": 0.6424,
+              "mase_worst_origin": 3.2177,
+              "mae_mean": 566.8439,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "naive",
+              "label": "Naive (last value)",
+              "mase_mean": 2.4083,
+              "mase_std": 0.623,
+              "mase_worst_origin": 3.6599,
+              "mae_mean": 750.9509,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            },
+            {
+              "model": "drift",
+              "label": "Drift",
+              "mase_mean": 2.425,
+              "mase_std": 0.6303,
+              "mase_worst_origin": 3.6878,
+              "mae_mean": 757.4454,
+              "beats_seasonal_naive": false,
+              "n_origins": 8
+            }
+          ]
+        }
+      },
+      "risks": [
+        "Model hyperparameters are fixed rather than tuned per series. Tuning would likely improve the ML forecaster most, so the comparison is mildly conservative towards it.",
+        "SARIMA order is fixed at (1,1,1)(1,1,1,m) rather than selected per series by AIC. A per-series search would be fairer to SARIMA and is the obvious next step.",
+        "Series lengths range from 141 to 3,650 observations, so the number of usable rolling origins differs and short-series estimates are noisier."
+      ]
+    },
+    {
+      "name": "deployment",
+      "title": "Deployment",
+      "summary": "Each series ships with its observations, STL components, ACF/PACF and full backtest table, driving a forecast studio where a reader can switch series and model and see the rolling-origin error move.",
+      "decisions": [],
+      "evidence": {
+        "series": [
+          "airline_passengers",
+          "daily_min_temps",
+          "drug_sales",
+          "sunspots"
+        ]
+      },
+      "risks": []
+    }
+  ],
+  "phases_recorded": 6,
+  "phases_missing": [],
+  "complete": true,
+  "_run": {
+    "project": "05_timeseries_forecasting",
+    "seed": 42,
+    "git_commit": "02a5f5a",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 32.98,
+    "generated_at_unix": 1789368564
+  }
+}
