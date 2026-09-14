@@ -1,0 +1,36 @@
+{
+  "datasets": [
+    {
+      "id": "compas",
+      "title": "COMPAS Recidivism Risk Scores (Broward County, 2013-2014)",
+      "kind": "REAL",
+      "origin": "Broward County, Florida criminal records joined to COMPAS risk scores, obtained by ProPublica under a public records request and published alongside their 2016 'Machine Bias' investigation. Each row is a real defendant: their COMPAS decile score, demographics, prior offences, and whether they were in fact rearrested within two years.",
+      "license": "Released publicly by ProPublica for independent scrutiny (github.com/propublica/compas-analysis).",
+      "url": "https://raw.githubusercontent.com/propublica/compas-analysis/master/compas-scores-two-years.csv",
+      "mirror_note": "ProPublica's own repository \u2014 this is the canonical source.",
+      "rows": "7,214 defendants",
+      "notes": "Data about real, named individuals in the criminal justice system. Used here strictly for the purpose ProPublica released it: auditing an algorithmic risk score for disparate impact. Names are dropped on load and never analysed. The dataset is also the centre of a genuine methodological dispute \u2014 ProPublica argued unequal error rates, Northpointe argued equal calibration \u2014 which the project treats as the substance rather than picking a side.",
+      "cached_files": [
+        {
+          "file": "compas.csv",
+          "sha256": "c451db85908b2f7fef1d83203bedf6b71ecda0d5af468d82ae62178f91d0cc7d"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "10_fairness_audit",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.3,
+    "generated_at_unix": 1789378991
+  }
+}

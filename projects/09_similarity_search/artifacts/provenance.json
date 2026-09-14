@@ -1,0 +1,36 @@
+{
+  "datasets": [
+    {
+      "id": "consumer_complaints",
+      "title": "US Consumer Financial Complaints",
+      "kind": "REAL",
+      "origin": "Complaints filed by US consumers with the Consumer Financial Protection Bureau against financial institutions. Each row is a real complaint with its product, issue, company and disposition.",
+      "license": "US Government work \u2014 public domain.",
+      "url": "https://raw.githubusercontent.com/plotly/datasets/master/26k-consumer-complaints.csv",
+      "mirror_note": "Plotly's public dataset archive.",
+      "rows": "28,156 complaints naming 1,534 distinct companies",
+      "notes": "Company names are entered free-form, so the same institution appears under many spellings. That makes it a genuine entity-resolution problem rather than a synthetic one.",
+      "cached_files": [
+        {
+          "file": "consumer_complaints.csv",
+          "sha256": "3d8238cc1d4a432a9f717baa497890822c4c6b7be5ae61da2218abad777a1841"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "09_similarity_search",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 4.41,
+    "generated_at_unix": 1789378823
+  }
+}

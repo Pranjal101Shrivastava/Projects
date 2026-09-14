@@ -264,6 +264,80 @@ REGISTRY: dict[str, Dataset] = {
             "model'. Project 06 trains with and without it to quantify the inflation."
         ),
     ),
+    "compas": Dataset(
+        id="compas",
+        title="COMPAS Recidivism Risk Scores (Broward County, 2013-2014)",
+        kind="REAL",
+        origin=(
+            "Broward County, Florida criminal records joined to COMPAS risk scores, "
+            "obtained by ProPublica under a public records request and published "
+            "alongside their 2016 'Machine Bias' investigation. Each row is a real "
+            "defendant: their COMPAS decile score, demographics, prior offences, and "
+            "whether they were in fact rearrested within two years."
+        ),
+        license=(
+            "Released publicly by ProPublica for independent scrutiny "
+            "(github.com/propublica/compas-analysis)."
+        ),
+        url=(
+            "https://raw.githubusercontent.com/propublica/compas-analysis/master/"
+            "compas-scores-two-years.csv"
+        ),
+        mirror_note="ProPublica's own repository — this is the canonical source.",
+        rows="7,214 defendants",
+        notes=(
+            "Data about real, named individuals in the criminal justice system. Used here "
+            "strictly for the purpose ProPublica released it: auditing an algorithmic risk "
+            "score for disparate impact. Names are dropped on load and never analysed. The "
+            "dataset is also the centre of a genuine methodological dispute — ProPublica "
+            "argued unequal error rates, Northpointe argued equal calibration — which the "
+            "project treats as the substance rather than picking a side."
+        ),
+    ),
+    "consumer_complaints": Dataset(
+        id="consumer_complaints",
+        title="US Consumer Financial Complaints",
+        kind="REAL",
+        origin=(
+            "Complaints filed by US consumers with the Consumer Financial Protection "
+            "Bureau against financial institutions. Each row is a real complaint with its "
+            "product, issue, company and disposition."
+        ),
+        license="US Government work — public domain.",
+        url=(
+            "https://raw.githubusercontent.com/plotly/datasets/master/"
+            "26k-consumer-complaints.csv"
+        ),
+        mirror_note="Plotly's public dataset archive.",
+        rows="28,156 complaints naming 1,534 distinct companies",
+        notes=(
+            "Company names are entered free-form, so the same institution appears under "
+            "many spellings. That makes it a genuine entity-resolution problem rather than "
+            "a synthetic one."
+        ),
+    ),
+    "aapl_daily": Dataset(
+        id="aapl_daily",
+        title="Apple Inc. Daily OHLCV (Feb 2015 - Feb 2017)",
+        kind="REAL",
+        origin=(
+            "Daily open/high/low/close/volume bars for AAPL with split- and "
+            "dividend-adjusted closes, as distributed in Plotly's finance chart examples."
+        ),
+        license="Open for educational use.",
+        url=(
+            "https://raw.githubusercontent.com/plotly/datasets/master/"
+            "finance-charts-apple.csv"
+        ),
+        mirror_note="Plotly's public dataset archive.",
+        rows="506 trading days",
+        notes=(
+            "Two years of daily bars is a short sample for a trading study, and that "
+            "limitation drives the conclusion rather than being hidden from it. Always use "
+            "AAPL.Adjusted rather than AAPL.Close: the unadjusted series contains a price "
+            "discontinuity at every dividend that a naive model reads as a real move."
+        ),
+    ),
     "tiny_shakespeare": Dataset(
         id="tiny_shakespeare",
         title="Tiny Shakespeare",

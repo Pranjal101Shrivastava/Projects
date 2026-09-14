@@ -1,0 +1,98 @@
+{
+  "rows_raw": 7214,
+  "rows_after_propublica_filters": 6172,
+  "filters_applied": {
+    "days_b_screening_arrest within [-30, 30]": "charge and screening must correspond",
+    "is_recid != -1": "drop records with no recidivism data",
+    "c_charge_degree != 'O'": "drop ordinary traffic offences, which carry no jail time",
+    "score_text != 'N/A'": "drop rows with no COMPAS score"
+  },
+  "overall_recidivism_rate": 0.4551,
+  "overall_high_risk_rate": 0.4457,
+  "group_sizes": {
+    "African-American": 3175,
+    "Caucasian": 2103,
+    "Hispanic": 509,
+    "Other": 343,
+    "Asian": 31,
+    "Native American": 11
+  },
+  "groups_compared": [
+    "African-American",
+    "Caucasian",
+    "Hispanic"
+  ],
+  "groups_too_small_to_compare": [
+    {
+      "group": "Other",
+      "n": 343
+    },
+    {
+      "group": "Asian",
+      "n": 31
+    },
+    {
+      "group": "Native American",
+      "n": 11
+    }
+  ],
+  "min_group_size": 500,
+  "identifying_columns_dropped": [
+    "name",
+    "first",
+    "last"
+  ],
+  "decile_distribution": {
+    "African-American": {
+      "1": 365,
+      "2": 346,
+      "3": 298,
+      "4": 337,
+      "5": 323,
+      "6": 318,
+      "7": 343,
+      "8": 301,
+      "9": 317,
+      "10": 227
+    },
+    "Caucasian": {
+      "1": 605,
+      "2": 321,
+      "3": 238,
+      "4": 243,
+      "5": 200,
+      "6": 160,
+      "7": 113,
+      "8": 96,
+      "9": 77,
+      "10": 50
+    },
+    "Hispanic": {
+      "1": 159,
+      "2": 89,
+      "3": 73,
+      "4": 47,
+      "5": 39,
+      "6": 27,
+      "7": 28,
+      "8": 14,
+      "9": 17,
+      "10": 16
+    }
+  },
+  "_run": {
+    "project": "10_fairness_audit",
+    "seed": 42,
+    "git_commit": "200f444",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.0+cu130"
+    },
+    "duration_seconds": 0.28,
+    "generated_at_unix": 1789378991
+  }
+}
