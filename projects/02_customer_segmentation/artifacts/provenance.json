@@ -1,0 +1,35 @@
+{
+  "datasets": [
+    {
+      "id": "bank_marketing",
+      "title": "Bank Marketing \u2014 Portuguese Term Deposit Campaigns (2008\u20132010)",
+      "kind": "REAL",
+      "origin": "Direct marketing call records from a Portuguese retail bank, collected May 2008 \u2013 November 2010 and published by Moro, Cortez & Rita (2014). Each row is one real client contacted by phone; the target is whether they subscribed to a term deposit. Includes contemporaneous macroeconomic indicators (euribor3m, employment variation rate, consumer confidence).",
+      "license": "Creative Commons Attribution 4.0 (UCI Machine Learning Repository).",
+      "url": "https://raw.githubusercontent.com/selva86/datasets/master/bank-full.csv",
+      "mirror_note": "Selva Prabhakaran's archive of the UCI bank-additional-full variant. Semicolon-delimited.",
+      "rows": "41,188 contacts, 4,640 subscriptions (11.27%)",
+      "notes": "Carries a documented target leak. The 'duration' column records how long the call lasted, which is only known AFTER the outcome is decided \u2014 a call of zero seconds is necessarily a 'no'. UCI's own documentation warns it 'should be discarded if the intention is to have a realistic predictive model'. Project 06 trains with and without it to quantify the inflation.",
+      "cached_files": [
+        {
+          "file": "bank_marketing.csv",
+          "sha256": "74adfc578bf77a7ff4bb1ba4a9f8709d9e3c6907342959c2c8416847e0afb4d8"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "02_customer_segmentation",
+    "seed": 42,
+    "git_commit": "4aa8c30",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 347.51,
+    "generated_at_unix": 1789367081
+  }
+}
