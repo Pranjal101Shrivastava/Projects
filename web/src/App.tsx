@@ -59,8 +59,8 @@ export default function App() {
         <div className="wrap">
           <div className="row">
             <span>
-              Eight end-to-end data science systems. Every figure is read from a committed
-              JSON artifact produced by a pipeline in this repository.
+              {PROJECTS.length} end-to-end data science systems. Every figure is read from
+              a committed JSON artifact produced by a pipeline in this repository.
             </span>
             <span className="spacer" />
             <a href="https://github.com/Pranjal101Shrivastava/Projects" target="_blank"

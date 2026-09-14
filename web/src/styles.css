@@ -1,7 +1,7 @@
 /* ==========================================================================
    Design tokens
    --------------------------------------------------------------------------
-   One scale, one palette, one type ramp, shared by all eight project views.
+   One scale, one palette, one type ramp, shared by every project view.
    The point of a single system across projects that share nothing technically
    is that a reader moving between them spends no attention re-learning where
    things are.

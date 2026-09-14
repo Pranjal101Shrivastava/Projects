@@ -1,4 +1,5 @@
 import { Callout, Section } from "../components/UI";
+import { PROJECTS } from "../lib/projects";
 
 /**
  * The standing argument of the portfolio.
@@ -12,7 +13,8 @@ export default function Methodology() {
       <header className="hero">
         <h1>Methodology</h1>
         <p className="lead">
-          Eight projects sharing one library, one set of rules, and one commitment: every
+          {PROJECTS.length} projects sharing one library, one set of rules, and one commitment:
+          every
           number on this site is read from a JSON artifact written by a pipeline in the
           repository, so the prose and the measurements cannot drift apart.
         </p>

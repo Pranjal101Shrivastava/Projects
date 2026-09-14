@@ -7,7 +7,7 @@ import {
 import { PROJECT_VIEWS } from "./views";
 
 /**
- * Shell shared by all eight project pages.
+ * Shell shared by every project page.
  *
  * Three tabs are identical everywhere — Findings, Method, Data — because they answer the
  * same three questions for every project: what was found, how was it decided, and where

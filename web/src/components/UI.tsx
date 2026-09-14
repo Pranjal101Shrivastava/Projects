@@ -1,7 +1,7 @@
 /**
  * Shared presentational components.
  *
- * These exist so that the eight project views present the same kinds of information the
+ * These exist so that every project view presents the same kinds of information the
  * same way. The most load-bearing of them are `Caveat` and `PhaseTimeline`: this portfolio
  * argues that stating limitations is part of the work, so limitations get a dedicated,
  * visually prominent component rather than a paragraph at the bottom of a page.
