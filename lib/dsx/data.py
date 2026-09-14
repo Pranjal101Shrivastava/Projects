@@ -278,6 +278,58 @@ def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def _download_with_retry(url: str, *, attempts: int = 5) -> bytes:
+    """Download a URL, resuming after a truncated transfer.
+
+    Large files through the sandbox's egress proxy are routinely cut off mid-stream
+    (``IncompleteRead``) - the 100 MB fraud CSV and the 26 MB monthly Uber files both hit
+    it. Rather than failing the pipeline, we keep the bytes already received and issue a
+    ranged request for the remainder, falling back to a clean restart if the server will
+    not honour ``Range``. Backoff is exponential so a genuinely unreachable host still
+    fails promptly rather than hanging.
+    """
+    import time
+
+    buffer = bytearray()
+    last_error: Exception | None = None
+
+    for attempt in range(attempts):
+        headers = {"User-Agent": "dsx-portfolio/1.0"}
+        if buffer:
+            headers["Range"] = f"bytes={len(buffer)}-"
+        request = urllib.request.Request(url, headers=headers)
+
+        try:
+            with urllib.request.urlopen(request, timeout=300) as response:  # noqa: S310
+                # A server ignoring Range replies 200 with the whole file; restart cleanly.
+                if buffer and response.status == 200:
+                    buffer = bytearray()
+                while True:
+                    chunk = response.read(1 << 20)
+                    if not chunk:
+                        break
+                    buffer.extend(chunk)
+            return bytes(buffer)
+
+        except Exception as error:  # noqa: BLE001 - retried below, re-raised if terminal
+            last_error = error
+            partial = getattr(error, "partial", None)
+            if partial:
+                buffer.extend(partial)
+            if attempt < attempts - 1:
+                delay = 2 ** attempt
+                print(
+                    f"  transfer interrupted at {len(buffer):,} bytes "
+                    f"({type(error).__name__}); resuming in {delay}s"
+                )
+                time.sleep(delay)
+
+    raise RuntimeError(
+        f"Failed to download {url} after {attempts} attempts "
+        f"({len(buffer):,} bytes received). Last error: {last_error!r}"
+    )
+
+
 def fetch(dataset_id: str, *, url_override: str | None = None,
           cache_name: str | None = None) -> Path:
     """Download a declared dataset to the cache and return its local path.
@@ -312,10 +364,7 @@ def fetch(dataset_id: str, *, url_override: str | None = None,
                 )
         return target
 
-    req = urllib.request.Request(url, headers={"User-Agent": "dsx-portfolio/1.0"})
-    with urllib.request.urlopen(req, timeout=180) as response:  # noqa: S310 - declared URL
-        payload = response.read()
-
+    payload = _download_with_retry(url)
     target.write_bytes(payload)
     manifest[key] = {
         "dataset_id": dataset_id,

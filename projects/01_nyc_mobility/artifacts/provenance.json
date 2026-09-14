@@ -1,0 +1,55 @@
+{
+  "datasets": [
+    {
+      "id": "uber_nyc_2014",
+      "title": "Uber NYC Pickups (TLC FOIL response, Apr-Sep 2014)",
+      "kind": "REAL",
+      "origin": "NYC Taxi & Limousine Commission, released to FiveThirtyEight under a Freedom of Information Law request. Each row is one real dispatched pickup.",
+      "license": "Made public by FiveThirtyEight; TLC data is a public record.",
+      "url": "https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-{month}14.csv",
+      "mirror_note": "FiveThirtyEight's public archive of the TLC FOIL response.",
+      "rows": "~4.5M across six monthly files",
+      "notes": "Columns: Date/Time, Lat, Lon, Base. No trip duration or fare field.",
+      "cached_files": [
+        {
+          "file": "uber_raw_apr14.csv",
+          "sha256": "4c92b95b9918e73ae84bade0bffef6e758e792c247469523130d3c1ad7b646e0"
+        },
+        {
+          "file": "uber_raw_aug14.csv",
+          "sha256": "710e5766a8f2c13cfa9fd1dda30a4f6c5cba1b964a1efeb7087df0085a86f091"
+        },
+        {
+          "file": "uber_raw_jul14.csv",
+          "sha256": "42bc47c906a3d17b2b4f9543594ab300db9ac5f8bbb7a6060d215fa30a8c62c2"
+        },
+        {
+          "file": "uber_raw_jun14.csv",
+          "sha256": "ca999fb126a068a429c266d6781b1e8825b2acc1c74644481222ca6f01dbb557"
+        },
+        {
+          "file": "uber_raw_may14.csv",
+          "sha256": "3940ebee250998e32e810fed596fa2e5ac170e6926e0da43b977b6f76c6921e9"
+        },
+        {
+          "file": "uber_raw_sep14.csv",
+          "sha256": "3c7bda88de4106b5ebeb489545a17b09133a6e5c0efde71d9666d0ee14b7b7d9"
+        }
+      ]
+    }
+  ],
+  "_run": {
+    "project": "01_nyc_mobility",
+    "seed": 42,
+    "git_commit": "a90a660",
+    "libraries": {
+      "python": "3.11.15",
+      "numpy": "2.4.6",
+      "pandas": "3.0.5",
+      "sklearn": "1.9.1",
+      "lightgbm": "4.7.0"
+    },
+    "duration_seconds": 43.12,
+    "generated_at_unix": 1789365420
+  }
+}
