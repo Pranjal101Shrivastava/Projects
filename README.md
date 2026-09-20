@@ -141,19 +141,6 @@ docs/screenshots/     verified captures of every page
 
 ---
 
-## Video walkthrough
-
-<!-- YOUTUBE-PLACEHOLDER -->
-> 🎬 **A video walkthrough will be linked here.**
->
-> It was explicitly deferred for this submission. In the meantime, the
-> [live site](https://pranjal101shrivastava.github.io/Projects) is fully interactive, and
-> [`docs/screenshots/`](./docs/screenshots/) contains browser-verified captures of every page
-> — each one asserted to have rendered real artifact data with zero console errors before it
-> was saved.
-
----
-
 ## Running it
 
 ```bash
