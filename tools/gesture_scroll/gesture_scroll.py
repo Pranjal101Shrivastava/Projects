@@ -108,6 +108,14 @@ MODEL_URL = ("https://storage.googleapis.com/mediapipe-models/hand_landmarker/"
 PINCH_THRESHOLD = 0.22
 REACH_THRESHOLD = 1.35
 
+# How far a fingertip must clear its middle joint to count as extended, as a
+# fraction of the hand span. This used to be an absolute distance in frame
+# units, which quietly broke the scale invariance everything else has: sitting
+# far enough from the camera shrank the hand until no finger could clear a fixed
+# margin, and gestures stopped registering. 0.07 spans matches the old value at
+# a normal sitting distance.
+MARGIN_SPANS = 0.07
+
 
 # ---------------------------------------------------------------------------
 # Geometry
@@ -126,15 +134,18 @@ def hand_span(lm: Sequence) -> float:
     return max(_dist(lm, WRIST, MIDDLE_MCP), 1e-6)
 
 
-def fingers_up(lm: Sequence, margin: float = 0.02) -> tuple[bool, bool, bool, bool]:
+def fingers_up(lm: Sequence,
+               margin: float = MARGIN_SPANS) -> tuple[bool, bool, bool, bool]:
     """Which of index/middle/ring/pinky are extended.
 
     A finger counts as extended when its tip sits higher in the image than its
     middle joint. Image y grows downward, so "higher" means a smaller y. The
     margin is a dead band: without it a finger resting exactly at the boundary
-    flickers between states from one frame to the next.
+    flickers between states from one frame to the next. It is measured in hand
+    spans, so it means the same thing near the camera and far from it.
     """
-    return tuple(lm[tip].y < lm[pip].y - margin for tip, pip in FINGER_JOINTS)
+    dead_band = margin * hand_span(lm)
+    return tuple(lm[tip].y < lm[pip].y - dead_band for tip, pip in FINGER_JOINTS)
 
 
 def pinch_ratio(lm: Sequence) -> float:
@@ -174,7 +185,7 @@ def classify(
     lm: Sequence,
     pinch_threshold: float = PINCH_THRESHOLD,
     reach_threshold: float = REACH_THRESHOLD,
-    margin: float = 0.02,
+    margin: float = MARGIN_SPANS,
     allow_drag: bool = True,
 ) -> str:
     """Map 21 landmarks onto one gesture.

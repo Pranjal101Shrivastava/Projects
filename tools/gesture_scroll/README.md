@@ -135,12 +135,15 @@ Recognising a pose is the easy half. These are the parts that took thought:
 **A finger is "up" when its tip is above its middle joint** — with a dead band.
 Image coordinates grow downward, so "above" means a *smaller* y. Comparing the
 two directly works, but a finger resting near the boundary flips state every
-frame and the page stutters, so a tip has to clear its joint by a margin
-(default 0.02 of the frame) before it counts.
+frame and the page stutters, so a tip has to clear its joint by a margin before
+it counts.
 
-**Everything is measured in hand spans, not pixels.** Thresholds are divided by
-the wrist-to-middle-knuckle distance, so leaning back from the camera does not
-change which gestures fire.
+**Everything is measured in hand spans, not pixels** — including that margin,
+which is the point. Thresholds are divided by the wrist-to-middle-knuckle
+distance, so leaning back from the camera does not change which gestures fire.
+The margin was originally a fixed distance in frame units, and a scale sweep
+found the consequence: sit far enough back and no finger can clear a fixed dead
+band, so every gesture silently goes idle.
 
 **A fist is not a pinch, even though it measures like one.** Distance between
 thumb tip and index tip is the obvious pinch test, and it is not enough: curl
@@ -256,32 +259,55 @@ Run `python3 check_setup.py` first — it diagnoses most of this directly.
 | drag never fires | `--calibrate`, then raise `--reach-threshold` |
 | `module 'mediapipe' has no attribute 'solutions'` | MediaPipe 1.x with an old copy of this script — `git pull` |
 | `libEGL.so.1: cannot open shared object file` | Linux only: `sudo apt install libegl1 libgles2` |
+| stops detecting in a dim room | darkness is fine, but a noisy sensor is not — add a light rather than turning up exposure |
 | low fps, laggy | close other camera apps; the script already runs at 640×480 |
 | `pip` cannot find mediapipe, Intel Mac | no MediaPipe 1.x Intel wheel exists; 0.10.x needs Python 3.9–3.12. Run `check_setup.py` for the Homebrew commands |
 | `pip` cannot find mediapipe, elsewhere | your Python is newer than MediaPipe's wheels — rebuild the venv on an older one |
 
 ---
 
+## What it survives
+
+Measured, not assumed — every photograph put through what a webcam and a room
+actually do to an image:
+
+| Condition | Result |
+|---|---|
+| mirrored (the live script mirrors) | fine |
+| hand far away — down to 15% of frame size | fine |
+| dim room — down to 30% brightness | fine |
+| motion blur — up to a 15px kernel | fine |
+| JPEG compression down to quality 20 | fine |
+| tilted hand, ±50° | fine; a clean single hand reads correctly to ±70° |
+| heavy sensor noise | **hand is not detected** — nothing scrolls |
+| hand pointing sideways | idle; tilt the finger ~15° above horizontal and it reads as up |
+
+The important one is the second-to-last. Past the point where it can see
+reliably, it loses the hand rather than inventing a gesture — a missed detection
+does nothing, a wrong gesture scrolls your page. That property is asserted, not
+hoped for.
+
 ## Tests
 
 Two layers, because the first one alone was not enough.
 
 ```bash
-python3 self_test.py     # 19 checks, no camera, no pytest needed
-python3 image_test.py    # 4 real photographs, needs mediapipe + ~8 MB of downloads
+python3 self_test.py     # 1,063 checks, no camera, no pytest needed
+python3 image_test.py    # 272 checks over 7 real photographs, needs mediapipe
 ```
 
-`self_test.py` runs the geometry against synthetic landmarks: that a fist is not
-read as a pinch, that the same pose at half the apparent size classifies the
-same, that a gesture flickering past does nothing, that sub-click drag movement
-accumulates instead of rounding to zero.
+`self_test.py` runs the geometry against synthetic landmarks. Beyond the named
+cases, it sweeps the properties that must hold across a range rather than at one
+point: scale from 5% to 300%, position across the frame, rotation through ±80°,
+seeded landmark jitter, a 15×15 grid of the pinch decision, and every one of the
+243 possible five-frame gesture sequences through the hold filter.
 
-`image_test.py` runs the real landmarker over MediaPipe's own published
-photographs of hands and asserts the gesture for each. This is the layer that
-earned its place: every synthetic test passed while a real fist still triggered a
-drag, because the synthetic fist had been built from the same wrong assumption as
-the threshold it was testing. The measurements in the table above come from here,
-and `self_test.py` now pins them as a regression test.
+`image_test.py` runs the real landmarker over MediaPipe's published photographs
+and over degraded versions of each. This is the layer that earns its place: every
+synthetic test passed while a real fist still triggered a drag, because the
+synthetic fist had been built from the same wrong assumption as the threshold it
+was testing. Both bugs found so far — that one, and the absolute-margin scale
+bug — came from sweeps rather than from named cases.
 
 ---
 
