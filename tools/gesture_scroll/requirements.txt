@@ -1,0 +1,10 @@
+# Hand-gesture scroller. Install into a virtualenv on Python 3.10-3.12:
+#   python3 -m venv .venv && source .venv/bin/activate   (Windows: .venv\Scripts\activate)
+#   pip install -r requirements.txt
+#
+# MediaPipe does not publish wheels for every new Python release right away. If
+# pip cannot find mediapipe, check your version with `python3 --version` and use
+# 3.12 or older rather than fighting the resolver.
+mediapipe>=0.10.9
+opencv-python>=4.8
+pyautogui>=0.9.54
