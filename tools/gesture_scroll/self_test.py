@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from gesture_scroll import (  # noqa: E402
     DOWN, DRAG, IDLE, UP,
-    GestureFilter, Scroller,
+    Calibrator, GestureFilter, Scroller,
     classify, fingers_up, hand_span, index_reach, is_pinch, pinch_ratio,
 )
 
@@ -70,10 +70,15 @@ def build_hand(*, up: tuple[str, ...] = (), thumb=(0.30, 0.68), index_tip=None):
             lm[dip] = P(x, 0.40)
             lm[tip] = P(x, 0.32)
         else:
+            # Curled, with the geometry measured off real photographs: the
+            # middle joint becomes the highest point of the finger and the tip
+            # comes back down to about the knuckle line -- roughly 0.95 hand
+            # spans from the wrist, not into the middle of the palm. Getting
+            # this wrong is what let a fist read as a pinch.
             curled_x = x + (0.50 - x) * 0.3    # tips converge on the palm
-            lm[pip] = P(x, 0.56)               # middle joint: highest point
-            lm[dip] = P(curled_x, 0.66)
-            lm[tip] = P(curled_x, 0.74)        # back down against the palm
+            lm[pip] = P(x, 0.52)               # middle joint: highest point
+            lm[dip] = P(curled_x, 0.57)
+            lm[tip] = P(curled_x, 0.615)
     if index_tip is not None:
         lm[8] = P(*index_tip)
     return lm
@@ -85,10 +90,13 @@ TWO_FINGERS = build_hand(up=("index", "middle"))
 # A fist: every finger curled and the thumb folded across them, which puts the
 # thumb tip close to the index fingertip. This is the pose that a naive
 # distance-only pinch test misreads.
-FIST = build_hand(thumb=(0.52, 0.74))
+FIST = build_hand(thumb=(0.518, 0.615))
 # A real pinch: thumb and index tip meeting out in front of the palm.
+# A real pinch: the index bent so its tip meets the thumb out in front of
+# the palm, about 1.4 hand spans from the wrist -- between a fist (0.95) and a
+# finger pointing straight out (1.9).
 PINCH = build_hand(up=("middle", "ring", "pinky"),
-                   index_tip=(0.44, 0.30), thumb=(0.455, 0.315))
+                   index_tip=(0.44, 0.484), thumb=(0.455, 0.497))
 
 
 def test_hand_span_is_wrist_to_knuckle():
@@ -112,14 +120,57 @@ def test_margin_suppresses_a_borderline_finger():
 
 
 def test_pinch_is_distinguished_from_a_fist():
-    # Both poses put the thumb near the index tip ...
+    # Both poses put the thumb tip right next to the index tip ...
     assert pinch_ratio(PINCH) < 0.22
     assert pinch_ratio(FIST) < 0.22
-    # ... and the reach test is what separates them.
-    assert index_reach(PINCH) > 0.75
-    assert index_reach(FIST) < 0.75
-    assert is_pinch(PINCH, 0.22, 0.75) is True
-    assert is_pinch(FIST, 0.22, 0.75) is False
+    # ... so distance alone cannot tell them apart. Reach is what does: the
+    # pinch happens out in front of the palm, the fist against it.
+    assert 1.3 < index_reach(PINCH) < 1.5
+    assert 0.9 < index_reach(FIST) < 1.0
+    assert is_pinch(PINCH) is True
+    assert is_pinch(FIST) is False
+
+
+def hand_from_ratios(pinch: float, reach: float):
+    """A hand placed to hit exact pinch/reach values, for the measurements below.
+
+    Only the four landmarks is_pinch reads are meaningful here, so this is not a
+    usable hand for anything else -- fingers_up would be reading zeros.
+    """
+    lm = [P(0.0, 0.0) for _ in range(21)]
+    span = 0.30
+    lm[0] = P(0.50, 0.90)                              # wrist
+    lm[9] = P(0.50, 0.60)                              # middle MCP: the span
+    lm[8] = P(0.50, 0.90 - reach * span)               # index tip
+    lm[4] = P(0.50 + pinch * span, lm[8].y)            # thumb tip
+    return lm
+
+
+# Measured by running the landmarker over MediaPipe's own published photographs
+# of hands (see image_test.py), as (thumb-index distance, index reach) in hand
+# spans. The fist is the whole reason is_pinch has two conditions: a 0.75 reach
+# threshold passed every synthetic test and still called this fist a pinch.
+MEASURED = {
+    "fist": (0.20, 0.94),
+    "thumb_up": (0.97, 0.80),
+    "pointing_up": (1.06, 1.92),
+    "victory": (1.05, 1.84),
+}
+
+
+def test_no_measured_real_hand_is_read_as_a_pinch():
+    for name, (pinch, reach) in MEASURED.items():
+        lm = hand_from_ratios(pinch, reach)
+        assert abs(pinch_ratio(lm) - pinch) < 1e-9, name
+        assert abs(index_reach(lm) - reach) < 1e-9, name
+        assert is_pinch(lm) is False, f"{name} must not be a pinch"
+
+
+def test_the_old_threshold_would_have_failed_on_a_real_fist():
+    # Kept as a tripwire: this is the exact regression the photographs caught.
+    fist = hand_from_ratios(*MEASURED["fist"])
+    assert is_pinch(fist, reach_threshold=0.75) is True    # the bug
+    assert is_pinch(fist, reach_threshold=1.35) is False   # the fix
 
 
 def test_classify_maps_each_pose():
@@ -214,6 +265,30 @@ def test_invert_drag_flips_the_direction():
     s = Scroller(sent.append, drag_gain=12.0, invert_drag=True, clock=FakeClock())
     s.drag(0.5)
     assert sent == [-6]
+
+
+def test_calibrator_suggests_a_threshold_between_the_poses():
+    c = Calibrator()
+    c.record("pinch", hand_from_ratios(0.08, 1.40))
+    c.record("fist", hand_from_ratios(0.20, 0.96))
+    out = c.report()
+    assert "--reach-threshold 1.18" in out, out     # midway between 0.96 and 1.40
+    assert "--pinch-threshold 0.11" in out, out     # just clear of the pinch samples
+
+
+def test_calibrator_refuses_to_invent_a_threshold_when_poses_overlap():
+    c = Calibrator()
+    c.record("pinch", hand_from_ratios(0.08, 0.90))
+    c.record("fist", hand_from_ratios(0.20, 1.00))
+    out = c.report()
+    assert "overlap" in out
+    assert "--reach-threshold" not in out
+
+
+def test_calibrator_needs_both_poses():
+    c = Calibrator()
+    c.record("pinch", hand_from_ratios(0.08, 1.40))
+    assert "Not enough samples" in c.report()
 
 
 def _run() -> int:
