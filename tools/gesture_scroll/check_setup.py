@@ -27,12 +27,26 @@ OK, WARN, FAIL = "OK", "WARN", "FAIL"
 MAC = platform.system() == "Darwin"
 WINDOWS = platform.system() == "Windows"
 
-# MediaPipe publishes wheels for a trailing range of Python versions, and is
-# usually a release or two behind the newest. This is the range that is safe to
-# assume; outside it, pip simply reports that no matching distribution exists,
-# which is a confusing way to learn you need a different interpreter.
+# Which Python versions MediaPipe can actually be installed on, read off the
+# wheels it publishes:
+#
+#   MediaPipe 1.x  ships  py3-none-macosx_11_0_arm64, win_amd64, manylinux.
+#                  "py3-none" means any Python 3 -- but there is NO Intel-Mac
+#                  wheel at all.
+#   MediaPipe 0.10 ships  cp39 to cp312 only, including Intel Mac.
+#
+# So on Apple Silicon any Python 3.9+ works, while on an Intel Mac pip has to
+# fall back to 0.10.x and the interpreter must be 3.12 or older. Outside the
+# supported range pip just says no matching distribution exists, which is a
+# confusing way to learn you need a different interpreter.
 PY_MIN = (3, 9)
 PY_MAX_KNOWN = (3, 13)
+PY_MAX_LEGACY = (3, 12)
+
+# platform.machine() reports the *interpreter's* architecture, so a Rosetta
+# Python on an Apple Silicon Mac correctly reads as x86_64 -- and does need the
+# Intel wheel that MediaPipe 1.x does not publish.
+MAC_INTEL = MAC and platform.machine() != "arm64"
 
 
 class Report:
@@ -83,26 +97,64 @@ class Report:
         return 0
 
 
+def _newer_python_fix(target: tuple[int, int]) -> str:
+    major, minor = target
+    if MAC:
+        # brew --prefix rather than a hardcoded path: Homebrew lives in
+        # /opt/homebrew on Apple Silicon and /usr/local on Intel.
+        return (f"brew install python@{major}.{minor}\n"
+                f"deactivate 2>/dev/null; rm -rf .venv\n"
+                f"\"$(brew --prefix)/opt/python@{major}.{minor}/bin/python{major}.{minor}\" "
+                f"-m venv .venv\n"
+                f"source .venv/bin/activate && pip install -r requirements.txt")
+    if WINDOWS:
+        return (f"winget install Python.Python.{major}.{minor}\n"
+                f"rmdir /s /q .venv\n"
+                f"py -{major}.{minor} -m venv .venv\n"
+                f".venv\\Scripts\\activate && pip install -r requirements.txt")
+    return (f"sudo apt install python{major}.{minor}-venv\n"
+            f"rm -rf .venv && python{major}.{minor} -m venv .venv\n"
+            f"source .venv/bin/activate && pip install -r requirements.txt")
+
+
 def check_python(r: Report) -> None:
     v = sys.version_info
     detail = f"{v.major}.{v.minor}.{v.micro}  ({sys.executable})"
+
+    # On an Intel Mac the ceiling is lower, because the only installable
+    # MediaPipe there is 0.10.x and its newest wheel is for CPython 3.12.
+    ceiling = PY_MAX_LEGACY if MAC_INTEL else PY_MAX_KNOWN
+
     if v[:2] < PY_MIN:
         r.add("Python version", FAIL, detail,
-              f"MediaPipe needs Python {PY_MIN[0]}.{PY_MIN[1]} or newer.")
-    elif v[:2] > PY_MAX_KNOWN:
-        r.add("Python version", WARN, detail,
-              "This is newer than the Python versions MediaPipe is known to ship\n"
-              "wheels for. If 'pip install -r requirements.txt' cannot find\n"
-              f"mediapipe, install Python {PY_MAX_KNOWN[0]}.{PY_MAX_KNOWN[1]} and "
-              "build the virtualenv with that instead:\n"
-              + ("  brew install python@3.12\n"
-                 "  /opt/homebrew/bin/python3.12 -m venv .venv" if MAC else
-                 "  winget install Python.Python.3.12\n"
-                 "  py -3.12 -m venv .venv" if WINDOWS else
-                 "  sudo apt install python3.12-venv\n"
-                 "  python3.12 -m venv .venv"))
+              f"MediaPipe needs Python {PY_MIN[0]}.{PY_MIN[1]} or newer.\n"
+              + _newer_python_fix(ceiling))
+    elif v[:2] > ceiling:
+        status = FAIL if MAC_INTEL else WARN
+        why = ("MediaPipe publishes no Intel-Mac wheel for 1.x, so pip must install\n"
+               f"0.10.x here -- and that has no wheel for Python {v.major}.{v.minor}.\n"
+               f"Rebuild the virtualenv on Python {ceiling[0]}.{ceiling[1]}:\n"
+               if MAC_INTEL else
+               "This is newer than the Python versions MediaPipe is known to ship\n"
+               "wheels for. If 'pip install -r requirements.txt' cannot find\n"
+               f"mediapipe, rebuild the virtualenv on Python {ceiling[0]}.{ceiling[1]}:\n")
+        r.add("Python version", status, detail, why + _newer_python_fix(ceiling))
     else:
         r.add("Python version", OK, detail)
+
+
+def check_architecture(r: Report) -> None:
+    """Only interesting on a Mac, where it decides which MediaPipe you get."""
+    if not MAC:
+        return
+    if MAC_INTEL:
+        r.add("Mac architecture", WARN, f"{platform.machine()} (Intel, or a Rosetta Python)",
+              "MediaPipe 1.x has no Intel-Mac wheel, so pip installs 0.10.x instead.\n"
+              "That is fine -- this script supports the older solutions API too, and\n"
+              "skips the model download because 0.10.x bundles its model. It does mean\n"
+              "the interpreter has to be Python 3.12 or older.")
+    else:
+        r.add("Mac architecture", OK, "arm64 (Apple Silicon)")
 
 
 def check_virtualenv(r: Report) -> None:
@@ -282,6 +334,7 @@ def main(argv: list[str] | None = None) -> int:
 
     r = Report()
     check_python(r)
+    check_architecture(r)
     check_virtualenv(r)
     mods = check_packages(r)
 

@@ -7,7 +7,9 @@
 # MediaPipe 1.x removed the mediapipe.solutions API and replaced it with
 # mediapipe.tasks, which needs a model file downloaded once (~7.8 MB, cached
 # outside the repo). gesture_scroll.py supports both and picks whichever is
-# installed, so this is deliberately not pinned to one generation.
+# installed, so this is deliberately not pinned to one generation -- which also
+# matters because MediaPipe 1.x publishes no Intel-Mac wheel, so pip has to fall
+# back to 0.10.x there (and that needs Python 3.9 to 3.12).
 mediapipe>=0.10.9
 opencv-python>=4.8
 pyautogui>=0.9.54

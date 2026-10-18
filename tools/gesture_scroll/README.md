@@ -27,6 +27,20 @@ pip install -r requirements.txt
 python3 check_setup.py
 ```
 
+Which Mac you have decides which MediaPipe you get, and on one of them the
+Python version matters:
+
+| | MediaPipe | Python | Model |
+|---|---|---|---|
+| **Apple Silicon** (M1–M4) | 1.x, via a `py3-none-macosx_11_0_arm64` wheel | any 3.9+ | downloaded once, ~7.8 MB |
+| **Intel Mac** | 0.10.x — there is no Intel wheel for 1.x at all | **3.9–3.12 only** | bundled, no download |
+
+Both paths work; the script detects which API is installed. But on an Intel Mac
+with Python 3.13 or newer, `pip install` fails outright with "no matching
+distribution", because neither MediaPipe generation publishes a wheel for that
+combination. `check_setup.py` detects this and prints the Homebrew commands to
+rebuild the virtualenv on 3.12.
+
 ### Windows (PowerShell)
 
 ```powershell
@@ -107,8 +121,10 @@ MediaPipe has two generations of Python API and this script supports both,
 picking whichever `pip` gave you:
 
 - **`mediapipe.tasks`** — MediaPipe 1.x. Needs the model file downloaded once.
+  This is what Apple Silicon, Windows and Linux get.
 - **`mediapipe.solutions.hands`** — 0.10.x, with the model bundled. Removed in
-  1.0, so this path only runs on older installs.
+  1.0, so this path runs on older installs and on Intel Macs, which have no
+  MediaPipe 1.x wheel.
 
 ---
 
@@ -241,7 +257,8 @@ Run `python3 check_setup.py` first — it diagnoses most of this directly.
 | `module 'mediapipe' has no attribute 'solutions'` | MediaPipe 1.x with an old copy of this script — `git pull` |
 | `libEGL.so.1: cannot open shared object file` | Linux only: `sudo apt install libegl1 libgles2` |
 | low fps, laggy | close other camera apps; the script already runs at 640×480 |
-| `pip` cannot find mediapipe | your Python is newer than MediaPipe's wheels — install 3.13 or older and rebuild the venv |
+| `pip` cannot find mediapipe, Intel Mac | no MediaPipe 1.x Intel wheel exists; 0.10.x needs Python 3.9–3.12. Run `check_setup.py` for the Homebrew commands |
+| `pip` cannot find mediapipe, elsewhere | your Python is newer than MediaPipe's wheels — rebuild the venv on an older one |
 
 ---
 
